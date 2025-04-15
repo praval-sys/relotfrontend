@@ -57,7 +57,7 @@ const Navbar = () => {
           <Link href="/wishlist" className="hidden sm:block">
             <Heart className="h-6 w-6" />
           </Link>
-          <Link href="/account">
+          <Link href="/login">
             <User className="h-6 w-6" />
           </Link>
           <Link href="/cart" className="relative">
