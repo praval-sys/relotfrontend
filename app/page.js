@@ -157,7 +157,7 @@ export default function Home() {
       <div className="flex justify-center items-center px-4 py-12">
         <div className="max-w-screen-lg w-full text-center">
           <h2 className="text-3xl font-bold uppercase tracking-wide">
-            RELOT SERVICE'S
+            RELOT SERVICE&aposS
           </h2>
         </div>
       </div>
