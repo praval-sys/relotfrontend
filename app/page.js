@@ -12,8 +12,7 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 
 export default function Home() {
-  const pathname = usePathname();
-  const hideLayout = pathname === '/login';
+  
 
   const images = [
     "https://relot.in/wp-content/uploads/2025/01/couple-winter-cloths-studio_1303-5887.avif",
@@ -49,7 +48,7 @@ export default function Home() {
 
   return (
     <main>
-      {!hideLayout && <Navbar />}
+    
       <div className="relative w-full h-screen overflow-auto text-white bg-gray-400">
       {/* Background Slideshow */}
       <Swiper
@@ -187,7 +186,7 @@ export default function Home() {
         ))}
       </div>
     </div>
-      {!hideLayout && <Footer />}
+
     </main>
   )
 }
