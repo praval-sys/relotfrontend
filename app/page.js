@@ -1,13 +1,11 @@
 'use client'
-import { usePathname } from 'next/navigation';
-import Footer from "./components/Footer";
-import Navbar from "./components/navbar"
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import ProductCategories from "../app/components/ProductCategories";
 import Link from "next/link";
 import Image from "next/image";
-import Testimonial from "../app/components/testimonial";
+import Testimonial from "../app/components/Testimonial";
 import "swiper/css";
 import "swiper/css/effect-fade";
 

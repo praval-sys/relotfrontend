@@ -1,6 +1,6 @@
 // app/(pages)/products/page.jsx
 import { Suspense } from 'react';
-import ProductsClient from './ProductsClient';
+import ProductsClient from './productsClient';
 
 export default function ProductsPage() {
   return (
