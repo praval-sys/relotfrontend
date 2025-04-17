@@ -29,7 +29,9 @@ const Navbar = () => {
               <span className="bg-red-600 text-white px-2">LOT</span>
             </div>
           </div>
-        </Link>
+        </Link> 
+
+        
 
         {/* Search Bar */}
         <div className="hidden md:flex flex-1 max-w-xl mx-4">
@@ -53,7 +55,7 @@ const Navbar = () => {
         </div>
 
         {/* Icons */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4"> 
           <Link href="/wishlist" className="hidden sm:block">
             <Heart className="h-6 w-6" />
           </Link>
