@@ -45,9 +45,15 @@ export default function Home() {
   ];
 
   return (
+<<<<<<< Updated upstream
    
     <div>
       <div className="relative w-full h-full text-white bg-gray-400 -z-10">
+=======
+    <main>
+    
+      <div className="relative w-full h-screen  text-white bg-gray-400 ">
+>>>>>>> Stashed changes
       {/* Background Slideshow */}
       <Swiper
         modules={[Autoplay, EffectFade]}
