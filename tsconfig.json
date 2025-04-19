@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "app/redux/actions.js", "app/(pages)/products/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]
