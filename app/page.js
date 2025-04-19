@@ -45,16 +45,16 @@ export default function Home() {
   ];
 
   return (
-    <main>
-    
-      <div className="relative w-full h-screen overflow-auto text-white bg-gray-400 -z-10">
+   
+    <div>
+      <div className="relative w-full h-full text-white bg-gray-400 z-100">
       {/* Background Slideshow */}
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"
         loop={true}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
-        className="absolute inset-0 w-full h-full z-0"
+        className="absolute inset-0 w-full h-[100vh] z-0"
       >
         {images.map((url, index) => (
           <SwiperSlide key={index}>
@@ -67,7 +67,7 @@ export default function Home() {
       </Swiper>
 
       {/* Overlay Content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-black/40 px-4 text-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center h-[100vh] z-10 bg-black/40 px-4 text-center">
         <h2 className="text-4xl md:text-6xl font-bold">Relot Leather Goods</h2>
         <p className="text-xl mt-4">Built to last!</p>
         <a
@@ -184,7 +184,7 @@ export default function Home() {
         ))}
       </div>
     </div>
-
-    </main>
+    </div>
+   
   )
 }
