@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
       >
         <Provider store={store}> {/* Wrap your content with Provider */}
           {showLayout && <Navbar />}
-          <main> {children}</main>
+           {children}
           {showLayout && <Footer />}
         </Provider>
       </body>
