@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <main>
     
-      <div className="relative w-full h-screen overflow-auto text-white bg-gray-400">
+      <div className="relative w-full h-screen overflow-auto text-white bg-gray-400 -z-10">
       {/* Background Slideshow */}
       <Swiper
         modules={[Autoplay, EffectFade]}
