@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '../../components/ProductCard';
 import Filters from '../../components/Filter';
 import Pagination from '../../components/Pagination'; // Don't forget this
-// Suspense is not needed inside a client component
+
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
@@ -37,11 +37,15 @@ export default function ProductsClient() {
         .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
         .join('&');
 
-      const response = await fetch(`/api/products?${queryString}`);
-      const data = await response.json();
-
-      setProducts(data.products);
-      setTotalProducts(data.totalCount);
+      const response = await fetch(`http://localhost:3001/v1/products?${queryString}`);
+      const result = await response.json();
+      // Update to match backend response structure
+      if (result.success) {
+        setProducts(result.data);
+        setTotalProducts(result.pagination.totalItems);
+      } else {
+        console.error('Error in API response:', result.message);
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -127,7 +131,7 @@ export default function ProductsClient() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product._id} product={product} />
                 ))}
               </div>
 
