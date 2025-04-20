@@ -1,56 +1,68 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from 'react-redux';
+import { setToken } from '../../redux/reducer/authSlice';
+import { useSelector } from 'react-redux';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
-      const response = await fetch("http://localhost:3001/auth/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed")
+        throw new Error(data.message || "Login failed");
       }
-
+      dispatch(setToken(data.accessToken));
+      
+      console.log("Redux Token:", token); 
+      
       // Redirect to home page after successful login
-      router.push("/")
+      router.push("/");
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.")
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
+          </h2>
         </div>
 
         {error && (
@@ -112,7 +124,10 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <Link href="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link
+                href="/forgot-password"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 Forgot your password?
               </Link>
             </div>
@@ -130,5 +145,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }
