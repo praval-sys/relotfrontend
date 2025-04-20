@@ -8,24 +8,23 @@ import engFlag from './images/eng.jpg';
 import franceFlag from './images/france.png';
 import germanFlag from './images/german.avif';
 import { Search, Heart, User, ShoppingBag, ChevronDown } from "lucide-react"
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
+import CartDailog from "../components/Cart/CartDailog"
+
 
 const Navbar = ({cartTotalQuantity}) => {
   const [searchQuery, setSearchQuery] = useState("")
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
-  console.log("cartTotalQuantity", cartTotalQuantity);
-  const cartItemCount = 0;
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const items= useSelector((state) => state.cart.items);
+
+
 
   const handleSearch = (e) => {
     e.preventDefault()
     // Implement search functionality
     console.log("Searching for:", searchQuery)
   }
-  const handleCart = () => {
-    // Implement cart functionality
 
-    console.log("Cart clicked")
-  } 
   const handleWishlist = () => {
     // Implement wishlist functionality
     console.log("Wishlist clicked")
@@ -75,14 +74,10 @@ const Navbar = ({cartTotalQuantity}) => {
           <Link href="/login">
             <User className="h-6 w-6" />
           </Link>
-          <button onClick={handleCart} className="relative">
-        <ShoppingBag className="h-6 w-6" />
-        {cartTotalQuantity > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {cartTotalQuantity}
-          </span>
-        )}
-      </button>
+
+          <div className="relative">
+        <CartDailog/>
+      </div>
         </div>
       </div>
 
@@ -335,10 +330,14 @@ const Navbar = ({cartTotalQuantity}) => {
         </form>
       </div>
     </header>
+    
   )
 }
 const mapStateToProps = (state) => ({
   cartTotalQuantity: state.cart.totalQuantity,
 });
 
-export default connect(mapStateToProps)(Navbar);
+
+export default Navbar;
+
+
