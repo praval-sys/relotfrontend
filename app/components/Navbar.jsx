@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 const Navbar = ({cartTotalQuantity}) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
-
+  console.log("cartTotalQuantity", cartTotalQuantity);
   const cartItemCount = 0;
 
   const handleSearch = (e) => {

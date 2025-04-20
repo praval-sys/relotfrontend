@@ -21,12 +21,8 @@ export default function RootLayout({ children }) {
       >
         <Provider store={store}> {/* Wrap your content with Provider */}
           {showLayout && <Navbar />}
-<<<<<<< Updated upstream
-           {children}
-=======
           <main> {children}</main>
           <Toaster position="bottom-right" />
->>>>>>> Stashed changes
           {showLayout && <Footer />}
         </Provider>
       </body>
