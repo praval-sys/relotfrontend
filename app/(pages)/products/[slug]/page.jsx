@@ -11,7 +11,6 @@ export async function generateMetadata({ params }) {
     const resolvedParams = await params;
   const productData = await getProductById(resolvedParams.slug);
   const product = productData.data;
-  console.log(product)
   return {
     title: `${product.name} | YourStore`,
     description: product.description,
