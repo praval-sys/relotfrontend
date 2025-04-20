@@ -1,4 +1,5 @@
-import { ADD_ITEM_TO_CART, REMOVE_ITEM_FROM_CART, UPDATE_CART_ITEM_QUANTITY } from '../types';
+import { useSelector } from 'react-redux';
+import { ADD_ITEM_TO_CART, REMOVE_ITEM_FROM_CART, UPDATE_CART_ITEM_QUANTITY,SET_CART_ITEMS } from '../types';
 
 export const addItemToCart = (item) => {
   return {
@@ -21,3 +22,34 @@ export const updateCartItemQuantity = (itemId, quantity) => {
   };
 };
 
+export const fetchUserCart = () => async (dispatch) => {
+  const token = useSelector((state) => state.auth.token);
+
+  if (!token) {
+    // User is not authenticated — optional: reset cart
+    dispatch({ type: SET_CART_ITEMS, payload: [] });
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:3000/v1/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    const items = data.items.map((item) => ({
+      id: item.productId,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image,
+    }));
+    console.log('Fetched cart items:', items);
+    dispatch({ type: SET_CART_ITEMS, payload: items });
+  } catch (err) {
+    console.error('Error fetching cart:', err);
+  }
+};

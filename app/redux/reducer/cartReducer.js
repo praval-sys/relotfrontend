@@ -1,4 +1,4 @@
-import { ADD_ITEM_TO_CART, REMOVE_ITEM_FROM_CART, UPDATE_CART_ITEM_QUANTITY } from '../types';
+import { ADD_ITEM_TO_CART, REMOVE_ITEM_FROM_CART, UPDATE_CART_ITEM_QUANTITY,SET_CART_ITEMS } from '../types';
 
 const initialState = {
   items: [], // Array to hold cart items
@@ -6,6 +6,11 @@ const initialState = {
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_CART_ITEMS:
+      return {
+        ...state,
+        items: action.payload,
+      };
     case ADD_ITEM_TO_CART:
       // Check if the item already exists in the cart
       const existingItemIndex = state.items.findIndex(item => item.id === action.payload.id);

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function CartDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.items);
-  const token = "sometoken"; // for now as you said
+  const token = useSelector((state) => state.auth.token);
   const router = useRouter();
 
   const handleSaveCart = async () => {
@@ -14,15 +14,25 @@ export default function CartDialog() {
       router.push("/login");
       return;
     }
-
+    console.log("Saving cart items:", cartItems);
+    const formattedCart = {
+        products: cartItems.map((item) => ({
+          productId: item._id || item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity || 1,
+          image: item.images?.[0] || "",
+        })),
+      };
     try {
-      const res = await fetch("/api/cart", {
+        //console.log("Saving cart items:", cartItems);
+      const res = await fetch("http://localhost:3000/v1/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ items: cartItems }),
+        body: JSON.stringify(formattedCart),
       });
 
       if (!res.ok) throw new Error("Failed to save cart");

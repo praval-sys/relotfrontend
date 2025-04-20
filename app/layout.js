@@ -1,29 +1,41 @@
-"use client"; // Make this a Client Component
+"use client";
 
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { usePathname } from 'next/navigation';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from "./redux/store";
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from "react";
+import { fetchUserCart } from "./redux/actions/cartActions"; // Make sure this path is correct
 
-
-export default function RootLayout({ children }) {
+function LayoutContent({ children }) {
   const pathname = usePathname();
   const noLayoutRoutes = ['/login', '/register', '/signup'];
   const showLayout = !noLayoutRoutes.includes(pathname);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserCart());
+  }, [dispatch]);
 
   return (
+    <>
+      {showLayout && <Navbar />}
+      <main>{children}</main>
+      <Toaster position="bottom-right" />
+      {showLayout && <Footer />}
+    </>
+  );
+}
+
+export default function RootLayout({ children }) {
+  return (
     <html lang="en">
-      <body
-        className={` antialiased`}
-      >
-        <Provider store={store}> {/* Wrap your content with Provider */}
-          {showLayout && <Navbar />}
-          <main> {children}</main>
-          <Toaster position="bottom-right" />
-          {showLayout && <Footer />}
+      <body className="antialiased">
+        <Provider store={store}>
+          <LayoutContent children={children} />
         </Provider>
       </body>
     </html>
