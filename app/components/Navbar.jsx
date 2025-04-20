@@ -8,21 +8,30 @@ import engFlag from './images/eng.jpg';
 import franceFlag from './images/france.png';
 import germanFlag from './images/german.avif';
 import { Search, Heart, User, ShoppingBag, ChevronDown } from "lucide-react"
+import { connect } from 'react-redux';
 
-const Navbar = () => {
+const Navbar = ({cartTotalQuantity}) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
-
-  const cartItemCount = 0 // Replace with your cart state
+  console.log("cartTotalQuantity", cartTotalQuantity);
+  const cartItemCount = 0;
 
   const handleSearch = (e) => {
     e.preventDefault()
     // Implement search functionality
     console.log("Searching for:", searchQuery)
   }
+  const handleCart = () => {
+    // Implement cart functionality
 
+    console.log("Cart clicked")
+  } 
+  const handleWishlist = () => {
+    // Implement wishlist functionality
+    console.log("Wishlist clicked")
+  }
   return (
-    <header className="w-full border-b border-gray-200">
+    <header className="w-full border-b border-gray-200 ">
       {/* Top navbar */}
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
@@ -66,14 +75,14 @@ const Navbar = () => {
           <Link href="/login">
             <User className="h-6 w-6" />
           </Link>
-          <Link href="/cart" className="relative">
-            <ShoppingBag className="h-6 w-6" />
-            {cartItemCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
+          <button onClick={handleCart} className="relative">
+        <ShoppingBag className="h-6 w-6" />
+        {cartTotalQuantity > 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            {cartTotalQuantity}
+          </span>
+        )}
+      </button>
         </div>
       </div>
 
@@ -328,5 +337,8 @@ const Navbar = () => {
     </header>
   )
 }
+const mapStateToProps = (state) => ({
+  cartTotalQuantity: state.cart.totalQuantity,
+});
 
-export default Navbar
+export default connect(mapStateToProps)(Navbar);

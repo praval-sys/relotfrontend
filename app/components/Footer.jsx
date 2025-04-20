@@ -15,7 +15,7 @@ import { MdLocationOn, MdEmail, MdCall } from "react-icons/md";
 
 export default function Footer() {
   return (
-    <footer className="bg-purple-600 text-white px-6 md:px-16 py-10 z">
+    <footer className="bg-purple-600 text-white px-6 md:px-16 py-10 position-sticky">
       <div className="grid md:grid-cols-4 gap-8">
         {/* Logo and Description */}
         <div>
