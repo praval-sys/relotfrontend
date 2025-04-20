@@ -37,7 +37,7 @@ export default function ProductsClient() {
         .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
         .join('&');
 
-      const response = await fetch(`http://localhost:3001/v1/products?${queryString}`);
+      const response = await fetch(`http://localhost:3000/v1/products?${queryString}`);
       const result = await response.json();
       // Update to match backend response structure
       if (result.success) {
