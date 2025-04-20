@@ -4,19 +4,26 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Search, Heart, User, ShoppingBag, ChevronDown } from "lucide-react"
+import { connect, useSelector } from 'react-redux';
+import CartDailog from "../components/Cart/CartDailog"
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
-
-  const cartItemCount = 0 // Replace with your cart state
-
+  const cartTotalQuantity = useSelector((state) => state.cart.items.length);
+  const items= useSelector((state) => state.cart.items);
+  console.log(items);
+  console.log(cartTotalQuantity);
   const handleSearch = (e) => {
     e.preventDefault()
     // Implement search functionality
     console.log("Searching for:", searchQuery)
   }
-
+  
+  const handleWishlist = () => {
+    // Implement wishlist functionality
+    console.log("Wishlist clicked")
+  }
   return (
     <header className="w-full border-b border-gray-200">
       {/* Top navbar */}
@@ -62,14 +69,9 @@ const Navbar = () => {
           <Link href="/login">
             <User className="h-6 w-6" />
           </Link>
-          <Link href="/cart" className="relative">
-            <ShoppingBag className="h-6 w-6" />
-            {cartItemCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
+          <div className="relative">
+        <CartDailog/>
+      </div>
         </div>
       </div>
 
@@ -185,7 +187,8 @@ const Navbar = () => {
         </form>
       </div>
     </header>
+    
   )
 }
 
-export default Navbar
+export default Navbar;
