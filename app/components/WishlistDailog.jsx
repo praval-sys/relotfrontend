@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Heart } from "lucide-react";
 import { useSelector } from "react-redux";
+import { setWish } from "../redux/reducer/wishSlice";
 
 export default function WishlistDailog() {
   const token = useSelector((state) => state.auth.token);
+  const wishList = useSelector((state) => state.wish.wishlist) || 0;
   const [products, setProducts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-
 
   const deleteFromList = async (itemId) => {
     console.log("Token:", token);
@@ -23,8 +24,10 @@ export default function WishlistDailog() {
           },
         }
       );
-      setProducts((prevProducts) =>
-        prevProducts.filter((item) => item.productId !== itemId)
+      dispatchEvent(
+        setWish((prevProducts) =>
+          prevProducts.filter((item) => item.productId !== itemId)
+        )
       );
       console.log("Item deleted:", res.data);
     } catch (error) {
@@ -49,28 +52,6 @@ export default function WishlistDailog() {
     }
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      debugger;
-      try {
-        const res = await axios.get(`http://localhost:3000/v1/wish/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }, 
-        });
-        const items = res.data?.data?.items || [];
-
-        setProducts(items);
-        setWishLength(items.length);
-        console.log(products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    console.log(token);
-    fetchProducts();
-  }, []);
-
   return (
     <div className="relative">
       {/* Wishlist Button/Icon */}
@@ -78,7 +59,7 @@ export default function WishlistDailog() {
       <button onClick={() => setIsOpen(!isOpen)} className="relative">
         <Heart className="h-6 w-6" />
         <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
-          {Object.keys(products).length}
+          {Object.keys(wishList).length}
         </span>
       </button>
 
@@ -105,10 +86,10 @@ export default function WishlistDailog() {
           </div>
 
           <div className="max-h-64 overflow-y-auto space-y-3">
-            {Object.values(products).length === 0 ? (
+            {Object.values(wishList).length === 0 ? (
               <p className="text-sm text-gray-500">Your wishlist is empty.</p>
             ) : (
-              Object.values(products).map((item) => (
+              Object.values(wishList).map((item) => (
                 <div
                   key={item.productId}
                   className="border p-3 rounded bg-gray-100 flex items-start gap-3"

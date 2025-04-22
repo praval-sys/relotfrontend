@@ -75,24 +75,7 @@ export default function CartDialog() {
     }
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/v1/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        dispatch({
-          type: SET_CART_ITEMS,
-          payload: res.data.data.items,
-        })
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProducts();
-  });
+  
 
   return (
     <div className="relative">
@@ -125,7 +108,7 @@ export default function CartDialog() {
                 <div key={item._id} className="border p-2 rounded bg-gray-100">
                   <h3 className="font-medium text-sm">{item.name}</h3>
                   <p className="text-xs text-gray-600">
-                    {item.description.slice(0, 50)}...
+                    {item.description}...
                   </p>
                   <p className="text-sm font-semibold">₹ {item.price}</p>
                 </div>
