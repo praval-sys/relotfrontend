@@ -2,11 +2,15 @@
 import { configureStore } from '@reduxjs/toolkit'; // Recommended way with Redux Toolkit
 import cartReducer from './reducer/cartReducer';
 import authReducer from '../redux/reducer/authSlice';
+import wishReducer from '../redux/reducer/wishSlice';
+
+
 
 const store = configureStore({
   reducer: {
     cart: cartReducer,
     auth: authReducer,
+    wish: wishReducer
   },
   devTools: process.env.NODE_ENV !== 'production', // Redux DevTools in development
 });

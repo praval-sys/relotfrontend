@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from 'react-redux';
-import { setToken } from '../../redux/reducer/authSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { setToken } from "../../redux/reducer/authSlice";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { SET_CART_ITEMS } from "../../redux/types";
+import { setWish } from "../../redux/reducer/wishSlice";
 
 export default function LoginPage() {
-
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const wishList = useSelector((state) => state.wish.wishlist);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +27,7 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    debugger;
 
     try {
       const response = await fetch("http://localhost:3000/auth/login", {
@@ -40,9 +44,9 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
       dispatch(setToken(data.accessToken));
-      
-      console.log("Redux Token:", token); 
-      
+
+      console.log("Redux Token:", token);
+
       // Redirect to home page after successful login
       router.push("/");
     } catch (err) {
@@ -50,11 +54,59 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+    console.log(token);
+    // fetchProducts(data.accessToken);
+    // fetchWishProducts(data.accessToken);
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+
+  const fetchProducts = async () => {
+    
+    try {
+      const res = await axios.get("http://localhost:3000/v1/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({
+        type: SET_CART_ITEMS,
+        payload: res.data.data.items,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchWishProducts = async () => {
+    
+    try {
+      const res = await axios.get(`http://localhost:3000/v1/wish/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const items = res.data?.data?.items || [];
+
+      console.log(items)
+      dispatch(setWish(items));
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  useEffect(() => {
+    debugger
+    if (token) {
+      fetchProducts();
+      fetchWishProducts();
+      console.log(wishList)
+    }
+  }, [token]);
+
    
   const handleGoogleSignIn = async () => {
     console.log('Google sign-in clicked');

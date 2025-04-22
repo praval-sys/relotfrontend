@@ -12,7 +12,7 @@ import { fetchUserCart } from "./redux/actions/cartActions"; // Make sure this p
 
 function LayoutContent({ children }) {
   const pathname = usePathname();
-  const noLayoutRoutes = ['/login', '/register', '/signup'];
+  const noLayoutRoutes = ['/login', '/register', '/signup', '/checkout'];
   const showLayout = !noLayoutRoutes.includes(pathname);
   const dispatch = useDispatch();
 
