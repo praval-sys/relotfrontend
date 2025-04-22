@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Check, X, Lock, Mail, User, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../../redux/reducer/authSlice';
+import { useSelector } from 'react-redux';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -54,6 +57,8 @@ const RegisterPage = () => {
     });
   };
   
+  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -107,11 +112,12 @@ const RegisterPage = () => {
     }
   };
   
-  const handleGoogleSignIn = () => {
-    // This function will be implemented later
+  const handleGoogleSignIn = async () => {
     console.log('Google sign-in clicked');
-    // We'll add OAuth functionality here in the future
+    window.location.href = "http://localhost:3000/auth/google";
+    
   };
+  
   
   // Check if all validations pass to enable the register button
   const isFormValid = 
