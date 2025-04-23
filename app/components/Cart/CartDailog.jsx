@@ -40,7 +40,7 @@ export default function CartDialog() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formattedCart.products),
+        body: JSON.stringify(formattedCart),
       });
       // const res = await axios.post(
       //   'http://localhost:3000/v1/add',
