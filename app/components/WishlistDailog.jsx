@@ -5,12 +5,15 @@ import axios from "axios";
 import { Heart } from "lucide-react";
 import { useSelector } from "react-redux";
 import { setWish } from "../redux/reducer/wishSlice";
+import { useDispatch } from "react-redux";
 
 export default function WishlistDailog() {
   const token = useSelector((state) => state.auth.token);
   const wishList = useSelector((state) => state.wish.wishlist) || 0;
   const [products, setProducts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const dispatch = useDispatch();
 
   const deleteFromList = async (itemId) => {
     console.log("Token:", token);
@@ -24,11 +27,13 @@ export default function WishlistDailog() {
           },
         }
       );
-      dispatchEvent(
-        setWish((prevProducts) =>
-          prevProducts.filter((item) => item.productId !== itemId)
-        )
+      const updatedProducts = wishList.filter(
+        (item) => item.productId !== itemId
       );
+
+      setProducts(updatedProducts);
+
+      dispatch(setWish(updatedProducts));
       console.log("Item deleted:", res.data);
     } catch (error) {
       console.log("Cannot delete items");
@@ -43,9 +48,9 @@ export default function WishlistDailog() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setProducts((prevProducts) =>
-        prevProducts.filter((item) => item.productId !== itemId)
-      );
+      debugger
+      
+      dispatch(setWish([]))
       console.log("Items deleted:", res.data);
     } catch (error) {
       console.log("Error in ClearWishList", error);

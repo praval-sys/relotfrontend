@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { SET_CART_ITEMS } from "../../redux/types";
 import { setWish } from "../../redux/reducer/wishSlice";
+import { setRemTime } from "../../redux/reducer/timeSlice";
+
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -44,8 +46,12 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
       dispatch(setToken(data.accessToken));
+      document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
+
+      const refreshToken = getCookie('refreshToken');
 
       console.log("Redux Token:", token);
+      console.log('RefreshToke:',refreshToken)
 
       // Redirect to home page after successful login
       router.push("/");
@@ -59,12 +65,17 @@ export default function LoginPage() {
     // fetchWishProducts(data.accessToken);
   };
 
+  const getCookie = (name) => {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  };
+  
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
   const fetchProducts = async () => {
-    
+    console.log(token);
     try {
       const res = await axios.get("http://localhost:3000/v1/", {
         headers: {
@@ -103,6 +114,7 @@ export default function LoginPage() {
       fetchProducts();
       fetchWishProducts();
       console.log(wishList)
+      dispatch(setRemTime(Date.now() + 15 * 60 * 1000))
     }
   }, [token]);
 
