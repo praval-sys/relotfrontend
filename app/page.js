@@ -8,10 +8,19 @@ import Image from "next/image";
 import Testimonial from "../app/components/Testimonial";
 import "swiper/css";
 import "swiper/css/effect-fade";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { SET_CART_ITEMS } from "./redux/types";
+import { setWish } from "./redux/reducer/wishSlice";
+import { useEffect } from "react";
+
 
 export default function Home() {
   
-
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const wishList = useSelector((state) => state.wish.wishlist); 
   const images = [
     "https://relot.in/wp-content/uploads/2025/01/couple-winter-cloths-studio_1303-5887.avif",
     "https://relot.in/wp-content/uploads/2025/02/rl2br.jpg",
@@ -43,6 +52,51 @@ export default function Home() {
       link: "https://relot.in/art-og-gifting/",
     },
   ];
+
+
+  const fetchProducts = async () => {
+    
+    try {
+      const res = await axios.get("http://localhost:3000/v1/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({
+        type: SET_CART_ITEMS,
+        payload: res.data.data.items,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchWishProducts = async () => {
+    
+    try {
+      const res = await axios.get(`http://localhost:3000/v1/wish/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const items = res.data?.data?.items || [];
+
+      console.log(items)
+      dispatch(setWish(items));
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  useEffect(() => {
+    debugger
+    if (token) {
+      fetchProducts();
+      fetchWishProducts();
+      console.log(wishList)
+    }
+  }, [token]);
+
 
   return (
    
