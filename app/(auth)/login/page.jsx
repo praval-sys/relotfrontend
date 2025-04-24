@@ -46,12 +46,12 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
       dispatch(setToken(data.accessToken));
-      document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
+      // document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
 
-      const refreshToken = getCookie('refreshToken');
+      // const refreshToken = getCookie('refreshToken');
 
       console.log("Redux Token:", token);
-      console.log('RefreshToke:',refreshToken)
+      
 
       // Redirect to home page after successful login
       router.push("/");
@@ -109,15 +109,15 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    debugger
-    if (token) {
-      fetchProducts();
-      fetchWishProducts();
-      console.log(wishList)
-      dispatch(setRemTime(Date.now() + 15 * 60 * 1000))
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   debugger
+  //   if (token) {
+  //     //fetchProducts();
+  //     //fetchWishProducts();
+  //     //console.log(wishList)
+  //     dispatch(setRemTime(Date.now() + 15 * 60 * 1000))
+  //   }
+  // }, [token]);
 
    
   const handleGoogleSignIn = async () => {

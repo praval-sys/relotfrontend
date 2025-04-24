@@ -91,11 +91,11 @@ export default function Home() {
   useEffect(() => {
     debugger
     if (token) {
-      fetchProducts();
-      fetchWishProducts();
-      console.log(wishList)
+      fetchProducts(token);
+      //fetchWishProducts();
+      //console.log(wishList)
     }
-  }, [token]);
+  },[dispatch,token]);
 
 
   return (
