@@ -29,12 +29,11 @@ export default function CartDialog() {
         name: item.name,
         price: item.price,
         quantity: item.quantity || 1,
-        image: item.images?.[0] || "",
+        image: item.image || (item.images?.[0] || ''),
       })),
     };
     console.log(formattedCart.products);
     try {
-      console.log("Saving cart items:", cartItems);
       const res = await fetch("http://localhost:3000/v1/add", {
         method: "POST",
         headers: {
