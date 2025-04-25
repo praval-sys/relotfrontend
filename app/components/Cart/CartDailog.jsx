@@ -7,6 +7,8 @@ import { SET_CART_ITEMS } from "../../redux/types";
 import { useDispatch } from "react-redux";
 import { type } from "os";
 import { setToken } from "../../redux/reducer/authSlice";
+import { checkTime } from "../refreshToken";
+import { setRemTime } from "../../redux/reducer/timeSlice";
 
 export default function CartDialog() {
   const dispatch = useDispatch();
@@ -14,7 +16,7 @@ export default function CartDialog() {
   const cartItems = useSelector((state) => state.cart.items);
   const token = useSelector((state) => state.auth.token);
   const router = useRouter();
-  //const remTime = useSelector((state) => state.time.remTime);
+  const remTime = useSelector((state) => state.time.remTime);
 
   const handleSaveCart = async () => {
     console.log(token);
@@ -34,12 +36,21 @@ export default function CartDialog() {
     };
     console.log(formattedCart.products);
     try {
+      debugger;
+
+      const refreshToken = await checkTime(remTime);
+      if(refreshToken){
+        setToken(refreshToken)
+        dispatch(setRemTime(Date.now() + 1 * 60 * 1000));
+      }
+      const currentToken = refreshToken || token;
+
       console.log("Saving cart items:", cartItems);
       const res = await fetch("http://localhost:3000/v1/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${currentToken}`,
         },
         body: JSON.stringify(formattedCart),
       });

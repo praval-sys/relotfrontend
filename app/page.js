@@ -71,8 +71,7 @@ export default function Home() {
     }
   };
 
-  const fetchWishProducts = async () => {
-    
+  const fetchWishProducts = async () => {   
     try {
       const res = await axios.get(`http://localhost:3000/v1/wish/`, {
         headers: {

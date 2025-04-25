@@ -12,12 +12,13 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   auth: authReducer,
   wish: wishReducer,
+  time: remTimeReducer
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'cart', 'wish'],
+  whitelist: ['auth', 'cart', 'wish', 'time'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
