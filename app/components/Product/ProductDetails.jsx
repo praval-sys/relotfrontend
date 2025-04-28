@@ -4,8 +4,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
-import { addToCart } from '../../lib/products/products';
-import { addToWishlist } from '../../lib/products/products';
+import { addToCart } from '../../lib/products';
+import { addToWishlist } from '../../lib/products';
 import { toast } from 'react-hot-toast';
 
 export default function ProductDetails({ product }) {

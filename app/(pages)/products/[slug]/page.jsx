@@ -4,7 +4,7 @@ import ProductDetails from '../../../components/Product/ProductDetails';
 import RelatedProducts from '../../../components/Product/RelatedProduct';
 import ProductReviews from '../../../components/Product/ProductReview';
 import AddReview from '../../../components/Product/AddReview'
-import { getProductById} from '../../../lib/products/products'
+import { getProductById} from '../../../lib/products'
 
 //Generate metadata for SEO
 export async function generateMetadata({ params }) {

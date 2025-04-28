@@ -1,49 +1,44 @@
 import { NextResponse } from 'next/server';
 
-// Define public routes that don't require authentication
-const PUBLIC_ROUTES = [
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-  '/auth/google',
+// Define protected route "prefixes" (dynamic groups)
+const PROTECTED_PREFIXES = [
+  '/userprofile',
+  '/dashboard',
+  '/settings',
+  '/my-account',
+  '/orders',
 ];
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Skip middleware for public routes and static files
-  if (
-    PUBLIC_ROUTES.some(route => pathname.startsWith(route)) ||
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.')
-  ) {
+  // Check if the current path starts with any protected prefix
+  const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix));
+
+  if (!isProtectedRoute) {
+    // If route is not protected, allow access freely
     return NextResponse.next();
   }
 
-  // Check for authentication
-  const authCookie = request.cookies.get('accessToken');
-  
-  // if (!authCookie) {
-  //   // Store the original URL to redirect back after login
-  //   const loginUrl = new URL('/login', request.url);
-  //   loginUrl.searchParams.set('callbackUrl', pathname);
-    
-  //   return NextResponse.redirect(loginUrl);
-  // }
+  // Check for accessToken or refreshToken in cookies
+  const accessToken = request.cookies.get('accessToken');
+  const refreshToken = request.cookies.get('refreshToken');
 
-  return NextResponse.next();
+  if (accessToken || refreshToken) {
+    // Token exists, allow user to continue
+    return NextResponse.next();
+  }
+
+  // No tokens found -> Redirect to login
+  const loginUrl = new URL('/login', request.url);
+  loginUrl.searchParams.set('callbackUrl', pathname); // So after login, user comes back to intended page
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
+     * Only run middleware on needed routes
      */
     '/((?!_next/static|_next/image|favicon.ico|public|assets).*)',
   ],
