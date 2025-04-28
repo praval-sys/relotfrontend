@@ -33,6 +33,7 @@ export default function CartDialog() {
     };
     console.log(formattedCart.products);
     try {
+
       const res = await api.post("/v1/add", formattedCart);
   
       if (res?.data?.success) {
