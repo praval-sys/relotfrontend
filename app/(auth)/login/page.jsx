@@ -11,12 +11,13 @@ import axios from "axios";
 import { SET_CART_ITEMS } from "../../redux/types";
 import { setWish } from "../../redux/reducer/wishSlice";
 import { setRemTime } from "../../redux/reducer/timeSlice";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
   const wishList = useSelector((state) => state.wish.wishlist);
-
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,47 +29,22 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    debugger;
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // Use AuthContext login function
+      await login({ email, password });
+      console.log('here');
+      router.push("/"); 
+    
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-      dispatch(setToken(data.accessToken));
-      // document.cookie = `refreshToken=${data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
-
-      // const refreshToken = getCookie('refreshToken');
-
-      console.log("Redux Token:", token);
-
-      // Redirect to home page after successful login
-      router.push("/");
+      // Router push is handled by AuthContext
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
-    console.log(token);
-    // fetchProducts(data.accessToken);
-    // fetchWishProducts(data.accessToken);
   };
 
-  const getCookie = (name) => {
-    const match = document.cookie.match(
-      new RegExp("(^| )" + name + "=([^;]+)")
-    );
-    return match ? match[2] : null;
-  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -108,12 +84,12 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    debugger;
+   
 
     //fetchProducts();
     //fetchWishProducts();
     //console.log(wishList)
-    dispatch(setRemTime(Date.now() + 1 * 60 * 1000));
+    //dispatch(setRemTime(Date.now() + 1 * 60 * 1000));
   }, []);
 
   const handleGoogleSignIn = async () => {

@@ -1,7 +1,4 @@
 import axios from "axios";
-import { setToken } from "../redux/reducer/authSlice";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 
 //const dispatch = useDispatch();
 const refreshTokenFunc = async () => {

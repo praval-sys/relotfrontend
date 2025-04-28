@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { store, persistor } from './redux/store'; // ✅ Now persistor is imported
 import { PersistGate } from 'redux-persist/integration/react';
 import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './context/AuthContext';
 
 function LayoutContent({ children }) {
   const pathname = usePathname();
@@ -30,7 +31,9 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
+            <AuthProvider>
             <LayoutContent children={children} />
+            </AuthProvider>
           </PersistGate>
         </Provider>
       </body>

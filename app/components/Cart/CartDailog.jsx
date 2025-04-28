@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import api from "../../lib/api";
 import axios from "axios";
 import { SET_CART_ITEMS } from "../../redux/types";
 import { useDispatch } from "react-redux";
@@ -31,29 +32,16 @@ export default function CartDialog() {
         name: item.name,
         price: item.price,
         quantity: item.quantity || 1,
-        image: item.images?.[0] || "",
+        image: item.image || (item.images?.[0] || ''),
       })),
     };
     console.log(formattedCart.products);
     try {
-      debugger;
 
-      const refreshToken = await checkTime(remTime);
-      if(refreshToken){
-        setToken(refreshToken)
-        dispatch(setRemTime(Date.now() + 1 * 60 * 1000));
-      }
-      const currentToken = refreshToken || token;
 
       console.log("Saving cart items:", cartItems);
-      const res = await fetch("http://localhost:3000/v1/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${currentToken}`,
-        },
-        body: JSON.stringify(formattedCart),
-      });
+      
+      const res = await api.post('/v1/add', formattedCart);
       // const res = await axios.post(
       //   'http://localhost:3000/v1/add',
       //   formattedCart.products,

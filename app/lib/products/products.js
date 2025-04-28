@@ -1,7 +1,16 @@
 // lib/api/products.js
 export async function getProductById(id) {
     try {
-      const response = await fetch(`http://localhost:3001/v1/products/${id}`);
+      const response = await fetch(`http://localhost:3000/v1/products/${id}`,{
+      next: { revalidate: 60 }, // Cache for 60 seconds
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
       const data = await response.json();
       return data;
     } catch (error) {

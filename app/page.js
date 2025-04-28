@@ -14,6 +14,7 @@ import axios from "axios";
 import { SET_CART_ITEMS } from "./redux/types";
 import { setWish } from "./redux/reducer/wishSlice";
 import { useEffect } from "react";
+import api from "./lib/api";
 
 
 export default function Home() {
@@ -57,15 +58,12 @@ export default function Home() {
   const fetchProducts = async () => {
     
     try {
-      const res = await axios.get("http://localhost:3000/v1/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch({
-        type: SET_CART_ITEMS,
-        payload: res.data.data.items,
-      });
+      const res = await api.get('/v1/'); // baseURL is already there
+      console.log(res.data.data.items);
+    dispatch({
+      type: SET_CART_ITEMS,
+      payload: res.data.data.items,
+    });
     } catch (error) {
       console.log(error);
     }
@@ -89,12 +87,8 @@ export default function Home() {
 
   useEffect(() => {
     debugger
-    if (token) {
-      fetchProducts(token);
-      //fetchWishProducts();
-      //console.log(wishList)
-    }
-  },[dispatch,token]);
+   fetchProducts();
+  },[dispatch]);
 
 
   return (
