@@ -42,17 +42,6 @@ export default function CartDialog() {
         },
         body: JSON.stringify(formattedCart),
       });
-      // const res = await axios.post(
-      //   'http://localhost:3000/v1/add',
-      //   formattedCart.products,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-
       if (!res.ok) throw new Error("Failed to save cart");
       alert("Cart saved!");
     } catch (err) {
@@ -82,36 +71,36 @@ export default function CartDialog() {
     return match ? match[2] : null;
   };
 
-  useEffect(() => {
-    const refreshTokenFunc = async (refreshToken) => {
-      debugger;
-      try {
-        const res = await axios.post(
-          "http://localhost:3000/auth/refresh-token",
-          {
-            refreshToken: refreshToken,
-          }
-        );
+  // useEffect(() => {
+  //   const refreshTokenFunc = async (refreshToken) => {
+  //     debugger;
+  //     try {
+  //       const res = await axios.post(
+  //         "http://localhost:3000/auth/refresh-token",
+  //         {
+  //           refreshToken: refreshToken,
+  //         }
+  //       );
 
-        console.log("new Token:", res.data.accessToken);
-        document.cookie = `refreshToken=${res.data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
-        dispatch(setToken(res.data.accessToken));
-      } catch (error) {
-        console.log(error, "error in refreshTokenFunction");
-      }
-    };
-    const checkTime = () => {
-      debugger;
-      if (remTime > Date.now()) {
-        console.log("this much time is left:", remTime - Date.now());
-      } else {
-        const refreshToken = getCookie("refreshToken");
-        refreshTokenFunc(refreshToken);
-      }
-    };
+  //       console.log("new Token:", res.data.accessToken);
+  //       document.cookie = `refreshToken=${res.data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
+  //       dispatch(setToken(res.data.accessToken));
+  //     } catch (error) {
+  //       console.log(error, "error in refreshTokenFunction");
+  //     }
+  //   };
+  //   const checkTime = () => {
+  //     debugger;
+  //     if (remTime > Date.now()) {
+  //       console.log("this much time is left:", remTime - Date.now());
+  //     } else {
+  //       const refreshToken = getCookie("refreshToken");
+  //       refreshTokenFunc(refreshToken);
+  //     }
+  //   };
 
-    checkTime();
-  });
+  //   checkTime();
+  // });
 
   return (
     <div className="relative">

@@ -5,9 +5,10 @@ import axios from "axios";
 import { Heart } from "lucide-react";
 import { useSelector } from "react-redux";
 import { setWish } from "../redux/reducer/wishSlice";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
+import { clearWish } from "../redux/reducer/wishSlice";
 
-export default function WishlistDailog() {
+function WishlistDailog({ clearWholeWish }) {
   const token = useSelector((state) => state.auth.token);
   const wishList = useSelector((state) => state.wish.wishlist) || 0;
   const [products, setProducts] = useState([]);
@@ -42,15 +43,16 @@ export default function WishlistDailog() {
 
   const ClearWishList = async () => {
     debugger;
+    clearWholeWish(clearWish());
     try {
       const res = await axios.delete("http://localhost:3000/v1/wish/clear", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      debugger
-      
-      dispatch(setWish([]))
+      debugger;
+
+      dispatch(setWish([]));
       console.log("Items deleted:", res.data);
     } catch (error) {
       console.log("Error in ClearWishList", error);
@@ -125,3 +127,10 @@ export default function WishlistDailog() {
     </div>
   );
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    clearWholeWish: () => dispatch(clearWish()),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(WishlistDailog);
