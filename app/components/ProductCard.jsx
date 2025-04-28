@@ -18,7 +18,14 @@ function ProductCard({ product, addItem }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    addItem(product);
+    const cartItem = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0],
+      quantity: 1
+    };
+    addItem(cartItem);
     toast.success('Added to cart!');
   };
 
