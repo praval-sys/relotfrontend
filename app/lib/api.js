@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create Axios instance
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000', // your backend URL
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/', // your backend URL
   withCredentials: true, // IMPORTANT because you use cookie-based auth
 });
 
