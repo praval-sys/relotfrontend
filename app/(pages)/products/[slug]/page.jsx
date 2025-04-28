@@ -72,3 +72,9 @@ export default async function ProductPage({ params }) {
     </div>
   );
 }
+
+// export default function Page() {
+//   return (
+//     <div>this is products description</div>
+//   );
+// }

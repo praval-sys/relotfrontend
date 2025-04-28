@@ -1,7 +1,7 @@
 // lib/api/products.js
 export async function getProductById(id) {
     try {
-      const response = await fetch(`http://localhost:3001/v1/products/${id}`);
+      const response = await fetch(`http://localhost:3000/v1/products/${id}`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -21,7 +21,7 @@ export async function getProductById(id) {
       // Handle the case where the token is missing, e.g., redirect to login
       return null; // Or throw an error
     }
-      const response = await fetch(`http://localhost:3001/v1/rec/similar/${productId}`,{
+      const response = await fetch(`http://localhost:3000/v1/rec/similar/${productId}`,{
         method: 'GET', 
         headers: {
           'Content-Type': 'application/json',
