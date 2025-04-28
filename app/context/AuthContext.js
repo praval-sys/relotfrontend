@@ -1,15 +1,19 @@
-// app/auth/AuthContext.js
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter,usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import api from '../lib/api';
-import path from 'path';
 
 const AuthContext = createContext({});
 
-const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password','/','/products'];
-
+// Protected route prefixes (similar to middleware)
+const PROTECTED_PREFIXES = [
+  '/userprofile',
+  '/dashboard',
+  '/settings',
+  '/my-account',
+  '/orders',
+];
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -17,24 +21,24 @@ export function AuthProvider({ children }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix));
 
-  // Check authentication status on initial load
   useEffect(() => {
     const checkAuth = async () => {
-        // Skip auth check for public routes
-      if (PUBLIC_ROUTES.includes(pathname)) {
+      // If route is NOT protected, skip auth check
+      if (!isProtectedRoute) {
         setLoading(false);
         return;
       }
+
       try {
         const response = await api.get('v1/user/');
         setUser(response.data);
-        if (!PUBLIC_ROUTES.includes(pathname)) {
-            router.push('/');
-          }
+        // No need to redirect, user is authenticated
       } catch (error) {
         console.error('Authentication check failed:', error);
         setUser(null);
+        router.push('/login'); // 👈 If not authenticated, redirect to login
       } finally {
         setLoading(false);
       }
@@ -47,9 +51,7 @@ export function AuthProvider({ children }) {
     try {
       const response = await api.post('/auth/login', credentials);
       const { id, name, email } = response.data;
-      
       setUser({ id, name, email });
-      console.log(id, name, email);
       console.log('Login successful:', response.data);
       return response;
     } catch (error) {

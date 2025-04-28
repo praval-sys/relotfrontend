@@ -9,7 +9,6 @@ import { getProductById} from '../../../lib/products'
 //Generate metadata for SEO
 export async function generateMetadata({ params }) {
     const resolvedParams = await params;
-    console.log(resolvedParams);
   const productData = await getProductById(resolvedParams.slug);
   const product = productData.data;
   return {
