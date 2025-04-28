@@ -12,6 +12,8 @@ import { SET_CART_ITEMS } from "../../redux/types";
 import { setWish } from "../../redux/reducer/wishSlice";
 import { setRemTime } from "../../redux/reducer/timeSlice";
 import { useAuth } from "../../context/AuthContext";
+import { setloginStatus } from "../../redux/reducer/loginSlice";
+
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -173,13 +175,24 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div>
+          <div className="flex gap-5">
             <button
               type="submit"
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70"
             >
               {isLoading ? "Signing in..." : "Sign in"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                router.push("/register");
+              }}
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70"
+            >
+              Register
             </button>
           </div>
 
