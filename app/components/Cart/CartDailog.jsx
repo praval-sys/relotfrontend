@@ -1,27 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import api from "../../lib/api";
 import axios from "axios";
 import { SET_CART_ITEMS } from "../../redux/types";
 import { useDispatch } from "react-redux";
 import { type } from "os";
 import { setToken } from "../../redux/reducer/authSlice";
+import { checkTime } from "../refreshToken";
+import { setRemTime } from "../../redux/reducer/timeSlice";
 
 export default function CartDialog() {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.items);
-  const token = useSelector((state) => state.auth.token);
+  //const token = useSelector((state) => state.auth.token);
   const router = useRouter();
   //const remTime = useSelector((state) => state.time.remTime);
 
   const handleSaveCart = async () => {
-    console.log(token);
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     console.log("Saving cart items:", cartItems);
     const formattedCart = {
       products: cartItems.map((item) => ({
@@ -34,37 +33,23 @@ export default function CartDialog() {
     };
     console.log(formattedCart.products);
     try {
-      const res = await fetch("http://localhost:3000/v1/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formattedCart),
-      });
-      // const res = await axios.post(
-      //   'http://localhost:3000/v1/add',
-      //   formattedCart.products,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
 
-      if (!res.ok) throw new Error("Failed to save cart");
-      alert("Cart saved!");
+      const res = await api.post("/v1/add", formattedCart);
+  
+      if (res?.data?.success) {
+        toast.success(res.data.message || "Cart saved successfully!"); 
+        return res.data; 
+      } else {
+        toast.error(res.data.message || "Failed to save cart!");
+      }
     } catch (err) {
       console.error(err);
+      toast.error("Something went wrong while saving the cart.");
     }
   };
 
   const handleCheckout = async () => {
-    if (!token) {
-      router.push("/login");
-      return;
-    }
+    
 
     try {
       await handleSaveCart();

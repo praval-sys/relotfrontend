@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { Star } from 'lucide-react';
-import { createProductReview } from '../../lib/products/products';
+import { createProductReview } from '../../lib/products';
 import { toast } from 'react-hot-toast';
 
 export default function AddReview({ productId }) {

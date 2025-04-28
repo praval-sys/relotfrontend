@@ -6,26 +6,38 @@ import Image from "next/image";
 import engFlag from "./images/eng.jpg";
 import franceFlag from "./images/france.png";
 import germanFlag from "./images/german.avif";
-import { Search, Heart, User, ShoppingBag, ChevronDown } from "lucide-react";
+import {
+  Search,
+  Heart,
+  User,
+  LogOut,
+  ShoppingBag,
+  ChevronDown,
+} from "lucide-react";
 import { connect, useSelector } from "react-redux";
 import CartDailog from "../components/Cart/CartDailog";
 import WishlistDailog from "../components/WishlistDailog";
+import { setloginStatus } from "../redux/reducer/loginSlice";
+//import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const Navbar = ({ cartTotalQuantity }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const items = useSelector((state) => state.cart.items);
+  const loginStatus = useSelector((state) => state.auth.loginStatus);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Implement search functionality
+
     console.log("Searching for:", searchQuery);
   };
 
-  const handleWishlist = () => {
-    // Implement wishlist functionality
-    console.log("Wishlist clicked");
+  const handleLogout = () => {
+    const dispatch = useDispatch();
+    dispatch(setloginStatus(false));
   };
+
   return (
     <header className="w-full border-b border-gray-200 ">
       {/* Top navbar */}
@@ -63,14 +75,21 @@ const Navbar = ({ cartTotalQuantity }) => {
 
         {/* Icons */}
         <div className="flex items-center space-x-4">
-          {/* <Link href="/wishlist" className="hidden sm:block">
-            <Heart className="h-6 w-6" />
-          </Link> */}
           <WishlistDailog />
-          <Link href="/login">
-            <User className="h-6 w-6" />
-          </Link>
-
+          <p>{loginStatus ? 'Logged In' : 'Logged Out'}</p>
+          {loginStatus ? (
+            <>
+              <button onClick={handleLogout}>
+                <LogOut className="h-6 w-6 text-red-600" />
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <User className="h-6 w-6 text-indigo-600" />
+              </Link>
+            </>
+          )}
           <div className="relative">
             <CartDailog />
           </div>
