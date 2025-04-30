@@ -13,6 +13,7 @@ const PROTECTED_PREFIXES = [
   '/settings',
   '/my-account',
   '/orders',
+  '/checkout',
 ];
 
 export function AuthProvider({ children }) {
@@ -75,7 +76,7 @@ export function AuthProvider({ children }) {
     try {
       await api.post('/auth/logout');
       setUser(null);
-      router.push('/login');
+      router.push('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }

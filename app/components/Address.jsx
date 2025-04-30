@@ -8,7 +8,7 @@ const dummyAddresses = [
     street: "123 Main Street",
     city: "New York",
     state: "NY",
-    pincode: "10001",
+    zipCode: "10001",
     phone: "123-456-7890",
     type: "Home"
   },
@@ -18,7 +18,7 @@ const dummyAddresses = [
     street: "456 Work Avenue",
     city: "New York",
     state: "NY",
-    pincode: "10002",
+    zipCode: "10002",
     phone: "123-456-7890",
     type: "Office"
   }
@@ -87,7 +87,7 @@ const AddressDialog = ({ onAddressSelect, selectedAddress }) => {
                             <p className="font-semibold">{address.name}</p>
                             <p className="text-sm text-gray-600">{address.street}</p>
                             <p className="text-sm text-gray-600">
-                              {address.city}, {address.state} {address.pincode}
+                              {address.city}, {address.state} {address.zipCode}
                             </p>
                             <p className="text-sm text-gray-600">Phone: {address.phone}</p>
                           </div>
