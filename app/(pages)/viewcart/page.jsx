@@ -19,15 +19,7 @@ export default function ViewCart() {
   };
   console.log("Cart items:", cartItems);
   // Dummy address for demonstration
-  const dummyAddress = {
-    name: "John Doe",
-    street: "123 Main Street",
-    city: "New York",
-    state: "NY",
-    pincode: "10001",
-    phone: "123-456-7890",
-    type: "Home"
-  };
+
 
   const handleQuantityChange = (itemId, quantity) => {
     dispatch(updateCartItemQuantity(itemId, quantity));
@@ -42,26 +34,27 @@ export default function ViewCart() {
   const total = calculateSubtotal() + deliveryCharges + processingFee;
 
   const handlePlaceOrder = async () => {
-    try {
-      const response = await fetch('http://your-api-endpoint/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          items: cartItems,
-          address: dummyAddress,
-          total: total
-        })
-      });
+    router.push('/checkout');
+    // try {
+    //   const response = await fetch('http://your-api-endpoint/create-order', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': `Bearer ${token}`
+    //     },
+    //     body: JSON.stringify({
+    //       items: cartItems,
+    //       address: dummyAddress,
+    //       total: total
+    //     })
+    //   });
 
-      if (response.ok) {
-        router.push('/checkout');
-      }
-    } catch (error) {
-      console.error('Error creating order:', error);
-    }
+    //   if (response.ok) {
+    //     router.push('/checkout');
+    //   }
+    // } catch (error) {
+    //   console.error('Error creating order:', error);
+    // }
   };
 
   if (cartItems.length === 0) {
@@ -109,7 +102,7 @@ export default function ViewCart() {
           <p className="font-semibold">{selectedAddress.name}</p>
           <p className="text-sm text-gray-600">{selectedAddress.street}</p>
           <p className="text-sm text-gray-600">
-            {selectedAddress.city}, {selectedAddress.state} {selectedAddress.pincode}
+            {selectedAddress.city}, {selectedAddress.state} {selectedAddress.zipCode}
           </p>
           <p className="text-sm text-gray-600">Phone: {selectedAddress.phone}</p>
         </div>
