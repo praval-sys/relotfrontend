@@ -1,26 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import api from "../../lib/api";
 import axios from "axios";
 import { SET_CART_ITEMS } from "../../redux/types";
 import { useDispatch } from "react-redux";
 import { type } from "os";
 import { setToken } from "../../redux/reducer/authSlice";
+import { checkTime } from "../refreshToken";
+import { setRemTime } from "../../redux/reducer/timeSlice";
 
 export default function CartDialog() {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const cartItems = useSelector((state) => state.cart.items);
-  const token = useSelector((state) => state.auth.token);
+  //const token = useSelector((state) => state.auth.token);
   const router = useRouter();
-  const remTime = useSelector((state) => state.time.remTime);
+  //const remTime = useSelector((state) => state.time.remTime);
 
   const handleSaveCart = async () => {
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     console.log("Saving cart items:", cartItems);
     const formattedCart = {
       products: cartItems.map((item) => ({
@@ -28,7 +28,7 @@ export default function CartDialog() {
         name: item.name,
         price: item.price,
         quantity: item.quantity || 1,
-        image: item.images?.[0] || "",
+        image: item.image || (item.images?.[0] || ''),
       })),
     };
     console.log(formattedCart.products);
@@ -42,18 +42,27 @@ export default function CartDialog() {
         },
         body: JSON.stringify(formattedCart),
       });
+      // const res = await axios.post(
+      //   'http://localhost:3000/v1/add',
+      //   formattedCart.products,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+
       if (!res.ok) throw new Error("Failed to save cart");
       alert("Cart saved!");
     } catch (err) {
       console.error(err);
+      toast.error("Something went wrong while saving the cart.");
     }
   };
 
   const handleCheckout = async () => {
-    if (!token) {
-      router.push("/login");
-      return;
-    }
+    
 
     try {
       await handleSaveCart();
@@ -64,12 +73,12 @@ export default function CartDialog() {
     }
   };
 
-  const getCookie = (name) => {
-    const match = document.cookie.match(
-      new RegExp("(^| )" + name + "=([^;]+)")
-    );
-    return match ? match[2] : null;
-  };
+  // const getCookie = (name) => {
+  //   const match = document.cookie.match(
+  //     new RegExp("(^| )" + name + "=([^;]+)")
+  //   );
+  //   return match ? match[2] : null;
+  // };
 
   // useEffect(() => {
   //   const refreshTokenFunc = async (refreshToken) => {

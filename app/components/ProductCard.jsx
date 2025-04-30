@@ -22,7 +22,7 @@ function ProductCard({ product, addItem,AddWishh }) {
   const handleAddToCart = (e) => {
     e.stopPropagation();
     addItem(product);
-    toast.success("Added to cart!");
+    toast.success('Added to cart!');
   };
 
   const handleAddToWishlist = (e) => {
