@@ -4,13 +4,11 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from './storage'; // Custom SSR-safe storage wrapper
 
 import cartReducer from './reducer/cartReducer';
-import authReducer from './reducer/authSlice';
 import wishReducer from './reducer/wishSlice';
 import remTimeReducer from './reducer/timeSlice';
 
 const rootReducer = combineReducers({
   cart: cartReducer,
-  auth: authReducer,
   wish: wishReducer,
   time: remTimeReducer
 });
@@ -18,7 +16,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'cart', 'wish', 'time'],
+  whitelist: ['cart', 'wish', 'time'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

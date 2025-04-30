@@ -3,8 +3,8 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'; // or 'next/router' if pages router
-import { useDispatch, useSelector } from 'react-redux';
-import { setToken } from '../../redux/reducer/authSlice'; // adjust import path
+import { useDispatch } from 'react-redux';
+ // adjust import path
 
 const GoogleCallbackPage = () => {
   const router = useRouter();
@@ -15,13 +15,9 @@ const GoogleCallbackPage = () => {
   useEffect(() => {
     const token = searchParams.get('accessToken');
 
-    if (token) {
-      console.log("Token received from Google OAuth:", token);
-      dispatch(setToken(token));
+   
       router.push('/');
-    } else {
-      console.error("No access token found in URL.");
-    }
+    
   }, [searchParams, dispatch, router]);
 
   return (

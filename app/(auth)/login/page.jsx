@@ -1,24 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { setToken } from "../../redux/reducer/authSlice";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import { SET_CART_ITEMS } from "../../redux/types";
-import { setWish } from "../../redux/reducer/wishSlice";
-import { setRemTime } from "../../redux/reducer/timeSlice";
-import { useAuth } from "../../context/AuthContext";
-import { setloginStatus } from "../../redux/reducer/loginSlice";
-
+//import { useAuth } from "../../context/AuthContext";
 
 export default function LoginPage() {
-  const dispatch = useDispatch();
-  const token = useSelector((state) => state.auth.token);
-  const wishList = useSelector((state) => state.wish.wishlist);
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,9 +23,8 @@ export default function LoginPage() {
     try {
       // Use AuthContext login function
       await login({ email, password });
-      console.log('here');
-      router.push("/"); 
-    
+      console.log("here");
+      router.push("/");
 
       // Router push is handled by AuthContext
     } catch (err) {
@@ -47,52 +34,10 @@ export default function LoginPage() {
     }
   };
 
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  const fetchProducts = async () => {
-    console.log(token);
-    try {
-      const res = await axios.get("http://localhost:3000/v1/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch({
-        type: SET_CART_ITEMS,
-        payload: res.data.data.items,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchWishProducts = async () => {
-    try {
-      const res = await axios.get(`http://localhost:3000/v1/wish/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const items = res.data?.data?.items || [];
-
-      console.log(items);
-      dispatch(setWish(items));
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  useEffect(() => {
-   
-
-    //fetchProducts();
-    //fetchWishProducts();
-    //console.log(wishList)
-    //dispatch(setRemTime(Date.now() + 1 * 60 * 1000));
-  }, []);
+  
 
   const handleGoogleSignIn = async () => {
     console.log("Google sign-in clicked");
