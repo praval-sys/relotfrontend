@@ -10,6 +10,9 @@ export const wishSlice = createSlice({
   reducers: {
     AddWish: (state, action) => {
       debugger
+      if (!Array.isArray(state.wishlist)) {
+        state.wishlist = [];
+      }
       const existingItemIndex = state.wishlist.findIndex(
         (item) => item.id === action.payload.id
       );

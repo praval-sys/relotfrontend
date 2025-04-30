@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { usePathname } from 'next/navigation';
 import { Provider } from 'react-redux';
-import { store, persistor } from './redux/store'; // ✅ Now persistor is imported
+import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';

@@ -1,16 +1,14 @@
 "use client";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Heart } from "lucide-react";
 import { useSelector } from "react-redux";
-import { setWish } from "../redux/reducer/wishSlice";
 import { connect, useDispatch } from "react-redux";
 import { clearWish } from "../redux/reducer/wishSlice";
 
 function WishlistDailog({ clearWholeWish }) {
-  const token = useSelector((state) => state.auth.token);
-  const wishList = useSelector((state) => state.wish.wishlist) || 0;
+  //const token = useSelector((state) => state.auth.token);
+  const wishList = useSelector((state) => state.wish.wishlist) || [];
   const [products, setProducts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 

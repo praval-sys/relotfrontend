@@ -3,14 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import api from "../../lib/api";
-import axios from "axios";
-import { SET_CART_ITEMS } from "../../redux/types";
 import { useDispatch } from "react-redux";
-import { type } from "os";
-import { setToken } from "../../redux/reducer/authSlice";
-import { checkTime } from "../refreshToken";
-import { setRemTime } from "../../redux/reducer/timeSlice";
+
 
 export default function CartDialog() {
   const dispatch = useDispatch();
@@ -67,50 +61,13 @@ export default function CartDialog() {
     try {
       await handleSaveCart();
       setIsOpen(false);
-      router.push("/checkout");
+      router.push("/viewcart");
     } catch (err) {
       console.error(err);
     }
   };
 
-  // const getCookie = (name) => {
-  //   const match = document.cookie.match(
-  //     new RegExp("(^| )" + name + "=([^;]+)")
-  //   );
-  //   return match ? match[2] : null;
-  // };
-
-  // useEffect(() => {
-  //   const refreshTokenFunc = async (refreshToken) => {
-  //     debugger;
-  //     try {
-  //       const res = await axios.post(
-  //         "http://localhost:3000/auth/refresh-token",
-  //         {
-  //           refreshToken: refreshToken,
-  //         }
-  //       );
-
-  //       console.log("new Token:", res.data.accessToken);
-  //       document.cookie = `refreshToken=${res.data.refreshToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
-  //       dispatch(setToken(res.data.accessToken));
-  //     } catch (error) {
-  //       console.log(error, "error in refreshTokenFunction");
-  //     }
-  //   };
-  //   const checkTime = () => {
-  //     debugger;
-  //     if (remTime > Date.now()) {
-  //       console.log("this much time is left:", remTime - Date.now());
-  //     } else {
-  //       const refreshToken = getCookie("refreshToken");
-  //       refreshTokenFunc(refreshToken);
-  //     }
-  //   };
-
-  //   checkTime();
-  // });
-
+ 
   return (
     <div className="relative">
       {/* Cart Icon Button */}

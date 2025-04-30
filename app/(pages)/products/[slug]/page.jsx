@@ -1,5 +1,3 @@
-// app/products/[id]/page.jsx
-import { Metadata } from 'next';
 import ProductDetails from '../../../components/Product/ProductDetails';
 import RelatedProducts from '../../../components/Product/RelatedProduct';
 import ProductReviews from '../../../components/Product/ProductReview';
@@ -8,7 +6,7 @@ import { getProductById} from '../../../lib/products'
 
 //Generate metadata for SEO
 export async function generateMetadata({ params }) {
-    const resolvedParams = await params;
+  const resolvedParams = await params;
   const productData = await getProductById(resolvedParams.slug);
   const product = productData.data;
   return {

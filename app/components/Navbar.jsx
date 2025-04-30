@@ -25,7 +25,7 @@ const Navbar = ({ cartTotalQuantity }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const items = useSelector((state) => state.cart.items);
-  const loginStatus = useSelector((state) => state.auth.loginStatus);
+  //const loginStatus = useSelector((state) => state.auth.loginStatus);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -76,20 +76,12 @@ const Navbar = ({ cartTotalQuantity }) => {
         {/* Icons */}
         <div className="flex items-center space-x-4">
           <WishlistDailog />
-          <p>{loginStatus ? 'Logged In' : 'Logged Out'}</p>
-          {loginStatus ? (
-            <>
-              <button onClick={handleLogout}>
-                <LogOut className="h-6 w-6 text-red-600" />
-              </button>
-            </>
-          ) : (
-            <>
+          
+         
               <Link href="/login">
                 <User className="h-6 w-6 text-indigo-600" />
               </Link>
-            </>
-          )}
+           
           <div className="relative">
             <CartDailog />
           </div>

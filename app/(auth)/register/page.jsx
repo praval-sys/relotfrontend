@@ -3,14 +3,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Check, X, Lock, Mail, User, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-import { useDispatch } from 'react-redux';
-import { setToken } from '../../redux/reducer/authSlice';
-import { useSelector } from 'react-redux';
 import { useAuth } from '../../context/AuthContext';
 
 
 const RegisterPage = () => {
-  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',

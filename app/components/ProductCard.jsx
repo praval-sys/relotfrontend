@@ -12,7 +12,6 @@ import { AddWish } from '../redux/reducer/wishSlice';
 
 function ProductCard({ product, addItem,AddWishh }) {
   const router = useRouter();
-  const dispatch = useDispatch()
 
   const handleClick = (e) => {
     if (e.target.closest("button")) return;
@@ -28,6 +27,7 @@ function ProductCard({ product, addItem,AddWishh }) {
   const handleAddToWishlist = (e) => {
     
     e.stopPropagation();
+    debugger
     AddWishh(product);
     toast.success("Added to wishlist!");
   };
