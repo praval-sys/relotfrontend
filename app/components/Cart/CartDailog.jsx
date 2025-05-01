@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
+import api from "../../lib/api";
 
 
 export default function CartDialog() {
@@ -27,28 +28,8 @@ export default function CartDialog() {
     };
     console.log(formattedCart.products);
     try {
-      console.log("Saving cart items:", cartItems);
-      const res = await fetch("http://localhost:3000/v1/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formattedCart),
-      });
-      // const res = await axios.post(
-      //   'http://localhost:3000/v1/add',
-      //   formattedCart.products,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
-
-      if (!res.ok) throw new Error("Failed to save cart");
-      alert("Cart saved!");
+      await api.post("/v1/add", formattedCart);
+      toast.success("Cart saved successfully!");
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong while saving the cart.");
@@ -61,7 +42,7 @@ export default function CartDialog() {
     try {
       await handleSaveCart();
       setIsOpen(false);
-      router.push("/viewcart");
+      router.push("/checkout");
     } catch (err) {
       console.error(err);
     }

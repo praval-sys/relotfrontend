@@ -11,14 +11,12 @@ import { useState } from "react";
 export default function ViewCart() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.auth.token);
   const cartItems = useSelector((state) => state.cart.items);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
   };
   console.log("Cart items:", cartItems);
-  // Dummy address for demonstration
 
 
   const handleQuantityChange = (itemId, quantity) => {
@@ -35,26 +33,6 @@ export default function ViewCart() {
 
   const handlePlaceOrder = async () => {
     router.push('/checkout');
-    // try {
-    //   const response = await fetch('http://your-api-endpoint/create-order', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `Bearer ${token}`
-    //     },
-    //     body: JSON.stringify({
-    //       items: cartItems,
-    //       address: dummyAddress,
-    //       total: total
-    //     })
-    //   });
-
-    //   if (response.ok) {
-    //     router.push('/checkout');
-    //   }
-    // } catch (error) {
-    //   console.error('Error creating order:', error);
-    // }
   };
 
   if (cartItems.length === 0) {
@@ -75,21 +53,6 @@ export default function ViewCart() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
-
-      {/* Address Section
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Delivery Address</h2>
-          <button className="text-red-600 hover:text-red-700">
-            Change Address
-          </button>
-        </div>
-        <AddressCard
-          address={dummyAddress}
-          isSelected={true}
-          onSelect={() => {}}
-        />
-      </div> */}
       <div className="mb-8">
   <div className="flex justify-between items-center mb-4">
     <h2 className="text-xl font-semibold">Delivery Address</h2>

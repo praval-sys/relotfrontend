@@ -27,7 +27,6 @@ function ProductCard({ product, addItem,AddWishh }) {
   const handleAddToWishlist = (e) => {
     
     e.stopPropagation();
-    debugger
     AddWishh(product);
     toast.success("Added to wishlist!");
   };

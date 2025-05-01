@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { Heart } from "lucide-react";
 import { useSelector } from "react-redux";
 import { connect, useDispatch } from "react-redux";
 import { clearWish } from "../redux/reducer/wishSlice";
 
 function WishlistDailog({ clearWholeWish }) {
-  //const token = useSelector((state) => state.auth.token);
   const wishList = useSelector((state) => state.wish.wishlist) || [];
   const [products, setProducts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -15,17 +14,8 @@ function WishlistDailog({ clearWholeWish }) {
   const dispatch = useDispatch();
 
   const deleteFromList = async (itemId) => {
-    console.log("Token:", token);
-    debugger;
     try {
-      const res = await axios.delete(
-        `http://localhost:3000/v1/wish/remove/${itemId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.delete(`v1/wish/remove/${itemId}`);
       const updatedProducts = wishList.filter(
         (item) => item.productId !== itemId
       );
@@ -40,14 +30,9 @@ function WishlistDailog({ clearWholeWish }) {
   };
 
   const ClearWishList = async () => {
-    debugger;
     clearWholeWish(clearWish());
     try {
-      const res = await axios.delete("http://localhost:3000/v1/wish/clear", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await api.delete("/v1/wish/clear");
       debugger;
 
       dispatch(setWish([]));

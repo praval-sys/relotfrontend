@@ -20,7 +20,7 @@ import api from "./lib/api";
 export default function Home() {
   
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.auth.token);
+  //const token = useSelector((state) => state.auth.token);
   const wishList = useSelector((state) => state.wish.wishlist); 
   const images = [
     "https://relot.in/wp-content/uploads/2025/01/couple-winter-cloths-studio_1303-5887.avif",
@@ -71,11 +71,7 @@ export default function Home() {
 
   const fetchWishProducts = async () => {   
     try {
-      const res = await axios.get(`http://localhost:3000/v1/wish/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await api.get('/v1/wish');
       const items = res.data?.data?.items || [];
 
       console.log(items)
@@ -86,7 +82,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    debugger
+    fetchWishProducts();
    fetchProducts();
   },[dispatch]);
 
