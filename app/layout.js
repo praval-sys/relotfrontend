@@ -12,7 +12,7 @@ import { AuthProvider } from './context/AuthContext';
 
 function LayoutContent({ children }) {
   const pathname = usePathname();
-  const noLayoutRoutes = ['/login', '/register', '/signup'];
+  const noLayoutRoutes = ['/login', '/register', '/signup', '/admin'];
   const showLayout = !noLayoutRoutes.includes(pathname);
 
   return (
