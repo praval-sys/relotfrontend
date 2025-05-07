@@ -37,9 +37,12 @@ export function AuthProvider({ children }) {
         setUser(response.data);
         // No need to redirect, user is authenticated
       } catch (error) {
-        console.error('Authentication check failed:', error);
+        console.error('Auth check failed:', error);
         setUser(null);
-        router.push('/login'); // 👈 If not authenticated, redirect to login
+  
+        if (isProtectedRoute) {
+          router.push('/login'); // only redirect on protected routes
+        }
       } finally {
         setLoading(false);
       }
@@ -82,8 +85,21 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const checkAuthStatus = async () => {
+    try {
+      const response = await api.get('v1/user/');
+      setUser(response.data);
+      return true; // User is logged in
+    } catch (error) {
+      console.warn('Silent auth check failed (no redirect):', error);
+      setUser(null);
+      return false; // User not logged in
+    }
+  };
+  
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout,checkAuthStatus }}>
       {children}
     </AuthContext.Provider>
   );

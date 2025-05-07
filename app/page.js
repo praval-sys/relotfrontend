@@ -10,9 +10,8 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { SET_CART_ITEMS } from "./redux/types";
-import { setWish } from "./redux/reducer/wishSlice";
+import { AddWish, setWish } from "./redux/reducer/wishSlice";
 import { useEffect } from "react";
 import api from "./lib/api";
 
@@ -75,7 +74,7 @@ export default function Home() {
       const items = res.data?.data?.items || [];
 
       console.log(items)
-      dispatch(setWish(items));
+      dispatch(AddWish(items));
     } catch (error) {
       console.error("Error fetching products:", error);
     }

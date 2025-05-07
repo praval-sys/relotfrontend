@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { addItemToCart } from '../../redux/actions/cartActions';
-import { addToWishlist } from '../../lib/products';
+import { addToWishlist } from '../../lib/wishlist';
 import { toast } from 'react-hot-toast';
 import { connect } from 'react-redux';
 
