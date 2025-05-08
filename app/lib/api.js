@@ -8,13 +8,10 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response && error.response.status === 401) {
-      console.error('Unauthorized! Redirecting to login...');
-      
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
+    if (error.response?.status === 401) {
+      console.warn('Unauthorized request.'); // Don't redirect
     }
+
     return Promise.reject(error);
   }
 );

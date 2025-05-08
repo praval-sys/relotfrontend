@@ -14,7 +14,7 @@ export async function getProductReviews(productId) {
 
 export async function createProductReview(productId, reviewData) {
   try {
-    const response = await api.post('/api/reviews', {
+    const response = await api.post('/v1/reviews', {
       productId,
       ...reviewData,
     });
@@ -24,3 +24,35 @@ export async function createProductReview(productId, reviewData) {
     throw error;
   }
 }
+
+export const updateProductReview = async (productId, reviewData) => {
+  try {
+    const response = await api.put(`/v1/reviews/${productId}`, reviewData);
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Error updating review:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to update review'
+    };
+  }
+};
+
+export const getUserReview = async () => {
+  try {
+    const response = await api.get("/v1/user/reviews/");
+    return {
+      success: true,
+      data: response.data
+    };
+  } catch (error) {
+    console.error('Error updating review:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || 'Failed to user review'
+    };
+  }
+};
