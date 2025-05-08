@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
 :root {
   --header-height: 3rem;
-  --nav-width: 68px;
+  --nav-width: 4.5vw;
   --first-color: #4723d9;
   --first-color-light: #afa5d9;
   --white-color: #f7f6fb;
@@ -42,6 +42,7 @@ a {
 .header_toggle {
   color: var(--first-color);
   font-size: 1.5rem;
+  padding-left: calc(var(--nav-width));
   cursor: pointer;
 }
 .header_img {
@@ -108,7 +109,12 @@ a {
   left: 0;
 }
 .body-pd {
-  padding-left: calc(var(--nav-width) + 1rem);
+  padding-left: calc(var(--nav-width) + 0.5rem);
+  transition: padding-left 0.3s ease;
+}
+
+.body-pd-back {
+  transition: padding-left 0.3s ease;
 }
 .active {
   color: var(--white-color);
@@ -125,13 +131,11 @@ a {
   height: 100vh;
 }
 @media screen and (min-width: 768px) {
-  body {
-    margin: calc(var(--header-height) + 1rem) 0 0 0;
-    padding-left: calc(var(--nav-width) + 2rem);
+  .bodyy {
+    padding-left: calc(var(--nav-width));
   }
   .header {
     height: calc(var(--header-height) + 1rem);
-    padding: 0 2rem 0 calc(var(--nav-width) + 2rem);
   }
   .header_img {
     width: 40px;
@@ -148,6 +152,9 @@ a {
     width: calc(var(--nav-width) + 156px);
   }
   .body-pd {
-    padding-left: calc(var(--nav-width) + 188px);
+    padding-left: 10vw;
+  }
+  .body-pd-header {
+    padding-left: 11vw;
   }
 }

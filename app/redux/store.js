@@ -5,18 +5,18 @@ import storage from './storage'; // Custom SSR-safe storage wrapper
 
 import cartReducer from './reducer/cartReducer';
 import wishReducer from './reducer/wishSlice';
-import remTimeReducer from './reducer/timeSlice';
+import sideNavReducer from './reducer/sideNavSlice';
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   wish: wishReducer,
-  time: remTimeReducer
+  sideNav: sideNavReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['cart', 'wish', 'time'],
+  whitelist: ['cart', 'wish', 'sideNav'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

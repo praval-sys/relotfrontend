@@ -12,8 +12,9 @@ import { AuthProvider } from './context/AuthContext';
 
 function LayoutContent({ children }) {
   const pathname = usePathname();
+  const isAdminRoute = pathname.startsWith('/admin');
   const noLayoutRoutes = ['/login', '/register', '/signup', '/admin'];
-  const showLayout = !noLayoutRoutes.includes(pathname);
+  const showLayout = !noLayoutRoutes.includes(pathname) && !isAdminRoute;
 
   return (
     <>
