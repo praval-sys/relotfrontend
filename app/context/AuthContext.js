@@ -14,6 +14,7 @@ const PROTECTED_PREFIXES = [
   '/my-account',
   '/orders',
   '/checkout',
+  '/admin'
 ];
 
 export function AuthProvider({ children }) {
