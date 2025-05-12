@@ -23,11 +23,12 @@ export function AuthProvider({ children }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix));
 
   useEffect(() => {
     const checkAuth = async () => {
       // If route is NOT protected, skip auth check
+      const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix));
+
       if (!isProtectedRoute) {
         setLoading(false);
         return;

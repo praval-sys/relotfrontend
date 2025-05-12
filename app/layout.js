@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <AuthProvider>
-            <LayoutContent children={children} />
+            <LayoutContent>{children}</LayoutContent> 
             </AuthProvider>
           </PersistGate>
         </Provider>
