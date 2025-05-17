@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-NEXT_PUBLIC_API_URL = 'http://69.62.85.32:5000'
+const BASE_URL = 'http://69.62.85.32:5000'; // Hardcoded API URL
 
 const api = axios.create({
-  baseURL: NEXT_PUBLIC_API_URL || 'http://localhost:3000/',
+  baseURL: BASE_URL || 'http://localhost:3000/',
   withCredentials: true,
 });
 
