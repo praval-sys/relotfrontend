@@ -40,7 +40,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /root/frontend
-            docker build -t nextjs-app .
-            docker stop nextjs-app || true
-            docker rm nextjs-app || true
-            docker run -d -p 3003:3003 nextjs-app 
+            docker build -t relotfrontend .
+            docker stop relotfrontend || true
+            docker rm relotfrontend || true
+            docker run -d -p 3003:3003 relotfrontend 
