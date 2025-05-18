@@ -41,7 +41,7 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             script: |
                 cd /root/frontend
-                echo "${{ secrets.FRONTEND_ENV }}" > .env
+                echo "${{ secrets.FRONTEND_ENV }}" > .env.production
 
       - name: Rebuild and start containers on VPS
         uses: appleboy/ssh-action@v1.0.0
@@ -52,4 +52,4 @@ jobs:
           script: |
             cd /root/frontend
             docker compose -f docker-compose.prod.yml down || true
-            docker compose -f docker-compose.prod.yml up -d --build
+            docker compose -f docker-compose.prod.yml up -d --build --no-cache
