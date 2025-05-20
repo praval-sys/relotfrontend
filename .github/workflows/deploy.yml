@@ -51,6 +51,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /root/frontend
-            docker compose -f docker-compose.prod.yml down || true
+            docker compose -f docker-compose.prod.yml down --rmi all --remove-orphans || true
             docker compose -f docker-compose.prod.yml build --no-cache
             docker compose -f docker-compose.prod.yml up -d
