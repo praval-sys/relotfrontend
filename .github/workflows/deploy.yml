@@ -1,12 +1,9 @@
-# .github/workflows/hello-world.yml
-
 name: VPS Deploy Workflow
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
-      
 
 jobs:
   deploytovps:
@@ -19,7 +16,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
-      
+
       - name: Add VPS to known_hosts
         run: |
           mkdir -p ~/.ssh
@@ -33,15 +30,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "."
           target: "/root/frontend"
-      - name: Set .env file on VPS
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-            host: ${{ secrets.SERVER_IP }}
-            username: root
-            key: ${{ secrets.SSH_KEY }}
-            script: |
-                cd /root/frontend
-                echo "${{ secrets.FRONTEND_ENV }}" > .env.production
 
       - name: Rebuild and start containers on VPS
         uses: appleboy/ssh-action@v1.0.0
@@ -51,6 +39,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /root/frontend
+            echo "${{ secrets.FRONTEND_ENV }}" > .env.production
+            export FRONTEND_ENV="$(cat .env.production | sed ':a;N;$!ba;s/\n/\\n/g')"
             docker compose -f docker-compose.prod.yml down --rmi all --remove-orphans || true
-            docker compose -f docker-compose.prod.yml build --no-cache
+            FRONTEND_ENV="$FRONTEND_ENV" docker compose -f docker-compose.prod.yml build --no-cache
             docker compose -f docker-compose.prod.yml up -d

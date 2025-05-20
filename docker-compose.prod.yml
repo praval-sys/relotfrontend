@@ -6,8 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        FRONTEND_ENV: ${FRONTEND_ENV}
     ports:
       - "3003:3003"
-    volumes:
-      - ./.env.production:/app/.env.production:ro
     restart: unless-stopped
