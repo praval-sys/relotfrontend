@@ -8,6 +8,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3003:3003"
-    env_file:
-      - .env
+    volumes:
+      - ./.env.production:/app/.env.production:ro
     restart: unless-stopped
