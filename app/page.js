@@ -7,14 +7,14 @@ import { AddWish } from "./redux/reducer/wishSlice"
 import api from "./lib/api"
 
 // Components
-import HeroSlider from "./components/home/HeroSlider"
+import HeroSlider from "./components/Home/HeroSlider"
 import BestSeller from "./components/Product/Bestsellers"
 import Testimonial from "./components/Testimonial"
-import CollectionShowcase from "./components/home/CollectionShowcase"
+import CollectionShowcase from "./components/Home/CollectionShowcase"
 import ProductCategories from "./components/ProductCategories"
 import TrendingProducts from "./components/Product/TrendingProdcuts"
-import CategoryBanners from "./components/home/CategoryBanners"
-import ServicesSection from "./components/home/ServicesSection"
+import CategoryBanners from "./components/Home/CategoryBanners"
+import ServicesSection from "./components/Home/ServicesSection"
 
 // Data
 import { heroData, servicesData } from "../data/homeData"

@@ -11,8 +11,8 @@ import UserNavigation from "./UserNavigation"
 import MobileMenu from "./MobileMenu"
 import DesktopMenu from "./DesktopMenu"
 import LanguageSelector from "./LanguageSelector"
-import CartButton from "./CartButton"
-import WishlistButton from "./WishlistButton"
+import CartButton from "./cartButton"
+import WishlistButton from "./WishListButton"
 
 import { languages, menuData } from "../../../data/navbarData"
 
