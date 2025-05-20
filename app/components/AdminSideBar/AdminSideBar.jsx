@@ -66,12 +66,12 @@ export default function AdminSideBar() {
               </Link>
 
               <Link
-                href="#"
+                href="/admin/createProduct"
                 className={`nav_link ${activeLink === "users" ? "active" : ""}`}
                 onClick={() => setActiveLink("users")}
               >
                 <LiaUserSolid />
-                <span className="nav_name">Users</span>
+                <span className="nav_name">Create Product</span>
               </Link>
 
               <Link
