@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import ProductCard from '../../components/ProductCard';
 import Filters from '../../components/Filter';
 import Pagination from '../../components/Pagination'; // Don't forget this
-
+import {ProductsPageGrid} from '../../components/ProductsCard/ProductGrid';
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
@@ -131,10 +130,8 @@ export default function ProductsClient() {
             </div>
           ) : products.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+              <div className="">
+                <ProductsPageGrid products={products} />
               </div>
 
               <div className="mt-8">

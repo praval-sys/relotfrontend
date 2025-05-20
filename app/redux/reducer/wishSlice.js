@@ -9,7 +9,6 @@ export const wishSlice = createSlice({
   initialState,
   reducers: {
     AddWish: (state, action) => {
-      debugger
       if (!Array.isArray(state.wishlist)) {
         state.wishlist = [];
       }

@@ -23,7 +23,6 @@ export default function LoginPage() {
     try {
       // Use AuthContext login function
       await login({ email, password });
-      console.log("here");
       router.push("/");
 
       // Router push is handled by AuthContext

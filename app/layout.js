@@ -1,14 +1,15 @@
 'use client';
 
 import './globals.css';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Navbar from '../app/components/Navbar/Navbar';
+import Footer from './components/footer/Footer';
 import { usePathname } from 'next/navigation';
 import { Provider } from 'react-redux';
 import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import AnnouncementBar from './components/home/AnnouncementBar';
 
 function LayoutContent({ children }) {
   const pathname = usePathname();
@@ -18,8 +19,15 @@ function LayoutContent({ children }) {
 
   return (
     <>
-      {showLayout && <Navbar />}
-      <main>{children}</main>
+      {showLayout && (
+        <>
+          <AnnouncementBar />
+          <Navbar />
+        </>
+      )}
+      <main className="mt-[140px]"> {/* Changed pt to mt for better spacing */}
+        {children}
+      </main>
       <Toaster position="bottom-right" />
       {showLayout && <Footer />}
     </>

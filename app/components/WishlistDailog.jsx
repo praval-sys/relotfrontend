@@ -92,7 +92,7 @@ function WishlistDailog({ clearWholeWish }) {
                   <div className="flex-1">
                     <h3 className="font-medium text-sm">{item.name}</h3>
                     <p className="text-xs text-gray-600">
-                      ${item.price.toFixed(2)}
+                      ${item.price}
                     </p>
                   </div>
                   <button
