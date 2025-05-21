@@ -25,7 +25,7 @@ function LayoutContent({ children }) {
           <Navbar />
         </>
       )}
-      <main className="mt-[140px]"> {/* Changed pt to mt for better spacing */}
+      <main className={`${showLayout ? 'mt-[140px]' : ''}`}>
         {children}
       </main>
       <Toaster position="bottom-right" />

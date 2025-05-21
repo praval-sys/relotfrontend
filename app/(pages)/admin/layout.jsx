@@ -22,15 +22,15 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full h-screen">
       <div
-        className={`transition-all duration-300 ${
-          isNavExpanded ? 'w-32' : 'w-4'
+        className={`transition-all duration-300 bg-gray-900 text-white ${
+          isNavExpanded ? 'w-60' : 'w-16'
         }`}
       >
         <AdminSideBar />
       </div>
-      <div className="flex-1 overflow-auto p-4">{children}</div>
+      <div className="flex-1 overflow-auto bg-gray-50 p-4">{children}</div>
     </div>
   );
 }
