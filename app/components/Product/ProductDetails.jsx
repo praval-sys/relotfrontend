@@ -50,6 +50,7 @@ function ProductDetails({ product,addItem }) {
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
               priority
+              unoptimized
             />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">

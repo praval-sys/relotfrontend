@@ -56,6 +56,7 @@ export default function BestSeller({ productId, category }) {
                   fill
                   className="object-cover group-hover:scale-105 transition-transform"
                   sizes="(max-width: 768px) 50vw, 25vw"
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
