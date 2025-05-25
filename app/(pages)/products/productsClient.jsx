@@ -38,7 +38,7 @@ export default function ProductsClient() {
         .join('&');
 
       const response = await api.get(`/v1/products?${queryString}`); 
-      const result = await response.json();
+      const result = await response.data;
       // Update to match backend response structure
       if (result.success) {
         setProducts(result.data);
