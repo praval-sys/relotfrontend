@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Filters from '../../components/Filter';
 import Pagination from '../../components/Pagination'; // Don't forget this
 import {ProductsPageGrid} from '../../components/ProductsCard/ProductGrid';
+import api from '../../lib/api';
 
 export default function ProductsClient() {
   const searchParams = useSearchParams();
@@ -36,7 +37,7 @@ export default function ProductsClient() {
         .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
         .join('&');
 
-      const response = await fetch(`http://localhost:3000/v1/products?${queryString}`); //
+      const response = await api.get(`/v1/products?${queryString}`); 
       const result = await response.json();
       // Update to match backend response structure
       if (result.success) {
