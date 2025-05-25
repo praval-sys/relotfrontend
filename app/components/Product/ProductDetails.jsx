@@ -75,6 +75,7 @@ function ProductDetails({ product,addItem }) {
                   alt={`${product.name} thumbnail ${index + 1}`}
                   fill
                   className="object-cover rounded"
+                  unoptimized
                 />
               </div>
             ))}

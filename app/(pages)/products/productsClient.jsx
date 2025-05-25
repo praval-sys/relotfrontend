@@ -84,7 +84,7 @@ export default function ProductsClient() {
             {currentFilters.search && ` - Search: "${currentFilters.search}"`}
           </>
         ) : currentFilters.search ? (
-          <>Search Results: "{currentFilters.search}"</>
+          <>Search Results: {currentFilters.search}</>
         ) : (
           'All Products'
         )}

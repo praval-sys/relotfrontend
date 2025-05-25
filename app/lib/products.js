@@ -2,9 +2,7 @@ import api from './api';
 
 export async function getProductById(id) {
   try {
-    const response = await api.get(`/v1/products/${id}`, {
-      next: { revalidate: 60 }, // Next.js revalidate option if you still want
-    });
+    const response = await api.get(`/v1/products/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching product:", error);
