@@ -2,8 +2,10 @@
 
 import { useEffect } from "react"
 import { useDispatch } from "react-redux"
-import { SET_CART_ITEMS } from "./redux/types"
+import { setCartItems } from "./redux/actions/cartActions"
+import { getCart} from "./lib/cart"
 import { AddWish } from "./redux/reducer/wishSlice"
+import { getWishlist } from "./lib/wishlist"
 import api from "./lib/api"
 
 // Components
@@ -25,23 +27,25 @@ export default function Home() {
 
   const fetchProducts = async () => {
     try {
-      const res = await api.get("/v1/")
-      dispatch({
-        type: SET_CART_ITEMS,
-        payload: res.data.data.items,
-      })
+      const res = await getCart();
+      if (res.success && res.data.items) {
+        dispatch(setCartItems(res.data.items));
+      }
     } catch (error) {
-      console.error("Error fetching products:", error)
+      console.error("Error fetching cart:", error)
+      dispatch(setCartItems([])); // Set empty cart on error
     }
   }
 
   const fetchWishProducts = async () => {
     try {
-      const res = await api.get("/v1/wish")
-      const items = res.data?.data?.items || []
-      dispatch(AddWish(items))
+      const res = await getWishlist();
+      if (res.success && res.data.items) {
+        dispatch(AddWish(res.data.items));
+      }
     } catch (error) {
-      console.error("Error fetching wish products:", error)
+      console.error("Error fetching wishlist:", error)
+      dispatch(AddWish([])); // Set empty wishlist on error
     }
   }
 

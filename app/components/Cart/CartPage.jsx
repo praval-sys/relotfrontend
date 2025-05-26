@@ -24,19 +24,8 @@ const CartPage =() =>  {
   const protectionFee = items.some(item => item.protectionFee) ? 18 : 0;
   const totalAmount = subtotal - discount + deliveryCharges + protectionFee;
   const totalSavings = discount;
-  console.log("Token:", token);
-  console.log("Items in Cart:", items);
   const handlePlaceOrder = async () => {
     try {
-      // Here you would usually make an API call to create an order
-      // Since you mentioned you already have backend code:
-      // const response = await fetch('/api/create-order', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ items, address: selectedAddress, totalAmount })
-      // });
-      
-      // For now, let's just redirect to checkout
       router.push('/checkout');
     } catch (error) {
       console.error('Error creating order:', error);

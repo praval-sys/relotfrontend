@@ -9,29 +9,28 @@ export const wishSlice = createSlice({
   initialState,
   reducers: {
     AddWish: (state, action) => {
-      if (!Array.isArray(state.wishlist)) {
-        state.wishlist = [];
-      }
-      const existingItemIndex = state.wishlist.findIndex(
-        (item) => item.id === action.payload.id
-      );
-      if (existingItemIndex >= 0) {
-        const updatedWishlist = state.wishlist.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-        state.wishlist = updatedWishlist;
+      // Handle both single item and array
+      if (Array.isArray(action.payload)) {
+        state.wishlist = action.payload;
       } else {
-        state.wishlist.push({ ...action.payload, quantity: 1 });
+        const existingItem = state.wishlist.find(
+          (item) => item.productId === action.payload.productId
+        );
+        if (!existingItem) {
+          state.wishlist.push(action.payload);
+        }
       }
     },
-
+    RemoveWish: (state, action) => {
+      state.wishlist = state.wishlist.filter(
+        (item) => item.productId !== action.payload
+      );
+    },
     clearWish: (state) => {
       state.wishlist = [];
     },
   },
 });
 
-export const { AddWish, clearWish } = wishSlice.actions;
+export const { AddWish, RemoveWish, clearWish } = wishSlice.actions;
 export default wishSlice.reducer;

@@ -7,27 +7,47 @@ import { ShoppingCart, Heart, Star } from "lucide-react"
 import toast from "react-hot-toast"
 import { addItemToCart } from "../../redux/actions/cartActions"
 import { AddWish } from "../../redux/reducer/wishSlice"
+import { addToWishlist } from "../../lib/wishlist"
+import { addToCart } from "../../lib/cart"
+
 
 function ProductPageCard({ product, addItem, AddWishh }) {
   const router = useRouter()
-  const rating = (Math.random() * 1.5 + 3.5).toFixed(1)
+  const rating = product.ratings
 
   const handleClick = (e) => {
     if (e.target.closest("button")) return
     router.push(`/products/${product._id}`)
   }
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.stopPropagation()
-    addItem(product)
-    toast.success("Added to cart!")
+    try {
+      // First update backend
+      await addToCart(product);
+      // Then update Redux store
+      addItem(product)
+      toast.success("Added to cart!")
+    } catch (error) {
+      toast.error("Failed to add to cart. Please try again.acha")
+      console.error("Cart error:", error)
+    }
   }
 
-  const handleAddToWishlist = (e) => {
+  const handleAddToWishlist = async (e) => {
     e.stopPropagation()
-    AddWishh(product)
-    toast.success("Added to wishlist!")
+    try {
+      // First update backend
+      await addToWishlist(product)
+      // Then update Redux store
+      AddWishh(product)
+      toast.success("Added to wishlist!")
+    } catch (error) {
+      toast.error("Failed to add to wishlist. Please try again.acha")
+      console.error("Wishlist error:", error)
+    }
   }
+
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
