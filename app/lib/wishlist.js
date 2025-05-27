@@ -12,15 +12,9 @@ export async function getWishlist() {
 
 export async function addToWishlist(product) {
   try {
-    const response = await api.post('/v1/wish/add/', {
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images[0],
-    });
+    const response = await api.post('/v1/wish/add/', product);
     return response.data;
   } catch (error) {
-    console.error("Error adding to wishlist:", error);
     throw error;
   }
 }

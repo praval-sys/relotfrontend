@@ -1,12 +1,23 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { footerData } from "../../../data/footerData"
 import { SocialIcon } from "./social-icons"
 import { ContactItem } from "./contactItem"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 export default function Footer() {
+  // Initialize openSections as an empty array
+  const [openSections, setOpenSections] = useState([]);
+
+  const toggleSection = (title) => {
+    setOpenSections((prev) =>
+      prev.includes(title) ? prev.filter((s) => s !== title) : [...prev, title]
+    )
+  }
+
   return (
     <footer className="bg-red-600 text-white px-6 md:px-16 py-12">
       <div className="container mx-auto">
@@ -14,7 +25,13 @@ export default function Footer() {
           {/* Logo and Description */}
           <div>
             <Link href="/" className="inline-block mb-6">
-              <Image src="/assets/logo.png" alt="Relot Logo" width={150} height={40} className="mb-4" />
+              <Image 
+                src="/assets/logo.png" 
+                alt="Relot Logo" 
+                width={150} 
+                height={40} 
+                className="mb-4" 
+              />
             </Link>
             <h2 className="font-bold text-xl mb-4">{footerData.tagline}</h2>
             <p className="text-base leading-relaxed">{footerData.description}</p>
@@ -22,11 +39,40 @@ export default function Footer() {
 
           {/* Information */}
           <div>
-            <h3 className="font-bold text-xl mb-5 border-b border-white pb-2">{footerData.informationTitle}</h3>
+            <h3 className="font-bold text-xl mb-5 border-b border-white pb-2">
+              {footerData.informationTitle}
+            </h3>
             <ul className="space-y-3">
               {footerData.informationLinks.map((link) => (
-                <li key={link.text} className="text-base hover:underline transition-all">
-                  <Link href={link.href}>{link.text}</Link>
+                <li key={link.text} className="text-base">
+                  <div 
+                    className="flex items-center justify-between cursor-pointer" 
+                    onClick={() => link.subsections && toggleSection(link.text)}
+                  >
+                    <Link href={link.href} className="hover:underline">
+                      {link.text}
+                    </Link>
+                    {link.subsections && (
+                      <span>
+                        {openSections.includes(link.text) ? (
+                          <ChevronUp size={18} />
+                        ) : (
+                          <ChevronDown size={18} />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  {link.subsections && openSections.includes(link.text) && (
+                    <ul className="ml-4 mt-2 space-y-2 text-sm">
+                      {link.subsections.map((sublink) => (
+                        <li key={sublink.text}>
+                          <Link href={sublink.href} className="hover:underline">
+                            {sublink.text}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ul>

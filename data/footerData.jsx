@@ -11,10 +11,42 @@ export const footerData = {
     { text: "About", href: "/about" },
     { text: "Contact Us", href: "/contact" },
     { text: "FAQ's", href: "/faqs" },
-    { text: "House of Relot", href: "/house-of-relot" },
-    { text: "Online Shopping", href: "/shopping" },
-    { text: "Customer Account", href: "/account" },
-    { text: "Products", href: "/products" },
+    {
+      text: "House of Relot",
+      href: "/house-of-relot",
+      subsections: [
+        { text: "Security and Data Protection", href: "/houseofrelot/securityanddataprotection" },
+        { text: "Manufacture", href: "/house-of-relot/manufacture" },
+        { text: "Cookies", href: "/house-of-relot/cookies" }
+      ]
+    },
+    {
+      text: "Online Shopping",
+      href: "/shopping",
+      subsections: [
+        { text: "How to Order", href: "/shopping/order" },
+        { text: "Payment Methods", href: "/shopping/payment" },
+        { text: "Delivery Info", href: "/shopping/delivery" }
+      ]
+    },
+    {
+      text: "Customer Account",
+      href: "/account",
+      subsections: [
+        { text: "Login", href: "/account/login" },
+        { text: "Register", href: "/account/register" },
+        { text: "Order History", href: "/account/orders" }
+      ]
+    },
+    {
+      text: "Products",
+      href: "/products",
+      subsections: [
+        { text: "Authentication", href: "/products/authentication" },
+        { text: "Availability", href: "/products/availability" },
+        { text: "Size Guide", href: "/products/size-guide" }
+      ]
+    }
   ],
 
   quickShopTitle: "Quick Shop",

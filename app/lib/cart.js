@@ -10,19 +10,9 @@ export async function getCart() {
   }
 }
 
-export async function addToCart(product) {
+export async function addToCart(products) {
   try {
-    const formattedData = {
-      products: [{
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        quantity: product.quantity || 1,
-        image: product.images?.[0] || product.image || '/placeholder.png'
-      }]
-    };
-
-    const response = await api.post("/v1/add", formattedData);
+    const response = await api.post("/v1/add", products);
     return response.data;
   } catch (error) {
     console.error("Error adding to cart:", error);

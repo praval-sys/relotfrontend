@@ -22,28 +22,89 @@ function ProductPageCard({ product, addItem, AddWishh }) {
 
   const handleAddToCart = async (e) => {
     e.stopPropagation()
+    
+    // Format product data for cart
+    const cartData = {
+    products: [{
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.images?.[0] || product.image || '/placeholder.png'
+    }]
+  }
+    const cartItem = {
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.images?.[0] || product.image || '/placeholder.png'
+  }
     try {
-      // First update backend
-      await addToCart(product);
-      // Then update Redux store
-      addItem(product)
-      toast.success("Added to cart!")
+      const response = await addToCart(cartData)
+      
+      if (response.success) {
+        // Backend success - item added
+        addItem(cartItem)
+        toast.success(response.message || "Added to cart!")
+      }
     } catch (error) {
-      toast.error("Failed to add to cart. Please try again.acha")
+      if (error.response?.status === 401) {
+        // User is not logged in - just update Redux
+        addItem(cartItem)
+        toast.success("Added to cart!")
+        return
+      }
+      
+      if (error.response?.status === 400) {
+        // Item exists or other validation error
+        toast.error(error.response.data.message || "Failed to add to cart")
+        return
+      }
+
+      // Other errors
+      toast.error("Failed to add to cart. Please try again.")
       console.error("Cart error:", error)
     }
   }
 
   const handleAddToWishlist = async (e) => {
     e.stopPropagation()
+    
+    // Format product data for wishlist
+    const wishlistItem = {
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || product.image || '/placeholder.png'
+    }
+
     try {
-      // First update backend
-      await addToWishlist(product)
-      // Then update Redux store
-      AddWishh(product)
-      toast.success("Added to wishlist!")
+      // Try to add to backend first
+      const response = await addToWishlist(wishlistItem)
+      
+      if (response.success) {
+        // Backend success - item added
+        AddWishh(wishlistItem)
+        toast.success(response.message || "Added to wishlist!")
+        return
+      }
     } catch (error) {
-      toast.error("Failed to add to wishlist. Please try again.acha")
+      if (error.response?.status === 401) {
+        // User is not logged in - just update Redux
+        AddWishh(wishlistItem)
+        toast.success("Added to wishlist!")
+        return
+      } 
+      
+      if (error.response?.status === 400 && error.response?.data?.message === "Item already in wishlist") {
+        // Item already exists
+        toast.error("Item is already in your wishlist!")
+        return
+      }
+
+      // Other errors
+      toast.error("Failed to add to wishlist. Please try again.")
       console.error("Wishlist error:", error)
     }
   }

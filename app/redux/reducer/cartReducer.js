@@ -15,7 +15,10 @@ const cartReducer = (state = initialState, action) => {
     case SET_CART_ITEMS:
       return {
         ...state,
-        items: action.payload || []
+        items: action.payload,
+        totalPrice: action.payload.reduce((sum, item) => 
+          sum + (item.price * (item.quantity || 1)), 0
+        )
       };
 
     case ADD_ITEM_TO_CART:

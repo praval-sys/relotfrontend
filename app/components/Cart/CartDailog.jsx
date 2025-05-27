@@ -5,8 +5,8 @@ import { ShoppingCart, X, Plus, Minus, Trash2, Eye } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { updateCartItemQuantity, removeItemFromCart } from "../../redux/actions/cartActions";
-import { updateCartItem, removeCartItem } from "../../lib/cart";
+import { setCartItems, updateCartItemQuantity, removeItemFromCart } from "../../redux/actions/cartActions";
+import { getCart, updateCartItem, removeCartItem } from "../../lib/cart";
 
 
 export default function CartDialog() {
@@ -16,6 +16,30 @@ export default function CartDialog() {
   const router = useRouter();
   const dialogRef = useRef(null);
   const [loading, setLoading] = useState(false);
+
+  // Fetch cart data on mount
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        setLoading(true);
+        const response = await getCart();
+        if (response.success && response.data.items) {
+          dispatch(setCartItems(response.data.items));
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          // User not authenticated - keep local cart state
+          return;
+        }
+        console.error("Failed to fetch cart:", error);
+        toast.error("Failed to load cart");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCartData();
+  }, [dispatch]);
 
   // Close dialog when clicking outside
   useEffect(() => {
@@ -40,12 +64,20 @@ export default function CartDialog() {
 
     try {
       setLoading(true);
-      // Update backend
-      await updateCartItem(item._id, newQuantity);
+      // Try to update backend first
+      await updateCartItem(item.productId, newQuantity);
       // Update Redux store
-      dispatch(updateCartItemQuantity(item._id, newQuantity));
+      dispatch(updateCartItemQuantity(item.productId, newQuantity));
+      toast.success("Quantity updated");
     } catch (error) {
-      toast.error("Failed to update quantity");
+      if (error.response?.status === 401) {
+        // User is not logged in - just update Redux
+        dispatch(updateCartItemQuantity(item.productId, newQuantity));
+        toast.success("Quantity updated");
+      } else {
+        toast.error("Failed to update quantity");
+        console.error("Cart error:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -54,13 +86,20 @@ export default function CartDialog() {
   const handleRemoveItem = async (itemId) => {
     try {
       setLoading(true);
-      // Update backend
-      await removeCartItem(itemId);
+      // Try to update backend first
+      await removeCartItem(itemId.productId);
       // Update Redux store
-      dispatch(removeItemFromCart(itemId));
+      dispatch(removeItemFromCart(itemId.productId));
       toast.success("Item removed from cart");
     } catch (error) {
-      toast.error("Failed to remove item");
+      if (error.response?.status === 401) {
+        // User is not logged in - just update Redux
+        dispatch(removeItemFromCart(itemId));
+        toast.success("Item removed from cart");
+      } else {
+        toast.error("Failed to remove item");
+        console.error("Cart error:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -76,9 +115,9 @@ export default function CartDialog() {
     router.push("/viewcart");
   };
 
-  const totalAmount = cartItems.reduce((sum, item) => 
-    sum + (item.price * (item.quantity || 1)), 0
-  );
+  // Update the total amount calculation to use the backend total if available
+  const totalAmount = useSelector((state) => state.cart.totalPrice) || 
+    cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
 
   return (
     <div className="relative" ref={dialogRef}>
@@ -121,7 +160,9 @@ export default function CartDialog() {
                 {cartItems.map((item) => (
                   <div
                     key={item._id}
-                    className="flex gap-4 p-3 bg-gray-50 rounded-lg"
+                    className={`flex gap-4 p-3 bg-gray-50 rounded-lg transition-opacity ${
+                      loading ? 'opacity-50' : ''
+                    }`}
                   >
                     <div className="relative w-20 h-20">
                       <Image
@@ -139,7 +180,11 @@ export default function CartDialog() {
                         <button
                           onClick={() => handleQuantityChange(item, -1)}
                           disabled={loading}
-                          className="p-1 hover:bg-gray-200 rounded"
+                          className={`p-1 rounded ${
+                            loading 
+                              ? 'bg-gray-100 cursor-not-allowed' 
+                              : 'hover:bg-gray-200'
+                          }`}
                         >
                           <Minus className="h-4 w-4" />
                         </button>
@@ -147,16 +192,24 @@ export default function CartDialog() {
                         <button
                           onClick={() => handleQuantityChange(item, 1)}
                           disabled={loading}
-                          className="p-1 hover:bg-gray-200 rounded"
+                          className={`p-1 rounded ${
+                            loading 
+                              ? 'bg-gray-100 cursor-not-allowed' 
+                              : 'hover:bg-gray-200'
+                          }`}
                         >
                           <Plus className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => handleRemoveItem(item._id)}
+                          onClick={() => handleRemoveItem(item)}
                           disabled={loading}
-                          className="p-1 hover:bg-red-100 text-red-600 rounded ml-auto"
+                          className={`p-1 rounded ml-auto ${
+                            loading 
+                              ? 'bg-gray-100 cursor-not-allowed' 
+                              : 'hover:bg-red-100 text-red-600'
+                          }`}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                         </button>
                       </div>
                     </div>
