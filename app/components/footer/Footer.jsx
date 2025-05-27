@@ -49,7 +49,7 @@ export default function Footer() {
                     className="flex items-center justify-between cursor-pointer" 
                     onClick={() => link.subsections && toggleSection(link.text)}
                   >
-                    <Link href={link.href} className="hover:underline">
+                    <Link href={link.text} className="hover:underline">
                       {link.text}
                     </Link>
                     {link.subsections && (

@@ -13,38 +13,41 @@ export const footerData = {
     { text: "FAQ's", href: "/faqs" },
     {
       text: "House of Relot",
-      href: "/house-of-relot",
       subsections: [
         { text: "Security and Data Protection", href: "/houseofrelot/securityanddataprotection" },
-        { text: "Manufacture", href: "/house-of-relot/manufacture" },
-        { text: "Cookies", href: "/house-of-relot/cookies" }
+        { text: "Manufacture", href: "/houseofrelot/manufacture" },
+        { text: "Cookies", href: "/houseofrelot/cookies" }
       ]
     },
     {
       text: "Online Shopping",
-      href: "/shopping",
       subsections: [
-        { text: "How to Order", href: "/shopping/order" },
-        { text: "Payment Methods", href: "/shopping/payment" },
-        { text: "Delivery Info", href: "/shopping/delivery" }
+        { text: "Browsing", href: "/onlineshopping/browsing" },
+        { text: "Collect in Store", href: "/onlineshopping/collectinstore" },
+        { text: "Delivery ", href: "/onlineshopping/delivery" },
+        { text: "Payments", href: "/onlineshopping/payments" },
+        { text: "Gifting", href: "/onlineshopping/gifting" },
+        { text: "Orders", href: "/onlineshopping/orders" },
+        { text: "Returns & Exchanges", href: "/onlineshopping/returnandexchanges" }
       ]
     },
     {
       text: "Customer Account",
-      href: "/account",
       subsections: [
-        { text: "Login", href: "/account/login" },
-        { text: "Register", href: "/account/register" },
-        { text: "Order History", href: "/account/orders" }
+        { text: "Account Creation", href: "/customeraccount/accountcreation" },
+        { text: "Forgotten Password", href: "/customeraccount/forgottenpassword" },
+        { text: "Settings and Cancellation", href: "/customeraccount/settingandcancellation" }
       ]
     },
     {
       text: "Products",
-      href: "/products",
       subsections: [
         { text: "Authentication", href: "/products/authentication" },
         { text: "Availability", href: "/products/availability" },
-        { text: "Size Guide", href: "/products/size-guide" }
+        { text: "Size Guide", href: "/products/sizeguide" },
+        { text: "Bespoke", href: "/products/bespoke" },
+        { text: "Orange Box", href: "/products/orangebox" },
+        { text: "Care & Repair", href: "/products/careandrepair" }
       ]
     }
   ],
