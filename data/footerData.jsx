@@ -13,6 +13,7 @@ export const footerData = {
     { text: "FAQ's", href: "/faqs" },
     {
       text: "House of Relot",
+      href: "#",
       subsections: [
         { text: "Security and Data Protection", href: "/houseofrelot/securityanddataprotection" },
         { text: "Manufacture", href: "/houseofrelot/manufacture" },
@@ -21,6 +22,7 @@ export const footerData = {
     },
     {
       text: "Online Shopping",
+      href: "#",
       subsections: [
         { text: "Browsing", href: "/onlineshopping/browsing" },
         { text: "Collect in Store", href: "/onlineshopping/collectinstore" },
@@ -33,6 +35,7 @@ export const footerData = {
     },
     {
       text: "Customer Account",
+      href: "#",
       subsections: [
         { text: "Account Creation", href: "/customeraccount/accountcreation" },
         { text: "Forgotten Password", href: "/customeraccount/forgottenpassword" },
@@ -41,6 +44,7 @@ export const footerData = {
     },
     {
       text: "Products",
+      href: "#",
       subsections: [
         { text: "Authentication", href: "/products/authentication" },
         { text: "Availability", href: "/products/availability" },
@@ -74,7 +78,7 @@ export const footerData = {
     },
     {
       type: "phone",
-      content: "+91-XXXXXXX",
+      content: "+91-9319198930",
       icon: <MdCall className="text-2xl flex-shrink-0" />,
     },
   ],
