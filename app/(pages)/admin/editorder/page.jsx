@@ -39,7 +39,10 @@ const OrderDetailsPage = () => {
     console.log(order);
     setStatus("Submitting...");
     try {
-      const res = await api.patch(`/v1/order/${order._id}/status`, order);
+      const res = await api.patch(
+        `/v1/admin/orders/${order._id}/status`,
+        order
+      );
       if (res.status != 200) throw new Error("Failed to edit order");
 
       setStatus(`✅ order edited Successfully`);
