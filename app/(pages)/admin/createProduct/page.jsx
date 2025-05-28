@@ -5,6 +5,7 @@ import { Upload, X } from "lucide-react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 
+
 export default function CreateProductPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -189,9 +190,12 @@ export default function CreateProductPage() {
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <Upload className="w-8 h-8 mb-2 text-gray-500" />
                   <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
+                    <span className="font-semibold">Click to upload</span> or
+                    drag and drop
                   </p>
-                  <p className="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 800x400px)</p>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG or JPEG (MAX. 800x400px)
+                  </p>
                 </div>
                 <input
                   type="file"

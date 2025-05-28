@@ -1,5 +1,4 @@
-import axios from 'axios';
-
+import axios from "axios";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -8,11 +7,11 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    console.log('🔥 API Request:', {
+    console.log("🔥 API Request:", {
       fullUrl: config.baseURL + config.url,
       method: config.method?.toUpperCase(),
       data: config.data,
-      headers: config.headers
+      headers: config.headers,
     });
     return config;
   },
@@ -25,7 +24,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      console.warn('Unauthorized request.'); // Don't redirect
+      console.warn("Unauthorized request."); // Don't redirect
     }
 
     return Promise.reject(error);

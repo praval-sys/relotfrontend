@@ -2,125 +2,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import AdminLayout from "../page";
-import {
-  Chart as ChartJS,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+import api from "../../../lib/api";
 import { useRef } from "react";
-import { FaShoppingCart, FaStar, FaComment, FaGem } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-
-ChartJS.register(
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  Legend,
-  Filler
-);
+import { MdEdit } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
 const pageSize = 5;
-
-const stats = [
-  {
-    icon: <FaShoppingCart className="text-white" />,
-    bg: "bg-blue-600",
-    title: "Top Sales",
-    user: "Johnathan Doe",
-    growth: "+68%",
-  },
-  {
-    icon: <FaStar className="text-black" />,
-    bg: "bg-yellow-400",
-    title: "Best Seller",
-    user: "MaterialPro Admin",
-    growth: "+68%",
-  },
-  {
-    icon: <FaComment className="text-white" />,
-    bg: "bg-green-500",
-    title: "Most Commented",
-    user: "Ample Admin",
-    growth: "+68%",
-  },
-  {
-    icon: <FaGem className="text-white" />,
-    bg: "bg-blue-400",
-    title: "Top Budgets",
-    user: "Sunil Joshi",
-    growth: "+15%",
-  },
-];
 
 export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsData, setProductsData] = useState([]);
   const chartRef = useRef(null);
-  const [gradient, setGradient] = useState(null);
+
   const router = useRouter();
-
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-    datasets: [
-      {
-        label: "Monthly Sales",
-        data: [3, 2, 2, 6, 4],
-        fill: true,
-        backgroundColor: gradient,
-        borderColor: "#3A7BD5",
-        tension: 0.4,
-        pointRadius: 5,
-        pointHoverRadius: 8,
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    animation: {
-      duration: 1500,
-      easing: "easeOutQuart",
-    },
-    plugins: {
-      tooltip: {
-        backgroundColor: "rgba(0,0,0,0.7)",
-        titleColor: "#fff",
-        bodyColor: "#fff",
-        borderColor: "#ddd",
-        borderWidth: 1,
-        cornerRadius: 6,
-      },
-      legend: {
-        labels: {
-          color: "#333",
-          font: {
-            size: 14,
-            family: "Arial",
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { color: "#555" },
-        grid: { color: "rgba(200,200,200,0.2)" },
-      },
-      x: {
-        ticks: { color: "#555" },
-        grid: { display: false },
-      },
-    },
-  };
 
   const totalPages = Math.ceil(productsData.length / pageSize);
   const currentProducts = productsData.slice(
@@ -153,6 +48,12 @@ export default function Products() {
       )}`
     );
   }
+
+  const deleteProduct = async (product) => {
+    debugger;
+    const response = await api.delete(`v1/products/${product.id}`);
+    console.log(response);
+  };
 
   const renderPageNumbers = () => {
     const pages = [];
@@ -200,47 +101,15 @@ export default function Products() {
 
   return (
     <div className="bodyy">
-      <div  style={{
-      marginBottom: "20px",
-      display: "flex",
-      justifyContent: "space-between",
-      gap: "81px"
-    }}>
+      <div
+        style={{
+          marginBottom: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "81px",
+        }}
+      >
         {/* chart */}
-        <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-md">
-          <Line ref={chartRef} data={data} options={options} />
-        </div>
-        {/* card */}
-        <div className="bg-white shadow rounded-lg p-6 w-full max-w-sm">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h2 className="text-lg font-semibold">Weekly Stats</h2>
-              <p className="text-sm text-gray-500">Average sales</p>
-            </div>
-            <div className="text-gray-400 text-xl">⋯</div>
-          </div>
-
-          <div className="space-y-4">
-            {stats.map((item, index) => (
-              <div className="flex items-center justify-between" key={index}>
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-10 h-10 flex items-center justify-center rounded-full ${item.bg}`}
-                  >
-                    {item.icon}
-                  </div>
-                  <div>
-                    <div className="font-medium">{item.title}</div>
-                    <div className="text-sm text-gray-500">{item.user}</div>
-                  </div>
-                </div>
-                <span className="bg-gray-100 text-sm font-semibold px-2 py-1 rounded">
-                  {item.growth}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       <div className="flex flex-col w-full justify-center h-full">
@@ -307,7 +176,13 @@ export default function Products() {
                           className="text-purple-600 hover:underline"
                           onClick={() => editProduct(product)}
                         >
-                          Edit
+                          <MdEdit />
+                        </button>
+                        <button
+                          className="text-purple-600 hover:underline"
+                          onClick={() => deleteProduct(product)}
+                        >
+                          <MdDelete />
                         </button>
                       </td>
                     </tr>
