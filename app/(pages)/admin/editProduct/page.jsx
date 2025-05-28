@@ -63,8 +63,8 @@ export default function CreateProductPage() {
     debugger;
     setStatus("Submitting...");
     try {
-      const res = await api.put("/v1/products/", formData);
-      if (res.status != 201) throw new Error("Failed to create product");
+      const res = await api.put(`/v1/products/${formData.id}`, formData);
+      if (res.status != 200) throw new Error("Failed to create product");
 
       setStatus(`✅ Product created Successfully`);
     } catch (error) {
@@ -73,7 +73,7 @@ export default function CreateProductPage() {
   };
 
   return (
-    <div >
+    <div>
       <div className="max-w-2xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Edit Poducts</h1>
 
@@ -228,6 +228,19 @@ export default function CreateProductPage() {
           >
             {loading ? "Editing Product..." : "Edit Product"}
           </button>
+          {status && (
+            <div
+              className={`mt-4 text-sm font-medium p-2 rounded ${
+                status.startsWith("✅")
+                  ? "text-green-700 bg-green-100 border border-green-300"
+                  : status.startsWith("❌")
+                  ? "text-red-700 bg-red-100 border border-red-300"
+                  : "text-blue-700 bg-blue-100 border border-blue-300"
+              }`}
+            >
+              {status}
+            </div>
+          )}
         </form>
       </div>
     </div>

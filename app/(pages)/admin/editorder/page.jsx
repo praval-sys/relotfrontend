@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import api from "../../../lib/api";
 
 const OrderDetailsPage = () => {
   const searchParams = useSearchParams();
   const [order, setOrder] = useState();
+  const [status, setStatus] = useState(null);
 
   useEffect(() => {
     const orderParam = searchParams.get("order");
@@ -31,14 +33,19 @@ const OrderDetailsPage = () => {
     setOrder((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Fields:", {
-      deliveryStatus: order.deliveryStatus,
-      paymentStatus: order.paymentStatus,
-      transactionId: order.transactionId,
-    });
-    // Optionally send to backend
+    debugger;
+    console.log(order);
+    setStatus("Submitting...");
+    try {
+      const res = await api.patch(`/v1/order/${order._id}/status`, order);
+      if (res.status != 200) throw new Error("Failed to edit order");
+
+      setStatus(`✅ order edited Successfully`);
+    } catch (error) {
+      setStatus(`❌ Error: ${error.message}`);
+    }
   };
 
   if (!order) return <p>Loading order data...</p>;
@@ -151,6 +158,19 @@ const OrderDetailsPage = () => {
           >
             Save Changes
           </button>
+          {status && (
+            <div
+              className={`mt-4 text-sm font-medium p-2 rounded ${
+                status.startsWith("✅")
+                  ? "text-green-700 bg-green-100 border border-green-300"
+                  : status.startsWith("❌")
+                  ? "text-red-700 bg-red-100 border border-red-300"
+                  : "text-blue-700 bg-blue-100 border border-blue-300"
+              }`}
+            >
+              {status}
+            </div>
+          )}
         </form>
       </div>
     </div>
