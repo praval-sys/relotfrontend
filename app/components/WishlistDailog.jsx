@@ -6,18 +6,20 @@ import { AddWish, RemoveWish, clearWish } from "../redux/reducer/wishSlice";
 import { getWishlist, removeItem, clearWishlist, moveToCart } from "../lib/wishlist";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function WishlistDialog() {
   const wishList = useSelector((state) => state.wish.wishlist) || [];
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const dialogRef = useRef(null);
+  const sidebarRef = useRef(null);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   // Close dialog when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dialogRef.current && !dialogRef.current.contains(event.target)) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
@@ -95,104 +97,131 @@ function WishlistDialog() {
     }
   };
 
+  // Add navigation handler
+  const handleProductClick = (productId) => {
+    setIsOpen(false); // Close sidebar when navigating
+    router.push(`/products/${productId}`);
+  };
+
   return (
-    <div className="relative" ref={dialogRef}>
+    <>
       {/* Wishlist Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+        className="relative p-2 hover:bg-gray-50 rounded-full transition-colors"
       >
-        <Heart className={`h-6 w-6 ${wishList.length > 0 ? 'text-red-500 fill-red-500' : ''}`} />
+        <Heart 
+          className={`h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 
+            ${wishList.length > 0 ? 'text-black' : 'text-gray-500'}`} 
+        />
         {wishList.length > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+          <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
             {wishList.length}
           </span>
         )}
       </button>
 
-      {/* Wishlist Dialog */}
+      {/* Backdrop */}
       {isOpen && (
-        <div className="absolute top-14 right-0 z-50 w-96 bg-white border border-gray-200 rounded-lg shadow-lg">
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Wishlist</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded-full"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-opacity"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        ref={sidebarRef}
+        className={`fixed top-0 right-0 h-full bg-white shadow-xl z-[60] transform transition-transform duration-300 ease-in-out
+          w-full sm:w-[400px] md:w-[450px] lg:w-[500px]
+          ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Header */}
+        <div className="sticky top-0 bg-white z-10 border-b border-gray-100">
+          <div className="flex items-center justify-between p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900">Wishlist</h2>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-2 hover:bg-gray-50 rounded-full text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <X className="h-5 w-5 md:h-6 md:w-6" />
+            </button>
           </div>
 
-          {loading ? (
-            <div className="p-8 flex justify-center">
-              <Loader className="h-6 w-6 animate-spin" />
+          {/* Clear All Button */}
+          {wishList.length > 0 && (
+            <div className="px-4 md:px-6 pb-4">
+              <button
+                onClick={handleClearWishlist}
+                className="text-sm text-red-600 hover:text-red-700 font-medium"
+              >
+                Clear All
+              </button>
             </div>
-          ) : (
-            <>
-              {wishList.length > 0 && (
-                <div className="p-4 border-b border-gray-200">
-                  <button
-                    onClick={handleClearWishlist}
-                    className="text-sm text-red-600 hover:text-red-700"
-                  >
-                    Clear All
-                  </button>
-                </div>
-              )}
-
-              <div className="max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                {wishList.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">
-                    <Heart className="h-12 w-12 mx-auto mb-4 stroke-1" />
-                    <p>Your wishlist is empty</p>
-                  </div>
-                ) : (
-                  <div className="p-4 space-y-4">
-                    {wishList.map((item) => (
-                      <div
-                        key={item._id}
-                        className="flex gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="relative w-20 h-20">
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fill
-                            className="object-cover rounded-md"
-                            sizes="80px"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-sm truncate">{item.name}</h3>
-                          <p className="text-sm text-gray-600">₹{item.price}</p>
-                          <div className="flex gap-2 mt-2">
-                            <button
-                              onClick={() => handleMoveToCart(item.productId)}
-                              className="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-700"
-                            >
-                              <ShoppingCart className="h-4 w-4" />
-                              Move to Cart
-                            </button>
-                            <button
-                              onClick={() => handleRemoveItem(item.productId)}
-                              className="text-xs text-red-600 hover:text-red-700"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
           )}
         </div>
-      )}
-    </div>
+
+        {/* Content */}
+        <div className="h-[calc(100vh-140px)] overflow-y-auto">
+          {loading ? (
+            <div className="h-full flex items-center justify-center">
+              <Loader className="h-6 w-6 animate-spin text-gray-600" />
+            </div>
+          ) : wishList.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+              <Heart className="h-12 w-12 mb-4 text-gray-400" />
+              <p className="text-gray-600">Your wishlist is empty</p>
+            </div>
+          ) : (
+            <div className="p-4 md:p-6 space-y-4">
+              {wishList.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  {/* Update image container with click handler and cursor pointer */}
+                  <div 
+                    className="relative w-20 h-20 md:w-24 md:h-24 flex-shrink-0 cursor-pointer"
+                    onClick={() => handleProductClick(item.productId)}
+                  >
+                    <Image
+                      src={item.image || '/placeholder.png'}
+                      alt={item.name}
+                      fill
+                      className="object-cover rounded-md hover:opacity-75 transition-opacity"
+                      sizes="(max-width: 768px) 80px, 96px"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-sm md:text-base text-gray-900 truncate">
+                      {item.name}
+                    </h3>
+                    <p className="text-sm md:text-base text-gray-700 mt-1">
+                      ₹{item.price}
+                    </p>
+                    <div className="flex flex-wrap gap-3 mt-3">
+                      <button
+                        onClick={() => handleMoveToCart(item.productId)}
+                        className="flex items-center gap-2 px-3 py-1.5 text-xs md:text-sm text-gray-700 hover:text-gray-900 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                        Move to Cart
+                      </button>
+                      <button
+                        onClick={() => handleRemoveItem(item.productId)}
+                        className="px-3 py-1.5 text-xs md:text-sm text-red-600 hover:text-red-700 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 
