@@ -8,10 +8,8 @@ const AuthContext = createContext({});
 
 // Protected route prefixes (similar to middleware)
 const PROTECTED_PREFIXES = [
-  '/userprofile',
-  '/dashboard',
+  '/profile',
   '/settings',
-  '/my-account',
   '/orders',
   '/checkout',
   '/admin'

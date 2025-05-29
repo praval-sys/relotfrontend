@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 
 // Define protected route "prefixes" (dynamic groups)
 const PROTECTED_PREFIXES = [
-  '/userprofile',
-  '/dashboard',
+  '/profile',
+  '/admin',
   '/settings',
-  '/my-account',
   '/orders',
+  '/checkout'
 ];
 
 export function middleware(request) {

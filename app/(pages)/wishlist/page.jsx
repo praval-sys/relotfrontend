@@ -1,206 +1,141 @@
 "use client";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { getWishlist, removeItem, clearWishlist, moveToCart } from "../../lib/wishlist";
+import { RemoveWish, clearWish } from "../../redux/reducer/wishSlice";
+import { ShoppingCart, Trash2, X } from "lucide-react";
+import toast from "react-hot-toast";
 
-function wishlist({clearWholeWish}) {
-  const token = useSelector((state) => state.auth.token);
-  const [products, setProducts] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+export default function WishlistPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const wishlistItems = useSelector((state) => state.wish.wishlist);
+  const [loading, setLoading] = useState(false);
 
-  const deleteFromList = async (itemId) => {
-    console.log("Token:", token);
-    debugger
+  // Handlers
+  const handleRemoveItem = async (productId) => {
     try {
-      const res = await axios.delete(
-        `http://localhost:3000/v1/wish/remove/${itemId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setProducts((prevProducts) =>
-        prevProducts.filter((item) => item.productId !== itemId)
-      );
-      console.log("Item deleted:", res.data);
+      setLoading(true);
+      await removeItem(productId);
+      dispatch(RemoveWish(productId));
+      toast.success("Item removed from wishlist");
     } catch (error) {
-      console.log("Cannot delete items");
+      toast.error("Failed to remove item");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const ClearWishList = async () => {
-    clearWholeWish(clearWish());
+  const handleClearWishlist = async () => {
     try {
-      const res = await axios.delete("http://localhost:3000/v1/wish/clear", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setProducts((prevProducts) =>
-        prevProducts.filter((item) => item.productId !== itemId)
-      );
-      console.log("Items deleted:", res.data);
+      setLoading(true);
+      await clearWishlist();
+      dispatch(clearWish());
+      toast.success("Wishlist cleared");
     } catch (error) {
-      console.log("Error in ClearWishList", error);
+      toast.error("Failed to clear wishlist");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      debugger
-      try {
-        const res = await axios.get(`http://localhost:3000/v1/wish/`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // <-- Add your token here
-          },
-        }); // or full URL
-        const items = res.data?.data?.items || [];
+  const handleMoveToCart = async (productId) => {
+    try {
+      setLoading(true);
+      await moveToCart(productId);
+      dispatch(RemoveWish(productId));
+      toast.success("Item moved to cart");
+    } catch (error) {
+      toast.error("Failed to move item to cart");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // Convert array to object (by product ID)
-
-        setProducts(items);
-        console.log(products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-    console.log(token);
-    fetchProducts();
-  }, []);
+  const handleProductClick = (productId) => {
+    router.push(`/products/${productId}`);
+  };
 
   return (
-    // <div className="min-h-screen bg-gray-100 py-10 px-4">
-    //   <h1 className="text-3xl font-bold text-center mb-8">Your Wishlist</h1>
-
-    //   <div className="max-w-4xl mx-auto mb-6 text-right">
-    //     <button
-    //       className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-    //       onClick={() => ClearWishList()}
-    //     >
-    //       Clear Wishlist
-    //     </button>
-    //   </div>
-
-    //   <div className="max-w-4xl mx-auto space-y-6">
-    //     {Object.values(products).map((item) => (
-    //       <div
-    //         key={item.productId}
-    //         className="flex bg-white rounded-xl shadow-md overflow-hidden"
-    //       >
-    //         <div className="w-32 h-32 relative shrink-0">
-    //           <img
-    //             src={item.image}
-    //             alt={item.name}
-    //             className="w-full h-full object-cover"
-    //           />
-    //         </div>
-
-    //         <div className="flex-1 p-4 flex flex-col sm:flex-row sm:items-center justify-between">
-    //           <div>
-    //             <h2 className="text-xl font-semibold">{item.name}</h2>
-    //             <p className="text-gray-500 text-sm mt-1">
-    //               ${item.price.toFixed(2)}
-    //             </p>
-    //           </div>
-
-    //           <div className="flex gap-3 mt-4 sm:mt-0">
-    //             <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-    //               Add to Cart
-    //             </button>
-    //             <button
-    //               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-    //               onClick={() => deleteFromList(item.productId)}
-    //             >
-    //               Remove
-    //             </button>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     ))}
-    //   </div>
-    // </div>
-    <>
-      {/* Wishlist Trigger */}
-      <button
-        className="text-blue-600 hover:underline"
-        onClick={() => setIsOpen(true)}
-      >
-        Wishlist
-      </button>
-
-      {/* Modal Overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          {/* Modal Box */}
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl p-6 relative max-h-[90vh] overflow-y-auto">
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-semibold text-gray-900">My Wishlist</h1>
+          {wishlistItems.length > 0 && (
             <button
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-              onClick={() => setIsOpen(false)}
+              onClick={handleClearWishlist}
+              disabled={loading}
+              className="text-sm text-red-600 hover:text-red-700 font-medium"
             >
-              ✕
+              Clear All
             </button>
+          )}
+        </div>
 
-            <h1 className="text-3xl font-bold text-center mb-8">Your Wishlist</h1>
-
-            <div className="text-right mb-4">
-              <button
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                onClick={() => ClearWishList()}
+        {/* Wishlist Items */}
+        {wishlistItems.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-lg">
+            <p className="text-gray-500">Your wishlist is empty</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {wishlistItems.map((item) => (
+              <div
+                key={item.productId}
+                className="flex gap-4 p-4 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
               >
-                Clear Wishlist
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              {Object.values(products).map((item) => (
-                <div
-                  key={item.productId}
-                  className="flex bg-gray-100 rounded-xl shadow overflow-hidden"
+                {/* Product Image */}
+                <div 
+                  className="relative w-24 h-24 flex-shrink-0 cursor-pointer"
+                  onClick={() => handleProductClick(item.productId)}
                 >
-                  <div className="w-32 h-32 relative shrink-0">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover rounded-md hover:opacity-75 transition-opacity"
+                    sizes="(max-width: 768px) 96px, 96px"
+                  />
+                </div>
 
-                  <div className="flex-1 p-4 flex flex-col sm:flex-row sm:items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-semibold">{item.name}</h2>
-                      <p className="text-gray-500 text-sm mt-1">
-                        ${item.price.toFixed(2)}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-3 mt-4 sm:mt-0">
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                        Add to Cart
-                      </button>
-                      <button
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                        onClick={() => deleteFromList(item.productId)}
-                      >
-                        Remove
-                      </button>
-                    </div>
+                {/* Product Details */}
+                <div className="flex-1 min-w-0">
+                  <h3 
+                    className="font-medium text-gray-900 hover:text-black cursor-pointer"
+                    onClick={() => handleProductClick(item.productId)}
+                  >
+                    {item.name}
+                  </h3>
+                  <p className="text-gray-700 mt-1">₹{item.price}</p>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 mt-3">
+                    <button
+                      onClick={() => handleMoveToCart(item.productId)}
+                      disabled={loading}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 bg-gray-50 rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Move to Cart
+                    </button>
+                    <button
+                      onClick={() => handleRemoveItem(item.productId)}
+                      disabled={loading}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:text-red-700 bg-red-50 rounded-full border border-red-100 hover:border-red-200 transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Remove
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
-    </>
+        )}
+      </div>
+    </div>
   );
 }
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    clearWholeWish: () => dispatch(clearWholeWish()),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(wishlist);

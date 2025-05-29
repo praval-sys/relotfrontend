@@ -15,6 +15,7 @@ import CartButton from "./cartButton"
 import WishlistButton from "./WishListButton"
 
 import { languages, menuData } from "../../../data/navbarData"
+import AnnouncementBar from "./AnnouncementBar"
 
 const Navbar = ({ className }) => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -54,41 +55,63 @@ const Navbar = ({ className }) => {
   }
 
   return (
-    <header className="w-full border-b border-gray-200 fixed top-[40px] left-0 right-0 bg-white shadow-md z-40">
-      {/* Top navbar */}
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Mobile menu toggle */}
-        <button
-          className="md:hidden p-2 rounded-md hover:bg-gray-100"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+    <header className="w-full fixed top-0 left-0 right-0 bg-white z-40">
+      {/* Announcement Bar */}
+      <AnnouncementBar/>
 
-        {/* Logo */}
-        <NavbarLogo />
+      {/* Main Navbar */}
+      <div className="fixed top-[40px] left-0 right-0 bg-white z-40 border-b border-gray-200 shadow-md">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between gap-4">
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden p-2 rounded-md hover:bg-gray-100"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
 
-        {/* Search Bar (hidden on mobile) */}
-        <div className="hidden md:flex flex-1 max-w-xl mx-4">
-          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleSearch={handleSearch} />
+            {/* Search Bar - Now First */}
+            <div className="hidden md:flex flex-1 max-w-xl">
+              <SearchBar 
+                searchQuery={searchQuery} 
+                setSearchQuery={setSearchQuery} 
+                handleSearch={handleSearch} 
+              />
+            </div>
+
+            {/* Logo - Now in Middle */}
+            <div className="flex-shrink-0">
+              <NavbarLogo />
+            </div>
+
+            {/* Icons - Now Last */}
+            <div className="flex items-center space-x-4">
+              <UserNavigation />
+              <WishlistButton />
+              <CartButton />
+            </div>
+          </div>
         </div>
 
-        {/* Icons */}
-        <div className="flex items-center space-x-4">
-          {/* Auth */}
-          <UserNavigation  />
-
-          {/* Wishlist */}
-          <WishlistButton />
-
-          {/* Cart */}
-          <CartButton />
-        </div>
+        {/* Desktop Navigation Menu */}
+        <nav className="hidden md:block container mx-auto px-4 py-2 border-t border-gray-100">
+          <ul className="flex items-center space-x-6">
+            <DesktopMenu 
+              menuData={menuData} 
+              activeSubmenu={activeSubmenu} 
+              setActiveSubmenu={setActiveSubmenu} 
+            />
+          </ul>
+        </nav>
       </div>
 
       {/* Mobile menu overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)}></div>
+        <div 
+          className="fixed inset-0 z-50 bg-black bg-opacity-50" 
+          onClick={() => setMobileMenuOpen(false)}
+        ></div>
       )}
 
       {/* Mobile menu */}
@@ -105,24 +128,6 @@ const Navbar = ({ className }) => {
         languages={languages}
         handleLanguageChange={handleLanguageChange}
       />
-
-      {/* Desktop Navigation Menu */}
-      <nav className="hidden md:block container mx-auto px-4 py-2">
-        <ul className="flex items-center space-x-6">
-          <DesktopMenu menuData={menuData} activeSubmenu={activeSubmenu} setActiveSubmenu={setActiveSubmenu} />
-
-          {/* Language Selector */}
-          <li className="relative ml-auto">
-            <LanguageSelector
-              currentLanguage={currentLanguage}
-              languages={languages}
-              isDropdownOpen={isLanguageDropdownOpen}
-              setIsDropdownOpen={setIsLanguageDropdownOpen}
-              handleLanguageChange={handleLanguageChange}
-            />
-          </li>
-        </ul>
-      </nav>
     </header>
   )
 }
