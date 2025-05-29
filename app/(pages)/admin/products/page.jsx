@@ -25,11 +25,10 @@ export default function Products() {
 
   useEffect(() => {
     const getAllProducts = async () => {
-      const response = await axios.get("http://localhost:3000/v1/products");
+      const response = await api.get("/v1/products");
       console.log(response.data.data);
       setProductsData(response.data.data);
     };
-    debugger;
     getAllProducts();
     if (!chartRef.current) return;
 
@@ -50,7 +49,6 @@ export default function Products() {
   }
 
   const deleteProduct = async (product) => {
-    debugger;
     const response = await api.delete(`v1/products/${product.id}`);
     console.log(response);
   };
