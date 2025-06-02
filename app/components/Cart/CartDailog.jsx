@@ -5,7 +5,7 @@ import { ShoppingCart, X, Plus, Minus, Trash2, Eye } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { setCartItems, updateCartItemQuantity, removeItemFromCart } from "../../redux/actions/cartActions";
+import { setCartItems, setCartTotal, updateCartItemQuantity, removeItemFromCart } from "../../redux/actions/cartActions";
 import { getCart, updateCartItem, removeCartItem } from "../../lib/cart";
 
 
@@ -23,8 +23,9 @@ export default function CartDialog() {
       try {
         setLoading(true);
         const response = await getCart();
-        if (response.success && response.data.items) {
+        if (response.success && response.data) {
           dispatch(setCartItems(response.data.items));
+          dispatch(setCartTotal(response.data.totalPrice));
         }
       } catch (error) {
         if (error.response?.status === 401) {
@@ -64,11 +65,12 @@ export default function CartDialog() {
 
     try {
       setLoading(true);
-      // Try to update backend first
-      await updateCartItem(item.productId, newQuantity);
-      // Update Redux store
-      dispatch(updateCartItemQuantity(item.productId, newQuantity));
-      toast.success("Quantity updated");
+      const response = await updateCartItem(item.productId, newQuantity);
+      if (response.success) {
+        dispatch(setCartItems(response.data.items));
+        dispatch(setCartTotal(response.data.totalPrice));
+        toast.success("Quantity updated");
+      }
     } catch (error) {
       if (error.response?.status === 401) {
         // User is not logged in - just update Redux
@@ -86,11 +88,12 @@ export default function CartDialog() {
   const handleRemoveItem = async (itemId) => {
     try {
       setLoading(true);
-      // Try to update backend first
-      await removeCartItem(itemId.productId);
-      // Update Redux store
-      dispatch(removeItemFromCart(itemId.productId));
-      toast.success("Item removed from cart");
+      const response = await removeCartItem(itemId.productId);
+      if (response.success) {
+        dispatch(setCartItems(response.data.items));
+        dispatch(setCartTotal(response.data.totalPrice));
+        toast.success("Item removed from cart");
+      }
     } catch (error) {
       if (error.response?.status === 401) {
         // User is not logged in - just update Redux
@@ -121,9 +124,8 @@ export default function CartDialog() {
     router.push(`/products/${productId}`);
   };
 
-  // Update the total amount calculation to use the backend total if available
-  const totalAmount = useSelector((state) => state.cart.totalPrice) ||
-    cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  // Replace the existing totalAmount calculation with direct selector
+  const totalAmount = useSelector((state) => state.cart.totalPrice);
 
   return (
     <>
@@ -186,7 +188,7 @@ export default function CartDialog() {
             <div className="p-4 md:p-6 space-y-4">
               {cartItems.map((item) => (
                 <div
-                  key={item._id}
+                  key={item.productId}
                   className="flex gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   {/* Update image container with click handler */}
@@ -206,9 +208,27 @@ export default function CartDialog() {
                     <h3 className="font-medium text-sm md:text-base text-gray-900 truncate">
                       {item.name}
                     </h3>
-                    <p className="text-sm md:text-base text-gray-700 mt-1">
-                      ₹{item.price}
-                    </p>
+                    
+                    {/* Price Display with Discount */}
+                    <div className="mt-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm md:text-base font-medium text-gray-900">
+                          ₹{(item.finalPrice || item.price).toFixed(2)}
+                        </p>
+                        {item.discount > 0 && (
+                          <>
+                            <p className="text-sm text-gray-500 line-through">
+                              ₹{item.price.toFixed(2)}
+                            </p>
+                            <span className="text-xs px-1.5 py-0.5 bg-red-100 text-red-600 rounded">
+                              {item.discount}% OFF
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Quantity Controls */}
                     <div className="flex items-center gap-3 mt-3">
                       <div className="flex items-center bg-white rounded-full border border-gray-200">
                         <button
@@ -247,12 +267,26 @@ export default function CartDialog() {
         {/* Footer */}
         {cartItems.length > 0 && (
           <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 md:p-6 space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-base md:text-lg font-medium text-gray-900">Total:</span>
-              <span className="text-base md:text-lg font-semibold text-gray-900">
-                ₹{totalAmount.toFixed(2)}
-              </span>
+            <div className="space-y-2">
+              {cartItems.some(item => item.discount > 0) && (
+                <div className="flex items-center justify-between text-sm text-green-600">
+                  <span>Total Savings:</span>
+                  <span>
+                    ₹{cartItems.reduce((sum, item) => 
+                      sum + ((item.price - (item.finalPrice || item.price)) * (item.quantity || 1)), 0
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <span className="text-base md:text-lg font-medium text-gray-900">Total:</span>
+                <span className="text-base md:text-lg font-semibold text-gray-900">
+                  ₹{totalAmount.toFixed(2)}
+                </span>
+              </div>
             </div>
+
+            {/* Existing action buttons */}
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={handleViewCart}

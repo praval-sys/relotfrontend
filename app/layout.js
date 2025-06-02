@@ -9,12 +9,14 @@ import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
-import { Raleway } from 'next/font/google';
+import localFont from 'next/font/local';
+
 
 // Configure Raleway font
-const raleway = Raleway({
-  subsets: ['latin'],
+const customFont = localFont({
+  src: '../app/font/fonnts.com-244192/fonts/fonnts.com-Newbery_Sans_Pro_Light.otf',
   display: 'swap',
+  variable: '--font-custom' // This creates a CSS variable
 });
 
 function LayoutContent({ children }) {
@@ -30,11 +32,9 @@ function LayoutContent({ children }) {
           <Navbar />
         </div>
       )}
-      <main 
-        className={`relative ${
-          showLayout ? 'pt-[140px] md:pt-[140px] lg:pt-[168px]' : ''
-        } min-h-screen w-full overflow-x-hidden`}
-      >
+      <main className={`${
+  showLayout ? 'pt-[144px] md:pt-[160px]' : ''
+} min-h-screen w-full overflow-x-hidden`}>
         {children}
       </main>
       <Toaster position="bottom-right" />
@@ -45,7 +45,7 @@ function LayoutContent({ children }) {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={raleway.className}>
+    <html lang="en" className={customFont.className}>
       <body className="antialiased">
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>

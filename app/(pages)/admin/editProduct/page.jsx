@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Upload, X } from "lucide-react";
 
-export default function CreateProductPage() {
+export default function EditProductPage() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +14,7 @@ export default function CreateProductPage() {
     category: "",
     images: [],
     stock: 0,
+    discount: 0, // Added discount field
   });
   const [status, setStatus] = useState(null);
 
@@ -39,6 +40,7 @@ export default function CreateProductPage() {
           images: Array.isArray(decoded.images)
             ? decoded.images
             : [decoded.images],
+          discount: decoded.discount || 0, // Initialize discount
         });
       } catch (error) {
         console.error("Error decoding product:", error);
@@ -48,14 +50,21 @@ export default function CreateProductPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Handle array fields like images
     if (name === "images") {
       setFormData({ ...formData, [name]: value.split(",") });
-    } else if (name === "price" || name === "stock") {
-      setFormData({ ...formData, [name]: parseFloat(value) });
+    } else if (["price", "stock", "discount"].includes(name)) {
+      // Handle numeric fields including discount
+      const numValue = parseFloat(value);
+      setFormData({ ...formData, [name]: numValue });
     } else {
       setFormData({ ...formData, [name]: value });
     }
+  };
+
+  // Calculate final price
+  const calculateFinalPrice = () => {
+    const { price, discount } = formData;
+    return price * (1 - discount / 100);
   };
 
   const handleSubmit = async (e) => {
@@ -75,7 +84,7 @@ export default function CreateProductPage() {
   return (
     <div>
       <div className="max-w-2xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Edit Poducts</h1>
+        <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info Section */}
@@ -127,6 +136,43 @@ export default function CreateProductPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Discount (%){" "}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    name="discount"
+                    value={formData.discount}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Price Summary */}
+              {formData.discount > 0 && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-md">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Original Price:</span>
+                    <span className="text-sm text-gray-900">₹{formData.price}</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-sm text-gray-600">Discount:</span>
+                    <span className="text-sm text-red-600">-{formData.discount}%</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-1 font-medium">
+                    <span className="text-sm text-gray-900">Final Price:</span>
+                    <span className="text-sm text-gray-900">
+                      ₹{calculateFinalPrice().toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Stock *
                   </label>
                   <input
@@ -139,25 +185,24 @@ export default function CreateProductPage() {
                     className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category *
-                </label>
-                <select
-                  required
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select Category</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="accessories">Accessories</option>
-                  <option value="bags">Bags</option>
-                  <option value="shoes">Shoes</option>
-                </select>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Category *
+                  </label>
+                  <select
+                    required
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="bags">Bags</option>
+                    <option value="shoes">Shoes</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -226,8 +271,9 @@ export default function CreateProductPage() {
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {loading ? "Editing Product..." : "Edit Product"}
+            {loading ? "Saving Changes..." : "Save Changes"}
           </button>
+
           {status && (
             <div
               className={`mt-4 text-sm font-medium p-2 rounded ${

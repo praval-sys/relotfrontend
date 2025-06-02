@@ -1,11 +1,9 @@
-export default function AnnouncementBar({className}) {
+export default function AnnouncementBar() {
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 bg-black text-white">
-      <div className={`py-2 w-full text-center text-sm ${className}`}>
-        <p className="text-sm md:text-base px-4">
-          Free Shipping on Orders Above ₹2000 · Exclusive Members-Only Sale
-        </p>
-      </div>
+    <div className="h-full flex items-center justify-center bg-black text-white">
+      <p className="text-xs md:text-sm px-4 truncate font-extrabold">
+        Free Shipping on Orders Above ₹2000 · Exclusive Members-Only Sale
+      </p>
     </div>
   )
 }

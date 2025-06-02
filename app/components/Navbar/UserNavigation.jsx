@@ -66,7 +66,7 @@ const UserNavigation = () => {
     
       <div
         ref={sidebarRef}
-        className={`fixed top-0 -right-4 h-screen w-[280px] md:w-[380px] bg-white z-[60] 
+        className={`fixed top-0 -right-4 h-screen w-[280px] md:w-[380px] bg-white z-[80] 
           transform transition-transform ease-in-out duration-300 ${
             isSidebarOpen ? 'translate-x-4' : 'translate-x-full'
           }`}

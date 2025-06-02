@@ -1,6 +1,10 @@
+"use client";
+import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import { getOrderById } from '../../../lib/orders';
-import { PackageCheck, Truck, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { PackageCheck, Truck, CheckCircle2, Clock, AlertCircle, Download } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import api from '../../../lib/api';
 
 const STATUS_STYLES = {
   pending: { icon: Clock, className: 'text-yellow-600 bg-yellow-50' },
@@ -9,10 +13,82 @@ const STATUS_STYLES = {
   cancelled: { icon: AlertCircle, className: 'text-red-600 bg-red-50' }
 };
 
-export default async function OrderPage({ params }) {
-  const resolvedParams = await params;
-  const orderData = await getOrderById(resolvedParams.slug);
-  const order = orderData.data;
+export default function OrderPage({ params }) {
+  // Unwrap params using React.use()
+  const resolvedParams = use(params);
+  const orderId = resolvedParams.slug;
+  
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrderData = async () => {
+      try {
+        setLoading(true);
+        const orderData = await getOrderById(orderId);
+        if (orderData.success) {
+          setOrder(orderData.data);
+        } else {
+          setError('Failed to fetch order details');
+        }
+      } catch (error) {
+        setError(error.message || 'Something went wrong');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderData();
+  }, [orderId]);
+
+  const handleDownloadInvoice = async () => {
+  try {
+    const response = await api.get(`/v1/user/orders/${orderId}/invoice`, {
+      responseType: 'blob',
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `invoice-${orderId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Failed to download invoice:", error);
+  }
+};
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Order not found</p>
+        </div>
+      </div>
+    );
+  }
 
   const StatusIcon = STATUS_STYLES[order.deliveryStatus.toLowerCase()]?.icon || PackageCheck;
   const statusClassName = STATUS_STYLES[order.deliveryStatus.toLowerCase()]?.className || 'text-gray-600 bg-gray-50';
@@ -34,9 +110,18 @@ export default async function OrderPage({ params }) {
                 })}
               </p>
             </div>
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusClassName}`}>
-              <StatusIcon className="h-5 w-5" />
-              <span className="text-sm font-medium capitalize">{order.deliveryStatus}</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleDownloadInvoice}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+              >
+                <Download className="h-4 w-4" />
+                <span>Download Invoice</span>
+              </button>
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${statusClassName}`}>
+                <StatusIcon className="h-5 w-5" />
+                <span className="text-sm font-medium capitalize">{order.deliveryStatus}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -63,7 +148,19 @@ export default async function OrderPage({ params }) {
                   <div className="flex-grow">
                     <h3 className="font-medium text-gray-900">{item.name}</h3>
                     <p className="text-sm text-gray-500 mt-1">Quantity: {item.quantity}</p>
-                    <p className="text-sm font-medium text-gray-900 mt-1">₹{item.price}</p>
+                    <div className="mt-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-gray-900">₹{item.finalPrice}</p>
+                        {item.discount > 0 && (
+                          <>
+                            <p className="text-sm text-gray-500 line-through">₹{item.price}</p>
+                            <span className="text-xs px-1.5 py-0.5 bg-red-100 text-red-600 rounded">
+                              {item.discount}% OFF
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -83,8 +180,24 @@ export default async function OrderPage({ params }) {
                   <span className="text-gray-500">Payment Status</span>
                   <span className="font-medium text-gray-900 capitalize">{order.paymentStatus}</span>
                 </div>
-                <div className="pt-2 border-t border-gray-100">
-                  <div className="flex justify-between text-base font-medium">
+                
+                {/* Price Breakdown */}
+                <div className="pt-2 mt-2 border-t border-gray-100 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Subtotal</span>
+                    <span className="text-gray-900">₹{order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0)}</span>
+                  </div>
+                  {order.items.some(item => item.discount > 0) && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Discount</span>
+                      <span className="text-green-600">-₹{
+                        order.items.reduce((acc, item) => 
+                          acc + ((item.price - item.finalPrice) * item.quantity), 0
+                        )
+                      }</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-base font-medium pt-2 border-t border-gray-100">
                     <span className="text-gray-900">Total Amount</span>
                     <span className="text-gray-900">₹{order.totalAmount}</span>
                   </div>

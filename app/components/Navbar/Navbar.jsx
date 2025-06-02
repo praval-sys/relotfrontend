@@ -24,6 +24,9 @@ const Navbar = ({ className }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [activeSubmenu, setActiveSubmenu] = useState(null)
   const [currentLanguage, setCurrentLanguage] = useState(languages[0])
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [hideHeader, setHideHeader] = useState(false);
 
   const { user, logout } = useAuth()
   const cartTotalQuantity = useSelector((state) => state.cart.totalQuantity)
@@ -43,6 +46,18 @@ const Navbar = ({ className }) => {
     }
   }, [])
 
+  // Update the useEffect scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 50); // Reduced threshold for earlier transition
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault()
     console.log("Searching for:", searchQuery)
@@ -55,54 +70,70 @@ const Navbar = ({ className }) => {
   }
 
   return (
-    <header className="w-full fixed top-0 left-0 right-0 bg-white z-40">
-      {/* Announcement Bar */}
-      <AnnouncementBar/>
+    <header className="w-full">
+      {/* Announcement Bar - Absolute positioned */}
+      <div 
+        className={`w-full bg-black transition-all duration-300 ease-in-out fixed top-0 
+          ${isScrolled ? '-translate-y-full' : 'translate-y-0'}`}
+      >
+        <div className="h-8 md:h-10">
+          <AnnouncementBar />
+        </div>
+      </div>
 
-      {/* Main Navbar */}
-      <div className="fixed top-[40px] left-0 right-0 bg-white z-40 border-b border-gray-200 shadow-md">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between gap-4">
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 rounded-md hover:bg-gray-100"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+      {/* Main Navbar - Fixed positioned */}
+      <div className={`w-full fixed z-40 bg-white transition-all duration-300
+        ${isScrolled ? 'top-0 shadow-md' : 'top-[32px] md:top-[40px]'}`}
+      >
+        {/* Upper Section (Logo, Search, Icons) */}
+        <div className={`w-full bg-white transition-all duration-300 overflow-hidden border-b border-gray-200
+          ${isScrolled ? 'h-0 opacity-0' : 'h-auto opacity-100'}`}
+        >
+          <div className="container mx-auto px-4 py-3 md:py-4">
+            <div className="flex items-center justify-between gap-4">
+              {/* Mobile menu button */}
+              <button
+                className="md:hidden p-2 rounded-md hover:bg-gray-100"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
 
-            {/* Search Bar - Now First */}
-            <div className="hidden md:flex flex-1 max-w-xl">
-              <SearchBar 
-                searchQuery={searchQuery} 
-                setSearchQuery={setSearchQuery} 
-                handleSearch={handleSearch} 
-              />
-            </div>
+              {/* Search Bar - Now First */}
+              <div className="hidden md:flex flex-1 max-w-xl">
+                <SearchBar 
+                  searchQuery={searchQuery} 
+                  setSearchQuery={setSearchQuery} 
+                  handleSearch={handleSearch} 
+                />
+              </div>
 
-            {/* Logo - Now in Middle */}
-            <div className="flex-shrink-0">
-              <NavbarLogo />
-            </div>
+              {/* Logo - Now in Middle */}
+              <div className="flex-shrink-0">
+                <NavbarLogo />
+              </div>
 
-            {/* Icons - Now Last */}
-            <div className="flex items-center space-x-4">
-              <UserNavigation />
-              <WishlistButton />
-              <CartButton />
+              {/* Icons - Now Last */}
+              <div className="flex items-center space-x-2 md:space-x-4 ">
+                <UserNavigation />
+                <WishlistButton />
+                <CartButton />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Desktop Navigation Menu */}
-        <nav className="hidden md:block container mx-auto px-4 py-2 border-t border-gray-100">
-          <ul className="flex items-center space-x-6">
-            <DesktopMenu 
-              menuData={menuData} 
-              activeSubmenu={activeSubmenu} 
-              setActiveSubmenu={setActiveSubmenu} 
-            />
-          </ul>
+        {/* Navigation Menu - Always Visible */}
+        <nav className="hidden md:block bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 py-3">
+            <ul className="flex items-center space-x-6">
+              <DesktopMenu 
+                menuData={menuData} 
+                activeSubmenu={activeSubmenu} 
+                setActiveSubmenu={setActiveSubmenu} 
+              />
+            </ul>
+          </div>
         </nav>
       </div>
 

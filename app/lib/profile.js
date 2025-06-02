@@ -18,12 +18,23 @@ export const updateProfile = async (data) => {
   }
 };
 
+// Replace your current requestEmailVerification with this:
 export const requestEmailVerification = async () => {
   try {
-    const response = await api.post('/profile/email-verification');
+    const response = await api.post('/v1/user/verify-email/request'); // Add the endpoint here
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to request verification');
+  }
+};
+
+// Add this to your API file where you have requestEmailVerification
+export const verifyEmailWithToken = async (token) => {
+  try {
+    const response = await api.post(`/v1/user/verify-email/${token}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to verify email');
   }
 };
 

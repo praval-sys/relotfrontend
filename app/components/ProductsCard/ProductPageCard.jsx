@@ -29,6 +29,7 @@ function ProductPageCard({ product, addItem, AddWishh }) {
       productId: product._id,
       name: product.name,
       price: product.price,
+      discount: product.discount,
       quantity: 1,
       image: product.images?.[0] || product.image || '/placeholder.png'
     }]
@@ -37,6 +38,7 @@ function ProductPageCard({ product, addItem, AddWishh }) {
       productId: product._id,
       name: product.name,
       price: product.price,
+      discount: product.discount,
       quantity: 1,
       image: product.images?.[0] || product.image || '/placeholder.png'
   }
@@ -109,6 +111,10 @@ function ProductPageCard({ product, addItem, AddWishh }) {
     }
   }
 
+  // Calculate final price with discount
+  const finalPrice = product.discount > 0 
+    ? product.price * (1 - product.discount / 100)
+    : product.price;
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
@@ -123,6 +129,12 @@ function ProductPageCard({ product, addItem, AddWishh }) {
           onClick={handleClick}
           unoptimized
         />
+        {/* Discount Badge */}
+        {product.discount > 0 && (
+          <div className="absolute top-3 left-3 bg-red-500 text-white text-sm font-medium px-2 py-1 rounded-full">
+            -{product.discount}% OFF
+          </div>
+        )}
         <button
           onClick={handleAddToWishlist}
           className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white"
@@ -131,7 +143,7 @@ function ProductPageCard({ product, addItem, AddWishh }) {
           <Heart className="w-5 h-5 text-gray-700" />
         </button>
         {product.stock === 0 && (
-          <div className="absolute top-3 left-3 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+          <div className="absolute bottom-3 left-3 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
             Out of stock
           </div>
         )}
@@ -145,18 +157,27 @@ function ProductPageCard({ product, addItem, AddWishh }) {
         {/* Rating */}
         <div className="flex items-center gap-1 mb-3">
           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-          <span className="text-sm text-gray-600">{rating}</span>
+          <span className="text-sm text-gray-600">{product.ratings}</span>
         </div>
 
         {/* Price */}
         <div className="flex items-center justify-between mb-4">
-          <div className="text-lg font-semibold text-gray-900">₹{product.price.toFixed(2)}</div>
+          <div className="flex items-center gap-2">
+            <div className="text-lg font-semibold text-gray-900">
+              ₹{finalPrice.toFixed(2)}
+            </div>
+            {product.discount > 0 && (
+              <div className="text-sm text-gray-500 line-through">
+                ₹{product.price.toFixed(2)}
+              </div>
+            )}
+          </div>
           {product.stock > 0 && (
             <span className="text-sm text-green-600">In Stock</span>
           )}
         </div>
 
-        {/* Actions */}
+        {/* Add to Cart Button */}
         <button
           onClick={handleAddToCart}
           disabled={product.stock === 0}

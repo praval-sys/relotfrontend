@@ -7,12 +7,21 @@
 }
 
 /* Base styles */
+@font-face {
+  font-family: 'CustomFont';
+  src: url('./font/fonnts.com-244192/fonts/fonnts.com-Newbery_Sans_Pro_Light.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Raleway', sans-serif;
+  font-family: 'CustomFont', 'Raleway', sans-serif; /* Updated font stack */
   font-size: 16px; /* base font size for mobile */
   line-height: 1.5;
+  overflow-y: scroll; /* Prevent content shift during header transitions */
 }
 
 /* Responsive font scaling based on screen width */
@@ -37,5 +46,20 @@ body {
 @media (min-width: 1280px) {
   body {
     font-size: 20px;
+  }
+}
+
+/* Add smooth transitions for header elements */
+/* Navbar transitions */
+.header-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Announcement bar transition fix */
+@media (max-width: 768px) {
+  .announcement-transition {
+    transition-property: height;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
   }
 }

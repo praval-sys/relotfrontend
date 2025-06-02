@@ -5,35 +5,102 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { addItemToCart } from '../../redux/actions/cartActions';
+import { addToCart } from '../../lib/cart';
 import { addToWishlist } from '../../lib/wishlist';
 import { toast } from 'react-hot-toast';
 import { connect } from 'react-redux';
+import { AddWish } from '../../redux/reducer/wishSlice';
 
 
-function ProductDetails({ product,addItem }) {
+function ProductDetails({ product, addItem, AddWishh }) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   
+  // Calculate final price with discount
+  const finalPrice = product.discount > 0 
+    ? product.price * (1 - product.discount / 100)
+    : product.price;
+
   const handleAddToCart = async (e) => {
     e.stopPropagation();
+    
+    // Format product data for cart
+    const cartData = {
+      products: [{
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        discount: product.discount,
+        quantity: quantity,
+        image: product.images?.[0] || '/placeholder.png'
+      }]
+    };
+
     const cartItem = {
-      _id: product._id,
+      productId: product._id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0],
-      quantity: 1
+      discount: product.discount,
+      quantity: quantity,
+      image: product.images?.[0] || '/placeholder.png'
     };
-    addItem(cartItem);
-    toast.success('Added to cart!');
-  };
-  
-  const handleAddToWishlist = async () => {
+
     try {
-      await addToWishlist(product.id);
-      toast.success(`${product.name} added to wishlist!`);
+      const response = await addToCart(cartData);
+      
+      if (response.success) {
+        addItem(cartItem);
+        toast.success(response.message || "Added to cart!");
+      }
     } catch (error) {
-      toast.error('Failed to add to wishlist');
-      console.error(error);
+      if (error.response?.status === 401) {
+        addItem(cartItem);
+        toast.success("Added to cart!");
+        return;
+      }
+      
+      if (error.response?.status === 400) {
+        toast.error(error.response.data.message || "Failed to add to cart");
+        return;
+      }
+
+      toast.error("Failed to add to cart. Please try again.");
+      console.error("Cart error:", error);
+    }
+  };
+
+  const handleAddToWishlist = async (e) => {
+    e.stopPropagation();
+    
+    const wishlistItem = {
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0] || '/placeholder.png'
+    };
+
+    try {
+      const response = await addToWishlist(wishlistItem);
+      
+      if (response.success) {
+        AddWishh(wishlistItem);
+        toast.success(response.message || "Added to wishlist!");
+        return;
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        AddWishh(wishlistItem);
+        toast.success("Added to wishlist!");
+        return;
+      } 
+      
+      if (error.response?.status === 400 && error.response?.data?.message === "Item already in wishlist") {
+        toast.error("Item is already in your wishlist!");
+        return;
+      }
+
+      toast.error("Failed to add to wishlist. Please try again.");
+      console.error("Wishlist error:", error);
     }
   };
   
@@ -100,7 +167,22 @@ function ProductDetails({ product,addItem }) {
           <span className="text-sm text-gray-500">({product.ratings || 0} ratings)</span>
         </div>
         
-        <div className="text-2xl font-bold text-blue-600">${product.price.toFixed(2)}</div>
+        {/* Updated Price Section */}
+        <div className="flex items-center gap-4">
+          <div className="text-2xl font-bold text-blue-600">
+            ₹{finalPrice.toFixed(2)}
+          </div>
+          {product.discount > 0 && (
+            <>
+              <div className="text-lg text-gray-500 line-through">
+                ₹{product.price.toFixed(2)}
+              </div>
+              <div className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
+                {product.discount}% OFF
+              </div>
+            </>
+          )}
+        </div>
         
         <div className="py-4">
           <h3 className="font-semibold text-lg mb-2">Description</h3>
@@ -173,11 +255,9 @@ function ProductDetails({ product,addItem }) {
   );
 }
 
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addItem: (item) => dispatch(addItemToCart(item)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  addItem: (item) => dispatch(addItemToCart(item)),
+  AddWishh: (item) => dispatch(AddWish(item)),
+});
 
 export default connect(null, mapDispatchToProps)(ProductDetails);

@@ -2,7 +2,8 @@ import {
   SET_CART_ITEMS, 
   ADD_ITEM_TO_CART, 
   REMOVE_ITEM_FROM_CART, 
-  UPDATE_CART_ITEM_QUANTITY 
+  UPDATE_CART_ITEM_QUANTITY, 
+  SET_CART_TOTAL 
 } from '../types';
 
 const initialState = {
@@ -12,13 +13,16 @@ const initialState = {
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_CART_TOTAL:
+      return {
+        ...state,
+        totalPrice: action.payload
+      };
+
     case SET_CART_ITEMS:
       return {
         ...state,
-        items: action.payload,
-        totalPrice: action.payload.reduce((sum, item) => 
-          sum + (item.price * (item.quantity || 1)), 0
-        )
+        items: action.payload
       };
 
     case ADD_ITEM_TO_CART:

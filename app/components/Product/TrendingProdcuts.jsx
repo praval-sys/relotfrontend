@@ -29,6 +29,10 @@ export default function TrendingProducts({ productId, category }) {
     fetchRelatedProducts();
   }, [productId, category]);
 
+  const calculateFinalPrice = (price, discount) => {
+    return price * (1 - discount / 100);
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -47,7 +51,16 @@ export default function TrendingProducts({ productId, category }) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
       {relatedProducts.map((product) => (
         <Link key={product.id} href={`/products/${product.id}`}>
-          <div className="group border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div className="group border rounded-lg overflow-hidden hover:shadow-lg transition-shadow relative">
+            {/* Discount Badge */}
+            {product.discount > 0 && (
+              <div className="absolute top-3 left-3 z-10">
+                <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  -{product.discount}% OFF
+                </div>
+              </div>
+            )}
+            
             <div className="aspect-square relative">
               {product.images && product.images.length > 0 ? (
                 <Image 
@@ -64,18 +77,51 @@ export default function TrendingProducts({ productId, category }) {
                 </div>
               )}
             </div>
+            
             <div className="p-4">
               <h3 className="font-medium text-lg truncate">{product.name}</h3>
+              
               <div className="flex items-center space-x-1 mt-1">
                 {Array(5).fill(0).map((_, i) => (
                   <Star 
                     key={i}
                     size={14}
-                    className={i < Math.round(product.ratings || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
+                    className={i < Math.round(product.ratings || 0) 
+                      ? "fill-yellow-400 text-yellow-400" 
+                      : "text-gray-300"}
                   />
                 ))}
               </div>
-              <div className="mt-2 font-bold text-blue-600">${product.price.toFixed(2)}</div>
+              
+              {/* Updated Price Display */}
+              <div className="mt-2 flex items-center gap-2">
+                {product.discount > 0 ? (
+                  <>
+                    <span className="font-bold text-lg text-blue-600">
+                      ₹{calculateFinalPrice(product.price, product.discount).toFixed(2)}
+                    </span>
+                    <span className="text-sm text-gray-500 line-through">
+                      ₹{product.price.toFixed(2)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="font-bold text-lg text-blue-600">
+                    ₹{product.price.toFixed(2)}
+                  </span>
+                )}
+              </div>
+
+              {/* Stock Status */}
+              {product.stock <= 5 && product.stock > 0 && (
+                <p className="mt-2 text-xs text-red-500">
+                  Only {product.stock} left!
+                </p>
+              )}
+              {product.stock === 0 && (
+                <p className="mt-2 text-xs text-red-500">
+                  Out of stock
+                </p>
+              )}
             </div>
           </div>
         </Link>

@@ -13,6 +13,7 @@ export default function CreateProductPage() {
     price: 0,
     category: "",
     stock: 0,
+    discount: 0, // Add discount field
   });
 
   const [images, setImages] = useState([]);
@@ -24,7 +25,9 @@ export default function CreateProductPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
+      [name]: ["price", "stock", "discount"].includes(name) 
+        ? parseFloat(value) 
+        : value,
     }));
   };
 
@@ -49,6 +52,7 @@ export default function CreateProductPage() {
       price: 0,
       category: "",
       stock: 0,
+      discount: 0, // Reset discount
     });
     setImages([]);
     setPreviews([]);
@@ -145,6 +149,23 @@ export default function CreateProductPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Discount (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  name="discount"
+                  value={formData.discount}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Stock *
                 </label>
                 <input
@@ -157,26 +178,45 @@ export default function CreateProductPage() {
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category *
+                </label>
+                <select
+                  required
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Category</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="bags">Bags</option>
+                  <option value="shoes">Shoes</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category *
-              </label>
-              <select
-                required
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select Category</option>
-                <option value="clothing">Clothing</option>
-                <option value="accessories">Accessories</option>
-                <option value="bags">Bags</option>
-                <option value="shoes">Shoes</option>
-              </select>
-            </div>
+            {/* Display final price with discount if discount is > 0 */}
+            {formData.discount > 0 && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-md">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Original Price:</span>
+                  <span className="text-sm text-gray-900">₹{formData.price}</span>
+                </div>
+                <div className="flex justify-between items-center mt-1">
+                  <span className="text-sm text-gray-600">Discount:</span>
+                  <span className="text-sm text-red-600">-{formData.discount}%</span>
+                </div>
+                <div className="flex justify-between items-center mt-1 font-medium">
+                  <span className="text-sm text-gray-900">Final Price:</span>
+                  <span className="text-sm text-gray-900">
+                    ₹{(formData.price * (1 - formData.discount / 100)).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
