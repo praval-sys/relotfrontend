@@ -9,7 +9,7 @@ export const footerData = {
   informationTitle: "Information",
   informationLinks: [
     { text: "About", href: "/about" },
-    { text: "Contact Us", href: "/contact" },
+    { text: "Contact Us", href: "/contactus" },
     { text: "FAQ's", href: "/faqs" },
     {
       text: "House of Relot",
