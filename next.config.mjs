@@ -13,8 +13,8 @@ const nextConfig = {
         hostname: 'relot.in',
       },
       {
-        protocol: 'https',
-        hostname: 'example.com',
+        protocol: 'http',
+        hostname: 'localhost',
       },
     ],
   },

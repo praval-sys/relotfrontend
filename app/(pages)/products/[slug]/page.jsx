@@ -1,72 +1,56 @@
 import ProductDetails from '../../../components/Product/ProductDetails';
-import RelatedProducts from '../../../components/Product/RelatedProduct';
 import ProductReviews from '../../../components/Product/ProductReview';
-import AddReview from '../../../components/Product/AddReview'
-import { getProductById} from '../../../lib/products'
-import { getUserReview } from '../../../lib/review';
-//Generate metadata for SEO
-export async function generateMetadata({ params }) {
-  const resolvedParams = await params;
-  const productData = await getProductById(resolvedParams.slug);
-  const product = productData.data;
-  return {
-    title: `${product.name} | YourStore`,
-    description: product.description,
-    openGraph: {
-      title: `${product.name} | YourStore`,
-      description: product.description,
-      images: product.images[0] ? [product.images[0]] : [],
-      type: 'website',
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: product.name,
-      description: product.description,
-      image: product.images,
-      offers: {
-        '@type': 'Offer',
-        price: product.price,
-        priceCurrency: 'USD',
-        availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      }
-    }
-  };
-}
+import AddReview from '../../../components/Product/AddReview';
+import { getProductById } from '../../../lib/products';
 
 export default async function ProductPage({ params }) {
-  // Fetch product data
   const resolvedParams = await params;
   const productData = await getProductById(resolvedParams.slug);
-  const product = productData.data;
+  const product = productData?.data;
 
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Product Not Found</h1>
+          <p className="text-gray-600">The product you are looking for does not exist or is unavailable.</p>
+          <a href="/shop" className="mt-6 inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
+            Go to Shop
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        {/* Product Details Component */}
-        <ProductDetails product={product} />
-        
-        {/* Related Products */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">You might also like</h2>
-          <RelatedProducts productId={product.id} category={product.category} />
-        </div>
-        
-        {/* Product Reviews */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
-          <ProductReviews productId={product.id} />
-        </div>
-        
-        {/* Add Review Form */}
-        <div className="mt-12 mb-8">
-          <h2 className="text-xl font-bold mb-4">Write a Review</h2>
-          <AddReview productId={product.id} />
+    <div className="bg-white">
+      {/* Section 1: Product Details (Two-column layout with sticky media) */}
+      <ProductDetails product={product} />
+
+      {/* Section 2: Reviews & Recommendations (Scrollable section) */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Reviews Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">Customer Reviews</h2>
+              <ProductReviews productId={product.id} />
+            </div>
+            
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">Write a Review</h2>
+              <AddReview productId={product.id} />
+            </div>
+          </div>
+
+          {/* Recommended Products Placeholder */}
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">You might also like</h2>
+            <div className="bg-white rounded-lg p-8 text-center">
+              <p className="text-gray-500">Recommended products will appear here</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

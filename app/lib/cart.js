@@ -30,15 +30,17 @@ export async function updateCartItem(productId, quantity) {
   }
 }
 
-export async function removeCartItem(productId) {
+export async function removeCartItem(productId, variantId) {
   try {
-    const response = await api.delete(`/v1/remove/${productId}`);
+    const queryParams = variantId ? `?variantId=${variantId}` : '';
+    const response = await api.delete(`/v1/remove/${productId}${queryParams}`);
     return response.data;
   } catch (error) {
     console.error("Error removing item from cart:", error);
     throw error;
   }
 }
+
 
 export async function clearCart() {
   try {

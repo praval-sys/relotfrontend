@@ -2,12 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import AdminSideBar from '../../components/AdminSideBar/AdminSideBar';
 import { useAuth } from '../../context/AuthContext';
 
 export default function AdminLayout({ children }) {
-  const isNavExpanded = useSelector((state) => state.sideNav.navOpen);
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -18,19 +16,29 @@ export default function AdminLayout({ children }) {
   }, [user, loading, router]);
 
   if (loading || !user || user.role !== 'ADMIN') {
-    return <div className="p-4">Loading or Unauthorized...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex w-full h-screen">
-      <div
-        className={`transition-all duration-300 bg-gray-900 text-white ${
-          isNavExpanded ? 'w-60' : 'w-16'
-        }`}
-      >
+    <div className="flex w-full h-screen bg-gray-50">
+      {/* Fixed width sidebar */}
+      <div className="w-64 flex-shrink-0">
         <AdminSideBar />
       </div>
-      <div className="flex-1 overflow-auto bg-gray-50 p-4">{children}</div>
+      
+      {/* Main content area */}
+      <div className="flex-1 overflow-auto">
+        <main className="p-6">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

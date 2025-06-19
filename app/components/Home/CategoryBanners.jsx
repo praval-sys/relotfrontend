@@ -9,7 +9,7 @@ export default function CategoryBanners() {
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
             style={{
-              backgroundImage: `url("/Wbag.webp")`,
+              backgroundImage: `url("/images/relot front page img 13-6/womenbags hero.jpg")`,
             }}
           ></div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col items-center justify-end p-8 text-white">
@@ -28,7 +28,7 @@ export default function CategoryBanners() {
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
             style={{
-              backgroundImage: `url("/Mbag.jpg")`,
+              backgroundImage: `url("/images/relot front page img 13-6/men-handbbag (1).avif")`,
             }}
           ></div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col items-center justify-end p-8 text-white">

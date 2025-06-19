@@ -25,46 +25,55 @@ function ProductPageCard({ product, addItem, AddWishh }) {
     
     // Format product data for cart
     const cartData = {
-    products: [{
-      productId: product._id,
-      name: product.name,
-      price: product.price,
-      discount: product.discount,
-      quantity: 1,
-      image: product.images?.[0] || product.image || '/placeholder.png'
-    }]
-  }
+      products: [{
+        product: product._id, // Changed from productId to product to match backend
+        name: product.name,
+        price: product.price,
+        discount: product.discount,
+        quantity: 1,
+        image: product.images?.[0] || product.image || '/placeholder.png',
+        // Only include variantId if product has variants
+        ...(product.hasVariants && product.variants?.length > 0 && {
+          variantId: product.variants[0]._id // Add first variant by default in card view
+        })
+      }]
+    }
+
+    // Format item for Redux store
     const cartItem = {
-      productId: product._id,
+      product: product._id,
       name: product.name,
       price: product.price,
       discount: product.discount,
       quantity: 1,
-      image: product.images?.[0] || product.image || '/placeholder.png'
-  }
+      image: product.images?.[0] || product.image || '/placeholder.png',
+      ...(product.hasVariants && product.variants?.length > 0 && {
+        variantId: product.variants[0]._id,
+        color: product.variants[0].color,
+        size: product.variants[0].size,
+        sku: product.variants[0].sku
+      })
+    }
+
     try {
       const response = await addToCart(cartData)
       
       if (response.success) {
-        // Backend success - item added
-        addItem(cartItem)
+        addItem(response.data.items[0]) // Use the actual item from response
         toast.success(response.message || "Added to cart!")
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        // User is not logged in - just update Redux
         addItem(cartItem)
         toast.success("Added to cart!")
         return
       }
       
       if (error.response?.status === 400) {
-        // Item exists or other validation error
-        toast.error(error.response.data.message || "Failed to add to cart")
+        toast.error(error.response.data?.message || "Failed to add to cart")
         return
       }
 
-      // Other errors
       toast.error("Failed to add to cart. Please try again.")
       console.error("Cart error:", error)
     }
@@ -73,40 +82,44 @@ function ProductPageCard({ product, addItem, AddWishh }) {
   const handleAddToWishlist = async (e) => {
     e.stopPropagation()
     
-    // Format product data for wishlist
-    const wishlistItem = {
-      productId: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.images?.[0] || product.image || '/placeholder.png'
-    }
-
     try {
-      // Try to add to backend first
-      const response = await addToWishlist(wishlistItem)
+      // Format product data according to new wishlist model
+      const wishlistData = {
+        productId: product._id,
+        variantId: undefined, // No variant selection in card view
+        name: product.name,
+        price: product.price,
+        discount: product.discount,
+        image: product.images?.[0] || '/placeholder.png',
+        // Don't include variant-specific fields since this is card view
+        color: undefined,
+        size: undefined,
+        sku: undefined
+      };
+
+      // Try to add to backend
+      const response = await addToWishlist(wishlistData);
       
       if (response.success) {
-        // Backend success - item added
-        AddWishh(wishlistItem)
-        toast.success(response.message || "Added to wishlist!")
-        return
+        AddWishh(response.data); // Use the response data from backend
+        toast.success(response.message || "Added to wishlist!");
       }
     } catch (error) {
       if (error.response?.status === 401) {
-        // User is not logged in - just update Redux
-        AddWishh(wishlistItem)
-        toast.success("Added to wishlist!")
-        return
+        toast.error("Please login to add items to wishlist");
+        return;
       } 
       
-      if (error.response?.status === 400 && error.response?.data?.message === "Item already in wishlist") {
-        // Item already exists
-        toast.error("Item is already in your wishlist!")
-        return
+      if (error.response?.status === 400) {
+        if (error.response.data?.message.includes("already in wishlist")) {
+          toast.error("Item is already in your wishlist!");
+        } else {
+          toast.error(error.response.data?.message || "Failed to add to wishlist");
+        }
+        return;
       }
 
-      // Other errors
-      toast.error("Failed to add to wishlist. Please try again.")
+      toast.error("Failed to add to wishlist. Please try again.");
       console.error("Wishlist error:", error)
     }
   }
