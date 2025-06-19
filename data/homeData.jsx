@@ -15,14 +15,14 @@ export const servicesData = [
     title: "Personalization",
     description:
       "Add a personal touch to bags, wallets, luggage, belts, leather accessories, and even items from our exclusive pet collection with initials, custom engravings, or unique designs.",
-    image: "https://relot.in/wp-content/uploads/2025/02/Personalizationjknm.avif",
+    image: "/images/relot front page img 13-6/Personalization.avif",
     link: "https://relot.in/personalisation/",
   },
   {
     title: "Relot Repairs",
     description:
       "We specialize in repairing a variety of items, from electronics like smartphones and tablets to home appliances. Get quick, efficient repair services that restore your items to original condition.",
-    image: "https://relot.in/wp-content/uploads/2025/02/df.avif",
+    image: "/images/relot front page img 13-6/Relot Repairs.avif",
     link: "https://relot.in/relot-repairs/",
   },
   {
@@ -30,7 +30,7 @@ export const servicesData = [
     description:
       "Master the art of gifting with our curated gift solutions. From hampers to customized items, every piece is selected to create a memorable, heartfelt experience.",
     image:
-      "https://relot.in/wp-content/uploads/2025/02/high-angle-view-woman-showing-seal-brown-envelop-with-craft-material-wooden-table_23-2148193635.avif",
+      "/images/relot front page img 13-6/art of gifting.avif",
     link: "https://relot.in/art-og-gifting/",
   },
 ]

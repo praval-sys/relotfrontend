@@ -1,7 +1,7 @@
 // components/product/ProductDetails.jsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { addItemToCart } from '../../redux/actions/cartActions';
@@ -15,34 +15,73 @@ import { AddWish } from '../../redux/reducer/wishSlice';
 function ProductDetails({ product, addItem, AddWishh }) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
   
+  // Initialize selected variant when product loads
+  useEffect(() => {
+    if (product.hasVariants && product.variants.length > 0) {
+      setSelectedColor(product.variants[0].color);
+      setSelectedSize(product.variants[0].size);
+    }
+  }, [product]);
+
+  // Update selected variant when color or size changes
+  useEffect(() => {
+    if (product.hasVariants) {
+      const variant = product.variants.find(
+        v => v.color === selectedColor && v.size === selectedSize
+      );
+      setSelectedVariant(variant);
+      // Reset quantity when variant changes
+      setQuantity(1);
+    }
+  }, [selectedColor, selectedSize, product]);
+
   // Calculate final price with discount
-  const finalPrice = product.discount > 0 
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+  const finalPrice = selectedVariant
+    ? selectedVariant.price * (1 - (product.discount || 0) / 100)
+    : product.price * (1 - (product.discount || 0) / 100);
+
+  // Get available stock
+  const availableStock = selectedVariant ? selectedVariant.stock : product.stock;
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
     
+    if (product.hasVariants && !selectedVariant) {
+      toast.error("Please select a variant");
+      return;
+    }
+
     // Format product data for cart
     const cartData = {
       products: [{
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        discount: product.discount,
+        product: product._id,
+        variantId: selectedVariant?._id,
         quantity: quantity,
-        image: product.images?.[0] || '/placeholder.png'
+        price: selectedVariant?.price || product.price,
+        discount: product.discount,
+        name: product.name,
+        image: product.images?.[0] || '/placeholder.png',
+        color: selectedVariant?.color,
+        size: selectedVariant?.size,
+        sku: selectedVariant?.sku
       }]
     };
 
     const cartItem = {
-      productId: product._id,
-      name: product.name,
-      price: product.price,
-      discount: product.discount,
+      product: product._id,
+      variantId: selectedVariant?._id,
       quantity: quantity,
-      image: product.images?.[0] || '/placeholder.png'
+      price: selectedVariant?.price || product.price,
+      discount: product.discount,
+      name: product.name,
+      image: product.images?.[0] || '/placeholder.png',
+      color: selectedVariant?.color,
+      size: selectedVariant?.size,
+      sku: selectedVariant?.sku
     };
 
     try {
@@ -72,11 +111,20 @@ function ProductDetails({ product, addItem, AddWishh }) {
   const handleAddToWishlist = async (e) => {
     e.stopPropagation();
     
+    if (product.hasVariants && !selectedVariant) {
+      toast.error("Please select a variant");
+      return;
+    }
+
     const wishlistItem = {
-      productId: product._id,
+      product: product._id,
+      variantId: selectedVariant?._id,
       name: product.name,
-      price: product.price,
-      image: product.images?.[0] || '/placeholder.png'
+      price: selectedVariant?.price || product.price,
+      image: product.images?.[0] || '/placeholder.png',
+      color: selectedVariant?.color,
+      size: selectedVariant?.size,
+      sku: selectedVariant?.sku
     };
 
     try {
@@ -167,7 +215,59 @@ function ProductDetails({ product, addItem, AddWishh }) {
           <span className="text-sm text-gray-500">({product.ratings || 0} ratings)</span>
         </div>
         
-        {/* Updated Price Section */}
+        {/* Variant Selection */}
+        {product.hasVariants && (
+          <div className="space-y-4">
+            {/* Color Selection */}
+            <div className="space-y-2">
+              <span className="font-medium">Color:</span>
+              <div className="flex gap-2">
+                {product.availableColors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`px-4 py-2 border rounded-md ${
+                      selectedColor === color 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-300'
+                    }`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Size Selection */}
+            <div className="space-y-2">
+              <span className="font-medium">Size:</span>
+              <div className="flex gap-2">
+                {product.availableSizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 border rounded-md ${
+                      selectedSize === size 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-300'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* SKU Display */}
+            {selectedVariant && (
+              <div className="text-sm text-gray-500">
+                SKU: {selectedVariant.sku}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Price Section */}
         <div className="flex items-center gap-4">
           <div className="text-2xl font-bold text-blue-600">
             ₹{finalPrice.toFixed(2)}
@@ -175,7 +275,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
           {product.discount > 0 && (
             <>
               <div className="text-lg text-gray-500 line-through">
-                ₹{product.price.toFixed(2)}
+                ₹{(selectedVariant?.price || product.price).toFixed(2)}
               </div>
               <div className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
                 {product.discount}% OFF
@@ -183,7 +283,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
             </>
           )}
         </div>
-        
+
         <div className="py-4">
           <h3 className="font-semibold text-lg mb-2">Description</h3>
           <p className="text-gray-600">{product.description}</p>
@@ -194,10 +294,13 @@ function ProductDetails({ product, addItem, AddWishh }) {
           <span className="text-gray-600">{product.category}</span>
         </div>
         
+        {/* Stock Display */}
         <div className="flex items-center space-x-2">
           <span className="font-medium">Availability:</span>
-          <span className={product.stock > 0 ? "text-green-600" : "text-red-600"}>
-            {product.stock > 0 ? `In Stock (${product.stock} available)` : "Out of Stock"}
+          <span className={availableStock > 0 ? "text-green-600" : "text-red-600"}>
+            {availableStock > 0 
+              ? `In Stock (${availableStock} available)` 
+              : "Out of Stock"}
           </span>
         </div>
         
@@ -215,15 +318,18 @@ function ProductDetails({ product, addItem, AddWishh }) {
             <input
               type="number"
               min="1"
-              max={product.stock}
+              max={availableStock}
               value={quantity}
-              onChange={(e) => setQuantity(Math.min(product.stock, Math.max(1, parseInt(e.target.value) || 1)))}
+              onChange={(e) => setQuantity(Math.min(
+                availableStock, 
+                Math.max(1, parseInt(e.target.value) || 1)
+              ))}
               className="w-16 text-center focus:outline-none"
             />
             <button 
               className="px-3 py-1 border-l"
-              onClick={() => setQuantity(prev => Math.min(product.stock, prev + 1))}
-              disabled={quantity >= product.stock}
+              onClick={() => setQuantity(prev => Math.min(availableStock, prev + 1))}
+              disabled={quantity >= availableStock}
             >
               +
             </button>
@@ -234,9 +340,11 @@ function ProductDetails({ product, addItem, AddWishh }) {
         <div className="flex flex-wrap gap-4 pt-6">
           <button
             onClick={handleAddToCart}
-            disabled={product.stock <= 0}
+            disabled={availableStock <= 0 || (product.hasVariants && !selectedVariant)}
             className={`flex items-center justify-center px-6 py-3 rounded-md text-white font-medium space-x-2 w-full md:w-auto
-              ${product.stock > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
+              ${availableStock > 0 && (!product.hasVariants || selectedVariant) 
+                ? 'bg-blue-600 hover:bg-blue-700' 
+                : 'bg-gray-400 cursor-not-allowed'}`}
           >
             <ShoppingCart size={20} />
             <span>Add to Cart</span>
@@ -244,7 +352,8 @@ function ProductDetails({ product, addItem, AddWishh }) {
           
           <button
             onClick={handleAddToWishlist}
-            className="flex items-center justify-center px-6 py-3 rounded-md bg-white border border-gray-300 font-medium space-x-2 hover:bg-gray-50 w-full md:w-auto"
+            disabled={product.hasVariants && !selectedVariant}
+            className="flex items-center justify-center px-6 py-3 rounded-md bg-white border border-gray-300 font-medium space-x-2 hover:bg-gray-50 w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Heart size={20} />
             <span>Add to Wishlist</span>

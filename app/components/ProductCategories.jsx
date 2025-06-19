@@ -5,30 +5,30 @@ import Link from 'next/link';
 const categories = [
   {
     href: '/handbags',
-    imgSrc: 'https://relot.in/wp-content/uploads/2025/02/llop.png',
+    imgSrc: '/images/relot front page img 13-6/1st setion women_s bag.png',
     title: "Women's Handbags",
     width: 417,
     height: 626,
   },
   {
     href: '/wallets-and-small-leather-goods',
-    imgSrc: 'https://relot.in/wp-content/uploads/2025/02/am.avif',
+    imgSrc: '/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif',
     title: "Women's Wallet and Small Leather Good",
     width: 417,
     height: 626,
   },
   {
     href: '/bags',
-    imgSrc: 'https://relot.in/wp-content/uploads/2025/02/sdf.avif',
+    imgSrc: '/images/relot front page img 13-6/men-handbbag (1).avif',
     title: "Men's Bags",
     width: 417,
     height: 626,
   },
   {
     href: '/wallets-and-small-leather-goods',
-    imgSrc: 'https://relot.in/wp-content/uploads/2025/02/sdc.avif',
+    imgSrc: '/images/relot front page img 13-6/Men_s Wallet and Small Leather Good.avif',
     title: "Men's Wallet and Small Leather Good",
-    width: 418,
+    width: 417,
     height: 626,
   },
 ];

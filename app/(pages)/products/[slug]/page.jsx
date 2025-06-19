@@ -43,7 +43,7 @@ export default async function ProductPage({ params }) {
   const resolvedParams = await params;
   const productData = await getProductById(resolvedParams.slug);
   const product = productData.data;
-
+console.log(product);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

@@ -74,11 +74,11 @@ export default function Home() {
       </section>
 
       {/* Collection Showcase */}
-      <section className="py-8 sm:py-12 md:py-16">
+      {/* <section className="py-8 sm:py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <CollectionShowcase />
         </div>
-      </section>
+      </section> */}
 
       {/* Product Categories */}
       <section className="py-8 sm:py-10 md:py-12 bg-white">

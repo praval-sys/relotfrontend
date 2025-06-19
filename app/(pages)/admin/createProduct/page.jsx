@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import api from "../../../lib/api";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-
 
 export default function CreateProductPage() {
   const [formData, setFormData] = useState({
@@ -12,30 +11,60 @@ export default function CreateProductPage() {
     description: "",
     price: 0,
     category: "",
-    stock: 0,
-    discount: 0, // Add discount field
+    discount: 0,
+    hasVariants: false,
+    variants: [],
+    stock: 0, // Only used when hasVariants is false
   });
 
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Available options for variants
+  const availableColors = ["Red", "Blue", "Black", "White", "Green"];
+  const availableSizes = ["XS", "S", "M", "L", "XL", "XXL"];
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: ["price", "stock", "discount"].includes(name) 
-        ? parseFloat(value) 
-        : value,
+      [name]: type === "checkbox" ? checked : 
+              ["price", "stock", "discount"].includes(name) ? 
+              parseFloat(value) : value,
     }));
   };
 
+  const handleVariantChange = (index, field, value) => {
+    setFormData(prev => {
+      const updatedVariants = [...prev.variants];
+      updatedVariants[index] = {
+        ...updatedVariants[index],
+        [field]: field === "stock" ? parseInt(value) : 
+                field === "price" ? parseFloat(value) : value
+      };
+      return { ...prev, variants: updatedVariants };
+    });
+  };
+
+  const addVariant = () => {
+    setFormData(prev => ({
+      ...prev,
+      variants: [...prev.variants, { color: "", size: "", stock: 0, price: formData.price }]
+    }));
+  };
+
+  const removeVariant = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Image handling functions remain the same
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages((prev) => [...prev, ...files]);
-
-    // Create preview URLs
     const newPreviews = files.map((file) => URL.createObjectURL(file));
     setPreviews((prev) => [...prev, ...newPreviews]);
   };
@@ -51,12 +80,13 @@ export default function CreateProductPage() {
       description: "",
       price: 0,
       category: "",
+      discount: 0,
+      hasVariants: false,
+      variants: [],
       stock: 0,
-      discount: 0, // Reset discount
     });
     setImages([]);
     setPreviews([]);
-    // Cleanup preview URLs to prevent memory leaks
     previews.forEach((url) => URL.revokeObjectURL(url));
   };
 
@@ -65,17 +95,32 @@ export default function CreateProductPage() {
     setLoading(true);
 
     try {
-      // Create FormData object
       const productFormData = new FormData();
 
-      // Append product data
+      // Append basic product data
       Object.keys(formData).forEach((key) => {
-        productFormData.append(key, formData[key]);
+        if (key === "variants") {
+          // Don't stringify variants here as they're already in correct format
+          if (formData.hasVariants) {
+            productFormData.append(key, JSON.stringify(formData[key]));
+          }
+        } else if (key === "hasVariants") {
+          // Convert boolean to string "true" or "false"
+          productFormData.append(key, formData[key].toString());
+        } else {
+          productFormData.append(key, formData[key]);
+        }
       });
 
       // Append images
       images.forEach((image) => {
         productFormData.append("images", image);
+      });
+
+      // Log the form data before sending
+      console.log('Sending product data:', {
+        ...Object.fromEntries(productFormData.entries()),
+        variants: formData.hasVariants ? JSON.parse(productFormData.get('variants')) : []
       });
 
       const res = await api.post("/v1/products", productFormData, {
@@ -89,6 +134,7 @@ export default function CreateProductPage() {
         resetForm();
       }
     } catch (error) {
+      console.error('Error creating product:', error);
       toast.error(`Failed to create product: ${error.message}`);
     } finally {
       setLoading(false);
@@ -96,7 +142,7 @@ export default function CreateProductPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create New Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -104,17 +150,39 @@ export default function CreateProductPage() {
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Product Name *
-              </label>
-              <input
-                required
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+            {/* Basic fields remain the same */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Product Name *
+                </label>
+                <input
+                  required
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category *
+                </label>
+                <select
+                  required
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Category</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="bags">Bags</option>
+                  <option value="shoes">Shoes</option>
+                </select>
+              </div>
             </div>
 
             <div>
@@ -134,7 +202,7 @@ export default function CreateProductPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Price (INR) *
+                  Base Price (INR) *
                 </label>
                 <input
                   required
@@ -163,7 +231,23 @@ export default function CreateProductPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Product Variants Toggle */}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="hasVariants"
+                name="hasVariants"
+                checked={formData.hasVariants}
+                onChange={handleChange}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="hasVariants" className="text-sm font-medium text-gray-700">
+                This product has multiple variants
+              </label>
+            </div>
+
+            {/* Stock input for non-variant products */}
+            {!formData.hasVariants && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Stock *
@@ -178,49 +262,108 @@ export default function CreateProductPage() {
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category *
-                </label>
-                <select
-                  required
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select Category</option>
-                  <option value="clothing">Clothing</option>
-                  <option value="accessories">Accessories</option>
-                  <option value="bags">Bags</option>
-                  <option value="shoes">Shoes</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Display final price with discount if discount is > 0 */}
-            {formData.discount > 0 && (
-              <div className="mt-4 p-3 bg-gray-50 rounded-md">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Original Price:</span>
-                  <span className="text-sm text-gray-900">₹{formData.price}</span>
-                </div>
-                <div className="flex justify-between items-center mt-1">
-                  <span className="text-sm text-gray-600">Discount:</span>
-                  <span className="text-sm text-red-600">-{formData.discount}%</span>
-                </div>
-                <div className="flex justify-between items-center mt-1 font-medium">
-                  <span className="text-sm text-gray-900">Final Price:</span>
-                  <span className="text-sm text-gray-900">
-                    ₹{(formData.price * (1 - formData.discount / 100)).toFixed(2)}
-                  </span>
-                </div>
-              </div>
             )}
           </div>
         </div>
 
-        {/* Image Upload Section */}
+        {/* Variants Section */}
+        {formData.hasVariants && (
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Product Variants</h2>
+              <button
+                type="button"
+                onClick={addVariant}
+                className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                <Plus className="w-4 h-4 mr-1" />
+                Add Variant
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {formData.variants.map((variant, index) => (
+                <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="font-medium">Variant {index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeVariant(index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Color
+                      </label>
+                      <select
+                        value={variant.color}
+                        onChange={(e) => handleVariantChange(index, "color", e.target.value)}
+                        className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Select Color</option>
+                        {availableColors.map(color => (
+                          <option key={color} value={color}>{color}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Size
+                      </label>
+                      <select
+                        value={variant.size}
+                        onChange={(e) => handleVariantChange(index, "size", e.target.value)}
+                        className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Select Size</option>
+                        {availableSizes.map(size => (
+                          <option key={size} value={size}>{size}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Stock *
+                      </label>
+                      <input
+                        required
+                        type="number"
+                        min="0"
+                        value={variant.stock}
+                        onChange={(e) => handleVariantChange(index, "stock", e.target.value)}
+                        className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Price Override
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={variant.price}
+                        onChange={(e) => handleVariantChange(index, "price", e.target.value)}
+                        placeholder="Optional"
+                        className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Image Upload Section - Remains largely the same */}
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h2 className="text-lg font-semibold mb-4">Product Images</h2>
 
