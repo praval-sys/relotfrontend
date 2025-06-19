@@ -10,18 +10,24 @@ export async function getWishlist() {
   }
 }
 
-export async function addToWishlist(product) {
+export async function addToWishlist(productData) {
   try {
-    const response = await api.post('/v1/wish/add/', product);
+    console.log("Adding item to wishlist:", productData);
+    const response = await api.post('/v1/wish/add', {
+      productId: productData.productId,
+      variantId: productData.variantId
+    });
     return response.data;
   } catch (error) {
     throw error;
   }
 }
 
-export async function removeItem(productId) {
+export async function removeItem(productId, options = {}) {
   try {
-    const response = await api.delete(`/v1/wish/remove/${productId}`);
+    const queryParams = options.variantId ? `?variantId=${options.variantId}` : '';
+    console.log("Removing item with ID:", productId.id, "and options:", options);
+    const response = await api.delete(`/v1/wish/remove/${productId.id}${queryParams}` );
     return response.data;
   } catch (error) {
     console.error("Error removing from wishlist:", error);
@@ -39,9 +45,9 @@ export async function clearWishlist() {
   }
 }
 
-export async function moveToCart(productId) {
+export async function moveToCart(productId,options = {}) {
   try {
-    const response = await api.post(`/v1/wish//move-to-cart/${productId}` );
+    const response = await api.post(`/v1/wish//move-to-cart/${productId.id}`,options );
     return response.data;
   } catch (error) {
     console.error("Error moving to cart:", error);

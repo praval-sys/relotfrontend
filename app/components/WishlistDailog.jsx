@@ -53,12 +53,11 @@ function WishlistDialog() {
     fetchWishlist();
   }, [dispatch]);
 
-  const handleRemoveItem = async (productId) => {
+  const handleRemoveItem = async (productId, variantId) => {
     try {
       setLoading(true);
-      await removeItem(productId);
-      // Use RemoveWish action instead of AddWish
-      dispatch(RemoveWish(productId));
+      await removeItem(productId, variantId ? { variantId } : undefined);
+      dispatch(RemoveWish({ productId, variantId }));
       toast.success("Item removed from wishlist");
     } catch (error) {
       toast.error("Failed to remove item");
@@ -82,12 +81,14 @@ function WishlistDialog() {
     }
   };
 
-  const handleMoveToCart = async (productId) => {
+  const handleMoveToCart = async (productId, variantId) => {
     try {
       setLoading(true);
-      await moveToCart(productId);
-      // Use RemoveWish action to remove item from wishlist
-      dispatch(RemoveWish(productId));
+      await moveToCart(productId, {
+        variantId,
+        quantity: 1
+      });
+      dispatch(RemoveWish({ productId, variantId }));
       toast.success("Item moved to cart");
     } catch (error) {
       toast.error("Failed to move item to cart");
@@ -101,6 +102,12 @@ function WishlistDialog() {
   const handleProductClick = (productId) => {
     setIsOpen(false); // Close sidebar when navigating
     router.push(`/products/${productId}`);
+  };
+
+  // Calculate final price with discount
+  const calculateFinalPrice = (price, discount) => {
+    if (!discount) return price;
+    return price * (1 - discount / 100);
   };
 
   return (
@@ -174,49 +181,82 @@ function WishlistDialog() {
             </div>
           ) : (
             <div className="p-4 md:p-6 space-y-4">
-              {wishList.map((item) => (
-                <div
-                  key={item._id}
-                  className="flex gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  {/* Update image container with click handler and cursor pointer */}
-                  <div 
-                    className="relative w-20 h-20 md:w-24 md:h-24 flex-shrink-0 cursor-pointer"
-                    onClick={() => handleProductClick(item.productId)}
+              {wishList.map((item) => {
+                const finalPrice = calculateFinalPrice(item.price, item.discount);
+                return (
+                  <div
+                    key={`${item.product}${item.variantId || ''}`}
+                    className="flex gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <Image
-                      src={item.image || '/placeholder.png'}
-                      alt={item.name}
-                      fill
-                      className="object-cover rounded-md hover:opacity-75 transition-opacity"
-                      sizes="(max-width: 768px) 80px, 96px"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-sm md:text-base text-gray-900 truncate">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm md:text-base text-gray-700 mt-1">
-                      ₹{item.price}
-                    </p>
-                    <div className="flex flex-wrap gap-3 mt-3">
-                      <button
-                        onClick={() => handleMoveToCart(item.productId)}
-                        className="flex items-center gap-2 px-3 py-1.5 text-xs md:text-sm text-gray-700 hover:text-gray-900 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                        Move to Cart
-                      </button>
-                      <button
-                        onClick={() => handleRemoveItem(item.productId)}
-                        className="px-3 py-1.5 text-xs md:text-sm text-red-600 hover:text-red-700 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
-                      >
-                        Remove
-                      </button>
+                    <div 
+                      className="relative w-20 h-20 md:w-24 md:h-24 flex-shrink-0 cursor-pointer"
+                      onClick={() => handleProductClick(item.product)}
+                    >
+                      <Image
+                        src={item.image || '/placeholder.png'}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded-md hover:opacity-75 transition-opacity"
+                        sizes="(max-width: 768px) 80px, 96px"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-sm md:text-base text-gray-900 truncate">
+                        {item.name}
+                      </h3>
+                      
+                      {/* Variant Details */}
+                      {(item.color || item.size) && (
+                        <div className="mt-1 space-x-2 text-sm text-gray-500">
+                          {item.color && <span>Color: {item.color}</span>}
+                          {item.size && <span>Size: {item.size}</span>}
+                        </div>
+                      )}
+
+                      {/* Price Display */}
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="text-sm md:text-base font-medium text-gray-900">
+                          ₹{finalPrice}
+                        </span>
+                        {item.discount > 0 && (
+                          <>
+                            <span className="text-sm text-gray-500 line-through">
+                              ₹{item.price.toFixed(2)}
+                            </span>
+                            <span className="text-xs text-green-600 font-medium">
+                              {item.discount}% OFF
+                            </span>
+                          </>
+                        )}
+                      </div>
+
+                      {/* SKU Display */}
+                      {item.sku && (
+                        <p className="mt-1 text-xs text-gray-500">
+                          SKU: {item.sku}
+                        </p>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-wrap gap-3 mt-3">
+                        <button
+                          onClick={() => handleMoveToCart(item.product, item.variantId)}
+                          className="flex items-center gap-2 px-3 py-1.5 text-xs md:text-sm text-gray-700 hover:text-gray-900 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
+                        >
+                          <ShoppingCart className="h-4 w-4" />
+                          Move to Cart
+                        </button>
+                        <button
+                          onClick={() => handleRemoveItem(item.product, item.variantId)}
+                          className="px-3 py-1.5 text-xs md:text-sm text-red-600 hover:text-red-700 bg-white rounded-full border border-gray-200 hover:border-gray-300 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

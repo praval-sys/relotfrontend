@@ -48,11 +48,9 @@ export default function RootLayout({ children }) {
     <html lang="en" className={customFont.className}>
       <body className="antialiased">
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
             <AuthProvider>
               <LayoutContent>{children}</LayoutContent>
             </AuthProvider>
-          </PersistGate>
         </Provider>
       </body>
     </html>

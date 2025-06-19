@@ -14,7 +14,7 @@ export const wishSlice = createSlice({
         state.wishlist = action.payload;
       } else {
         const existingItem = state.wishlist.find(
-          (item) => item.productId === action.payload.productId
+          (item) => item.product === action.payload.productId
         );
         if (!existingItem) {
           state.wishlist.push(action.payload);
@@ -22,8 +22,10 @@ export const wishSlice = createSlice({
       }
     },
     RemoveWish: (state, action) => {
-      state.wishlist = state.wishlist.filter(
-        (item) => item.productId !== action.payload
+      const { productId, variantId } = action.payload;
+      state.wishlist = state.wishlist.filter(item => 
+        !(item.product === productId && 
+          (!variantId || item.variantId === variantId))
       );
     },
     clearWish: (state) => {

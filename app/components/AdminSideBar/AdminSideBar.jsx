@@ -1,92 +1,197 @@
 "use client";
 
 import { useState } from "react";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { LiaUserSolid } from "react-icons/lia";
-import { LuMessageSquareText, LuFiles } from "react-icons/lu";
-import { CiBookmark } from "react-icons/ci";
-import { IoStatsChartOutline } from "react-icons/io5";
-import { PiSignOutFill } from "react-icons/pi";
-import { useDispatch, useSelector } from "react-redux";
-import { setsideNav } from "../../redux/reducer/sideNavSlice";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaCube } from "react-icons/fa";
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Plus,
+  Users,
+  Settings,
+  LogOut,
+  Mail,
+  Phone,
+  Shield,
+  Calendar
+} from "lucide-react";
 
 const navItems = [
   {
     name: "Dashboard",
-    icon: <MdOutlineSpaceDashboard />,
+    icon: <LayoutDashboard className="w-5 h-5" />,
     path: "/admin/dashboard",
     key: "dashboard",
   },
   {
     name: "Create Product",
-    icon: <LiaUserSolid />,
+    icon: <Plus className="w-5 h-5" />,
     path: "/admin/createProduct",
-    key: "users",
+    key: "createProduct",
   },
   {
     name: "Products",
-    icon: <LuMessageSquareText />,
+    icon: <Package className="w-5 h-5" />,
     path: "/admin/products",
-    key: "Products",
+    key: "products",
   },
-  { name: "Orders", icon: <FaCube />, path: "/admin/orders", key: "order" },
-  { name: "Files", icon: <LuFiles />, path: "#", key: "files" },
-  { name: "Stats", icon: <IoStatsChartOutline />, path: "#", key: "stats" },
+  {
+    name: "Orders",
+    icon: <ShoppingCart className="w-5 h-5" />,
+    path: "/admin/orders",
+    key: "orders",
+  },
+  {
+    name: "Users",
+    icon: <Users className="w-5 h-5" />,
+    path: "/admin/users",
+    key: "users",
+  },
 ];
 
 export default function AdminSideBar() {
   const [activeLink, setActiveLink] = useState("dashboard");
-  const isNavExpanded = useSelector((state) => state.sideNav.navOpen);
-  const dispatch = useDispatch();
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
-  const toggleNav = () => {
-    dispatch(setsideNav(!isNavExpanded));
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  // Generate initials from user name
+  const getInitials = (name) => {
+    if (!name) return 'A';
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   return (
-    <div className="h-screen bg-gray-900 text-white flex flex-col justify-between py-4 transition-all duration-300">
+    <div className="w-64 h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white flex flex-col shadow-2xl border-r border-slate-700">
       {/* Header */}
-      <div className="flex items-center justify-between px-4">
-        <img
-          src="https://i.imgur.com/hczKIze.jpg"
-          alt="User"
-          className={`rounded-full transition-all duration-300 ${
-            isNavExpanded ? "w-10 h-10" : "w-6 h-6"
-          }`}
-        />
+      <div className="p-4 border-b border-slate-700">
+        <div className="flex items-center space-x-3">
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg">
+              {getInitials(user?.name)}
+            </div>
+            {user?.verified && (
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-800 flex items-center justify-center">
+                <Shield className="w-2 h-2 text-white" />
+              </div>
+            )}
+          </div>
+          
+          {/* User Info */}
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-base text-white truncate">
+              {user?.name || 'Admin User'}
+            </h3>
+            <p className="text-sm text-slate-300 truncate">
+              {user?.role || 'ADMIN'}
+            </p>
+          </div>
+        </div>
+
+        {/* User Details */}
+        <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-600">
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center space-x-2 text-slate-300">
+              <Mail className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{user?.email}</span>
+            </div>
+            {user?.phoneNumber && (
+              <div className="flex items-center space-x-2 text-slate-300">
+                <Phone className="w-3 h-3 flex-shrink-0" />
+                <span>{user.phoneNumber}</span>
+              </div>
+            )}
+            <div className="flex items-center space-x-2 text-slate-300">
+              <Calendar className="w-3 h-3 flex-shrink-0" />
+              <span>Joined {formatDate(user?.createdAt)}</span>
+            </div>
+          </div>
+          
+          {/* Status Indicators */}
+          <div className="flex items-center justify-between mt-3 pt-2 border-t border-slate-600">
+            <div className="flex items-center space-x-1">
+              <div className={`w-2 h-2 rounded-full ${user?.verified ? 'bg-green-400' : 'bg-yellow-400'}`} />
+              <span className="text-xs text-slate-300">
+                {user?.verified ? 'Verified' : 'Unverified'}
+              </span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 rounded-full bg-blue-400" />
+              <span className="text-xs text-slate-300 capitalize">
+                {user?.provider || 'Email'}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Navigation Links */}
-      <nav className="mt-6 space-y-2 px-2 flex-1">
+      <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
         {navItems.map((item) => (
           <Link
             key={item.key}
             href={item.path}
-            className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-700 transition-colors ${
-              activeLink === item.key ? "bg-gray-700" : ""
+            className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+              activeLink === item.key
+                ? "bg-blue-600 text-white shadow-lg"
+                : "text-slate-300 hover:text-white hover:bg-slate-700"
             }`}
             onClick={() => setActiveLink(item.key)}
           >
-            {item.icon}
-            {isNavExpanded && (
-              <span className="whitespace-nowrap">{item.name}</span>
-            )}
+            <div className={`flex items-center justify-center flex-shrink-0 ${
+              activeLink === item.key ? "text-white" : "text-slate-400 group-hover:text-white"
+            }`}>
+              {item.icon}
+            </div>
+            <span className="ml-3 whitespace-nowrap">{item.name}</span>
           </Link>
         ))}
       </nav>
 
-      {/* Signout */}
-      <div className="px-2">
+      {/* Footer Actions */}
+      <div className="p-3 border-t border-slate-700 space-y-2">
+        {/* Settings */}
         <Link
-          href="#"
-          onClick={() => setActiveLink("signout")}
-          className="flex items-center gap-3 p-2 rounded-md hover:bg-red-600 transition-colors"
+          href="/admin/settings"
+          className="flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200"
+          onClick={() => setActiveLink("settings")}
         >
-          <PiSignOutFill />
-          {isNavExpanded && <span className="whitespace-nowrap">Sign Out</span>}
+          <Settings className="w-5 h-5 text-slate-400 hover:text-white flex-shrink-0" />
+          <span className="ml-3 whitespace-nowrap">Settings</span>
         </Link>
+
+        {/* Sign Out */}
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-slate-300 hover:text-white hover:bg-red-600 transition-all duration-200"
+        >
+          <LogOut className="w-5 h-5 text-slate-400 hover:text-white flex-shrink-0" />
+          <span className="ml-3 whitespace-nowrap">Sign Out</span>
+        </button>
       </div>
     </div>
   );
