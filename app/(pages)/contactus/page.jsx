@@ -83,7 +83,7 @@ export default function ContactPage() {
                 onChange={handleChange}
                 required
                 disabled={isSubmitting}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
             
@@ -99,7 +99,7 @@ export default function ContactPage() {
                 onChange={handleChange}
                 required
                 disabled={isSubmitting}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
             
@@ -115,7 +115,7 @@ export default function ContactPage() {
                 onChange={handleChange}
                 disabled={isSubmitting}
                 placeholder="Brief description of your inquiry"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
             
@@ -132,7 +132,7 @@ export default function ContactPage() {
                 required
                 disabled={isSubmitting}
                 placeholder="Please provide details about your inquiry..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               ></textarea>
             </div>
             
@@ -142,7 +142,7 @@ export default function ContactPage() {
               className={`w-full py-3 px-4 rounded-md font-medium text-white transition-colors ${
                 isSubmitting
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                  : 'bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
               }`}
             >
               {isSubmitting ? (
@@ -165,7 +165,7 @@ export default function ContactPage() {
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">Contact Information</h2>
           <div className="space-y-6 text-gray-700">
             <div className="flex items-start">
-              <MdLocationOn className="text-2xl text-blue-600 mr-4 flex-shrink-0 mt-1" />
+              <MdLocationOn className="text-2xl text-red-600 mr-4 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">Our Location</h3>
                 <p className="leading-relaxed">
@@ -177,13 +177,13 @@ export default function ContactPage() {
             </div>
             
             <div className="flex items-start">
-              <MdEmail className="text-2xl text-blue-600 mr-4 flex-shrink-0 mt-1" />
+              <MdEmail className="text-2xl text-red-600 mr-4 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">Email Us</h3>
                 <p>
                   <a 
                     href="mailto:Relot2025@gmail.com"
-                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                    className="text-red-600 hover:text-red-800 transition-colors"
                   >
                     Relot2025@gmail.com
                   </a>
@@ -195,13 +195,13 @@ export default function ContactPage() {
             </div>
             
             <div className="flex items-start">
-              <MdCall className="text-2xl text-blue-600 mr-4 flex-shrink-0 mt-1" />
+              <MdCall className="text-2xl text-red-600 mr-4 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">Call Us</h3>
                 <p>
                   <a 
                     href="tel:+919319198930"
-                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                    className="text-red-600 hover:text-red-800 transition-colors"
                   >
                     +91-9319198930
                   </a>
@@ -214,7 +214,7 @@ export default function ContactPage() {
           </div>
 
           {/* Additional Information */}
-          <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+          <div className="mt-8 p-4 bg-red-50 rounded-lg">
             <h3 className="font-semibold text-gray-800 mb-2">Business Hours</h3>
             <div className="text-sm text-gray-600 space-y-1">
               <p>Monday - Friday: 9:00 AM - 6:00 PM</p>

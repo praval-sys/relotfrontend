@@ -19,6 +19,7 @@ import AnnouncementBar from "./AnnouncementBar"
 
 const Navbar = ({ className }) => {
   const [searchQuery, setSearchQuery] = useState("")
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -29,7 +30,6 @@ const Navbar = ({ className }) => {
   const [hideHeader, setHideHeader] = useState(false);
 
   const { user, logout } = useAuth()
-  const cartTotalQuantity = useSelector((state) => state.cart.totalQuantity)
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -50,7 +50,7 @@ const Navbar = ({ className }) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 50); // Reduced threshold for earlier transition
+      setIsScrolled(currentScrollY > 50);
       setLastScrollY(currentScrollY);
     };
 
@@ -58,11 +58,12 @@ const Navbar = ({ className }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault()
-    console.log("Searching for:", searchQuery)
-    // Search logic here
-  }
+  // Close search when scrolling
+  useEffect(() => {
+    if (isScrolled && isSearchExpanded) {
+      setIsSearchExpanded(false)
+    }
+  }, [isScrolled, isSearchExpanded])
 
   const handleLanguageChange = (language) => {
     setCurrentLanguage(language)
@@ -73,7 +74,7 @@ const Navbar = ({ className }) => {
     <header className="w-full">
       {/* Announcement Bar - Absolute positioned */}
       <div 
-        className={`w-full bg-black transition-all duration-300 ease-in-out fixed top-0 
+        className={`w-full bg-black transition-all duration-300 ease-in-out fixed top-0 z-30
           ${isScrolled ? '-translate-y-full' : 'translate-y-0'}`}
       >
         <div className="h-8 md:h-10">
@@ -82,9 +83,9 @@ const Navbar = ({ className }) => {
       </div>
 
       {/* Main Navbar - Fixed positioned */}
-      <div className={`w-full fixed z-40 bg-white transition-all duration-300
-        ${isScrolled ? 'top-0 shadow-md' : 'top-[32px] md:top-[40px]'}`}
-      >
+      <div className={`w-full fixed bg-white transition-all duration-300 ${
+        isSearchExpanded ? 'z-30' : 'z-40'
+      } ${isScrolled ? 'top-0 shadow-md' : 'top-[32px] md:top-[40px]'}`}>
         {/* Upper Section (Logo, Search, Icons) */}
         <div className={`w-full bg-white transition-all duration-300 overflow-hidden border-b border-gray-200
           ${isScrolled ? 'h-0 opacity-0' : 'h-auto opacity-100'}`}
@@ -100,11 +101,12 @@ const Navbar = ({ className }) => {
               </button>
 
               {/* Search Bar - Now First */}
-              <div className="hidden md:flex flex-1 max-w-xl">
+              <div className="hidden md:flex flex-1 max-w-xl w-80">
                 <SearchBar 
                   searchQuery={searchQuery} 
                   setSearchQuery={setSearchQuery} 
-                  handleSearch={handleSearch} 
+                  isExpanded={isSearchExpanded}
+                  setIsExpanded={setIsSearchExpanded}
                 />
               </div>
 
@@ -114,7 +116,7 @@ const Navbar = ({ className }) => {
               </div>
 
               {/* Icons - Now Last */}
-              <div className="flex items-center space-x-2 md:space-x-4 ">
+              <div className="flex items-center space-x-2 md:space-x-4">
                 <UserNavigation />
                 <WishlistButton />
                 <CartButton />
@@ -151,7 +153,7 @@ const Navbar = ({ className }) => {
         setIsOpen={setMobileMenuOpen}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        handleSearch={handleSearch}
+        handleSearch={() => {}} // Remove handleSearch as it's now handled internally
         user={user}
         logout={logout}
         menuData={menuData}

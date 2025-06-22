@@ -1,9 +1,9 @@
 // components/product/ProductDetails.jsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Heart, ShoppingCart, Star, ZoomIn, ChevronDown, ChevronUp, Truck, Shield, RotateCcw, Award } from 'lucide-react';
+import { Heart, ShoppingCart, Star, ZoomIn, ChevronDown, ChevronUp, Truck, RotateCcw, Play, View, X } from 'lucide-react';
 import { addItemToCart } from '../../redux/actions/cartActions';
 import { addToCart } from '../../lib/cart';
 import { addToWishlist } from '../../lib/wishlist';
@@ -13,19 +13,84 @@ import { AddWish } from '../../redux/reducer/wishSlice';
 
 
 function ProductDetails({ product, addItem, AddWishh }) {
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedMedia, setSelectedMedia] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
   
+  // Zoom functionality states
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [showZoomDialog, setShowZoomDialog] = useState(false);
+  const [currentZoomImage, setCurrentZoomImage] = useState(null);
+  
+  const imageRef = useRef(null);
+  const zoomRef = useRef(null);
+
+  // Helper function to get media URL
+  const getMediaUrl = (mediaItem) => {
+    if (typeof mediaItem === 'string') return mediaItem;
+    return mediaItem?.url || mediaItem;
+  };
+
+  // Combine all media from different sources
+  const getAllMedia = () => {
+    const allMedia = [];
+
+    
+
+    // Gallery images
+    if (product.gallery?.images && Array.isArray(product.gallery.images)) {
+      product.gallery.images.forEach(img => {
+        allMedia.push({
+          url: getMediaUrl(img),
+          type: img.type || 'image',
+          alt: img.alt || `${product.name} gallery image`,
+          source: 'gallery'
+        });
+      });
+    }
+
+    // Gallery videos
+    if (product.gallery?.videos && Array.isArray(product.gallery.videos)) {
+      product.gallery.videos.forEach(video => {
+        allMedia.push({
+          url: getMediaUrl(video),
+          type: 'video',
+          alt: video.alt || `${product.name} video`,
+          source: 'gallery'
+        });
+      });
+    }
+
+    // Gallery 3D models
+    if (product.gallery?.models3D && Array.isArray(product.gallery.models3D)) {
+      product.gallery.models3D.forEach(model => {
+        allMedia.push({
+          url: getMediaUrl(model),
+          type: '3d_model',
+          alt: model.alt || `${product.name} 3D model`,
+          source: 'gallery'
+        });
+      });
+    }
+
+    // Remove duplicates based on URL
+    const uniqueMedia = allMedia.filter((media, index, self) => 
+      index === self.findIndex(m => m.url === media.url)
+    );
+
+    return uniqueMedia;
+  };
+
+  const allMedia = getAllMedia();
+
   // Initialize selected variant when product loads
   useEffect(() => {
-    if (product.hasVariants && product.variants.length > 0) {
+    if (product.hasVariants && product.variants?.length > 0) {
       const firstActiveVariant = product.variants.find(v => v.isActive);
       if (firstActiveVariant) {
         setSelectedColor(firstActiveVariant.color);
@@ -37,7 +102,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
   // Update selected variant when color or size changes
   useEffect(() => {
     if (product.hasVariants) {
-      const variant = product.variants.find(
+      const variant = product.variants?.find(
         v => v.color === selectedColor && v.size === selectedSize && v.isActive
       );
       setSelectedVariant(variant);
@@ -47,17 +112,47 @@ function ProductDetails({ product, addItem, AddWishh }) {
 
   // Calculate final price with discount
   const finalPrice = selectedVariant
-    ? selectedVariant.price * (1 - (product.discount || 0) / 100)
+    ? (selectedVariant.price || product.price) * (1 - (product.discount || 0) / 100)
     : product.price * (1 - (product.discount || 0) / 100);
 
   // Get available stock
   const availableStock = selectedVariant ? selectedVariant.stock : product.stock;
 
+  // Enhanced zoom functionality
   const handleMouseMove = (e) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - left) / width) * 100;
-    const y = ((e.clientY - top) / height) * 100;
-    setMousePosition({ x, y });
+    if (!imageRef.current || !isZooming) return;
+    
+    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
+    
+    // Calculate percentage position for zoom
+    const xPercent = (x / width) * 100;
+    const yPercent = (y / height) * 100;
+    
+    setZoomPosition({ x: xPercent, y: yPercent });
+  };
+
+  const handleMouseEnter = () => {
+    const currentMedia = allMedia[selectedMedia];
+    if (currentMedia?.type === 'image') {
+      setIsZooming(true);
+      setCurrentZoomImage(currentMedia);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsZooming(false);
+    setCurrentZoomImage(null);
+  };
+
+  // Toggle full screen zoom dialog
+  const toggleZoomDialog = () => {
+    const currentMedia = allMedia[selectedMedia];
+    if (currentMedia?.type === 'image') {
+      setCurrentZoomImage(currentMedia);
+      setShowZoomDialog(!showZoomDialog);
+    }
   };
 
   const handleAddToCart = async (e) => {
@@ -68,7 +163,6 @@ function ProductDetails({ product, addItem, AddWishh }) {
       return;
     }
 
-    // Format product data for cart
     const cartData = {
       products: [{
         product: product._id,
@@ -77,7 +171,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
         price: selectedVariant?.price || product.price,
         discount: product.discount,
         name: product.name,
-        image: product.images?.[0] || '/placeholder.png',
+        image: allMedia[0]?.url || '/placeholder.png',
         color: selectedVariant?.color,
         size: selectedVariant?.size,
         sku: selectedVariant?.sku
@@ -91,7 +185,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
       price: selectedVariant?.price || product.price,
       discount: product.discount,
       name: product.name,
-      image: product.images?.[0] || '/placeholder.png',
+      image: allMedia[0]?.url || '/placeholder.png',
       color: selectedVariant?.color,
       size: selectedVariant?.size,
       sku: selectedVariant?.sku
@@ -121,29 +215,16 @@ function ProductDetails({ product, addItem, AddWishh }) {
       return;
     }
 
-    // Create data specifically formatted for the API call
     const wishlistData = {
-      productId: product._id, // Make sure we use productId, not product
+      productId: product._id,
       variantId: selectedVariant?._id,
-    };
-
-    // Create item for Redux store (can maintain your original format)
-    const wishlistItem = {
-      product: product._id,
-      variantId: selectedVariant?._id,
-      name: product.name,
-      price: selectedVariant?.price || product.price,
-      image: product.images?.[0] || '/placeholder.png',
-      color: selectedVariant?.color,
-      size: selectedVariant?.size,
-      sku: selectedVariant?.sku
     };
 
     try {
       const response = await addToWishlist(wishlistData);
       
       if (response.success) {
-        AddWishh(response.data); // Use response data instead of local item
+        AddWishh(response.data);
         toast.success(response.message || "Added to wishlist!");
         return;
       }
@@ -166,65 +247,158 @@ function ProductDetails({ product, addItem, AddWishh }) {
       console.error("Wishlist error:", error);
     }
   };
-  
+
+  // Render media based on type
+  const renderMedia = (media, className = "", showControls = false) => {
+    switch (media.type) {
+      case 'video':
+        return (
+          <div className={`relative ${className}`}>
+            <video 
+              src={media.url} 
+              className="w-full h-full object-cover" 
+              controls={showControls}
+              muted
+              poster="/video-placeholder.png"
+            />
+            {!showControls && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                <Play className="h-12 w-12 text-white" />
+              </div>
+            )}
+          </div>
+        );
+      case '3d_model':
+        return (
+          <div className={`relative ${className} bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center`}>
+            <div className="text-center">
+              <View className="h-12 w-12 text-gray-500 mx-auto mb-2" />
+              <span className="text-sm text-gray-600">3D Model</span>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <Image
+            src={media.url}
+            alt={media.alt}
+            fill
+            className={`object-cover ${className}`}
+            unoptimized
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        );
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Image Section */}
+          {/* Enhanced Media Section with Zoom */}
           <div className="space-y-4">
-            {/* Main Image with Zoom */}
+            {/* Main Media Display with Zoom */}
             <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg">
               <div 
-                className="relative aspect-square cursor-zoom-in"
+                ref={imageRef}
+                className={`relative aspect-square ${
+                  allMedia[selectedMedia]?.type === 'image' ? 'cursor-zoom-in' : 'cursor-default'
+                }`}
                 onMouseMove={handleMouseMove}
-                onMouseEnter={() => setIsZoomed(true)}
-                onMouseLeave={() => setIsZoomed(false)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onClick={toggleZoomDialog}
               >
-                <Image
-                  src={product.images?.[selectedImage] || '/placeholder.png'}
-                  //src="/images/relot front page img 13-6/1st setion women_s bag.png"
-                  alt={product.name}
-                  fill
-                  className="object-cover transition-transform duration-300"
-                  style={{
-                    transform: isZoomed ? 'scale(2)' : 'scale(1)',
-                    transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`
-                  }}
-                  priority
-                />
-                {isZoomed && (
+                {allMedia.length > 0 ? (
+                  renderMedia(allMedia[selectedMedia], "", allMedia[selectedMedia]?.type === 'video')
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">No image available</span>
+                  </div>
+                )}
+                
+                {allMedia[selectedMedia]?.type === 'image' && (
                   <div className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-lg">
                     <ZoomIn className="h-5 w-5" />
                   </div>
                 )}
               </div>
+
+              {/* Zoom Lens Overlay */}
+              {isZooming && currentZoomImage && (
+                <div className="absolute inset-0 pointer-events-none">
+                  <div 
+                    className="absolute w-32 h-32 border-2 border-white shadow-lg rounded-full opacity-50"
+                    style={{
+                      left: `calc(${zoomPosition.x}% - 64px)`,
+                      top: `calc(${zoomPosition.y}% - 64px)`,
+                      background: 'rgba(255, 255, 255, 0.1)'
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Thumbnail Images */}
-            {product.images && product.images.length > 1 && (
+            {/* Media Thumbnails */}
+            {allMedia.length > 1 && (
               <div className="flex gap-3 overflow-x-auto pb-2">
-                {product.images.map((image, index) => (
+                {allMedia.map((media, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedImage(index)}
+                    onClick={() => setSelectedMedia(index)}
                     className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === index 
+                      selectedMedia === index 
                         ? 'border-blue-500 ring-2 ring-blue-200' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Image
-                      src={image}
-                      alt={`${product.name} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
+                    {renderMedia(media, "w-full h-full")}
+                    
+                    {/* Media type indicator */}
+                    <div className="absolute bottom-1 right-1">
+                      {media.type === 'video' && (
+                        <div className="bg-black/70 text-white p-1 rounded text-xs">
+                          <Play className="h-3 w-3" />
+                        </div>
+                      )}
+                      {media.type === '3d_model' && (
+                        <div className="bg-black/70 text-white p-1 rounded text-xs">
+                          <View className="h-3 w-3" />
+                        </div>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
             )}
+
+            {/* Media counter */}
+            <div className="text-center text-sm text-gray-500">
+              {selectedMedia + 1} of {allMedia.length} media
+            </div>
           </div>
+
+          {/* Zoom Preview Panel (Side Panel) */}
+          {isZooming && currentZoomImage && (
+            <div className="hidden lg:block fixed left-30 top-1/2 transform -translate-y-1/2 w-120 h-200 bg-white rounded-2xl shadow-2xl border-4 border-blue-200 z-50 overflow-hidden">
+              <div className="relative w-full h-full">
+                <Image
+                  src={currentZoomImage.url}
+                  alt={currentZoomImage.alt}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                  style={{
+                    transform: `scale(2)`,
+                    transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
+                  }}
+                />
+                <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                  Zoom View (2x)
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Product Info Section */}
           <div className="space-y-6">
@@ -234,6 +408,21 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 {product.name}
               </h1>
               
+              {/* Brand and Category */}
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                {product.brand && (
+                  <span className="font-medium">Brand: <span className="text-gray-900">{product.brand}</span></span>
+                )}
+                {product.category && (
+                  <span>Category: <span className="text-gray-900 capitalize">{product.category}</span></span>
+                )}
+              </div>
+
+              {/* Short Description */}
+              {product.shortDescription && (
+                <p className="text-gray-600 leading-relaxed">{product.shortDescription}</p>
+              )}
+              
               {/* Rating */}
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1">
@@ -241,7 +430,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                     <Star 
                       key={i} 
                       className={`h-5 w-5 ${
-                        i < Math.floor(product.ratings || 0) 
+                        i < Math.floor(product.averageRating || product.ratings || 0) 
                           ? 'text-yellow-400 fill-yellow-400' 
                           : 'text-gray-300'
                       }`} 
@@ -249,7 +438,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                   ))}
                 </div>
                 <span className="text-sm text-gray-600">
-                  ({product.ratings || 0} reviews)
+                  ({product.reviewCount || 0} reviews)
                 </span>
               </div>
             </div>
@@ -276,54 +465,63 @@ function ProductDetails({ product, addItem, AddWishh }) {
                   You save ₹{((selectedVariant?.price || product.price) - finalPrice).toFixed(2)}
                 </p>
               )}
+              {product.comparePrice && product.comparePrice > finalPrice && (
+                <p className="text-sm text-gray-500">
+                  Compare at ₹{product.comparePrice.toFixed(2)}
+                </p>
+              )}
             </div>
 
             {/* Variant Selection */}
-            {product.hasVariants && (
+            {product.hasVariants && product.variants?.length > 0 && (
               <div className="bg-white p-6 rounded-xl shadow-sm border space-y-4">
                 {/* Color Selection */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-900">
-                    Color: <span className="text-blue-600">{selectedColor}</span>
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {product.availableColors?.map((color) => (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all ${
-                          selectedColor === color 
-                            ? 'border-blue-500 bg-blue-50 text-blue-600' 
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        {color}
-                      </button>
-                    ))}
+                {product.availableColors?.length > 0 && (
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium text-gray-900">
+                      Color: <span className="text-blue-600">{selectedColor}</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {product.availableColors.map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all ${
+                            selectedColor === color 
+                              ? 'border-blue-500 bg-blue-50 text-blue-600' 
+                              : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                          }`}
+                        >
+                          {color}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Size Selection */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-900">
-                    Size: <span className="text-blue-600">{selectedSize}</span>
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {product.availableSizes?.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all ${
-                          selectedSize === size 
-                            ? 'border-blue-500 bg-blue-50 text-blue-600' 
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
+                {product.availableSizes?.length > 0 && (
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium text-gray-900">
+                      Size: <span className="text-blue-600">{selectedSize}</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {product.availableSizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all ${
+                            selectedSize === size 
+                              ? 'border-blue-500 bg-blue-50 text-blue-600' 
+                              : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* SKU Display */}
                 {selectedVariant?.sku && (
@@ -427,22 +625,27 @@ function ProductDetails({ product, addItem, AddWishh }) {
           </div>
         </div>
 
-        {/* Product Details Tabs */}
+        {/* Enhanced Product Details Tabs */}
         <div className="mt-16 bg-white rounded-2xl shadow-lg overflow-hidden">
           {/* Tab Navigation */}
           <div className="border-b border-gray-200">
             <nav className="flex">
-              {['description', 'specifications', 'reviews'].map((tab) => (
+              {[
+                { key: 'description', label: 'Description' },
+                ...(product.features && product.features.length > 0 ? [{ key: 'features', label: 'Features' }] : []),
+                ...(product.specifications && product.specifications.length > 0 ? [{ key: 'specifications', label: 'Specifications' }] : []),
+                { key: 'reviews', label: 'Reviews' }
+              ].map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-8 py-4 text-sm font-medium capitalize transition-all ${
-                    activeTab === tab
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-8 py-4 text-sm font-medium transition-all ${
+                    activeTab === tab.key
                       ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </nav>
@@ -453,57 +656,83 @@ function ProductDetails({ product, addItem, AddWishh }) {
             {activeTab === 'description' && (
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-gray-900">Product Description</h3>
-                <div className={`text-gray-700 leading-relaxed ${
-                  !isDescriptionExpanded ? 'line-clamp-4' : ''
-                }`}>
-                  <p>{product.description}</p>
-                  {/* Add more description content here if needed */}
-                  <p className="mt-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-                  <p className="mt-4">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  {isDescriptionExpanded ? (
-                    <>
-                      <span>Show Less</span>
-                      <ChevronUp className="h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Read More</span>
-                      <ChevronDown className="h-4 w-4" />
-                    </>
-                  )}
-                </button>
+                
+                {/* Detailed Description Sections */}
+                {product.detailedDescription && product.detailedDescription.length > 0 ? (
+                  <div className="space-y-6">
+                    {product.detailedDescription
+                      .sort((a, b) => a.order - b.order)
+                      .map((section, index) => (
+                        <div key={index} className="space-y-2">
+                          {section.title && (
+                            <h4 className="text-lg font-medium text-gray-800">{section.title}</h4>
+                          )}
+                          <div className={`text-gray-700 leading-relaxed ${
+                            section.type === 'html' ? 'prose max-w-none' : ''
+                          }`}>
+                            {section.type === 'html' ? (
+                              <div dangerouslySetInnerHTML={{ __html: section.content }} />
+                            ) : (
+                              <p>{section.content}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                ) : (
+                  <div className={`text-gray-700 leading-relaxed ${
+                    !isDescriptionExpanded ? 'line-clamp-4' : ''
+                  }`}>
+                    <p>{product.description}</p>
+                  </div>
+                )}
+
+                {!product.detailedDescription?.length && (
+                  <button
+                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    {isDescriptionExpanded ? (
+                      <>
+                        <span>Show Less</span>
+                        <ChevronUp className="h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Read More</span>
+                        <ChevronDown className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
 
-            {activeTab === 'specifications' && (
+            {activeTab === 'features' && product.features && product.features.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-900">Key Features</h3>
+                <ul className="space-y-2">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {activeTab === 'specifications' && product.specifications && product.specifications.length > 0 && (
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold text-gray-900">Specifications</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="font-medium text-gray-600">Category:</span>
-                      <span className="text-gray-900 capitalize">{product.category}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {product.specifications.map((spec, index) => (
+                    <div key={index} className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="font-medium text-gray-600">{spec.name}:</span>
+                      <span className="text-gray-900">{spec.value}</span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="font-medium text-gray-600">Stock:</span>
-                      <span className="text-gray-900">{product.totalStock || product.stock}</span>
-                    </div>
-                    {product.hasVariants && (
-                      <div className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="font-medium text-gray-600">Variants:</span>
-                        <span className="text-gray-900">{product.variants?.length || 0}</span>
-                      </div>
-                    )}
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -513,20 +742,24 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 <h3 className="text-xl font-semibold text-gray-900">Customer Reviews</h3>
                 <div className="flex items-center gap-4 p-6 bg-gray-50 rounded-lg">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">{product.ratings || 0}</div>
+                    <div className="text-3xl font-bold text-gray-900">
+                      {product.averageRating || product.ratings || 0}
+                    </div>
                     <div className="flex items-center justify-center gap-1 mt-1">
                       {[...Array(5)].map((_, i) => (
                         <Star 
                           key={i} 
                           className={`h-4 w-4 ${
-                            i < Math.floor(product.ratings || 0) 
+                            i < Math.floor(product.averageRating || product.ratings || 0) 
                               ? 'text-yellow-400 fill-yellow-400' 
                               : 'text-gray-300'
                           }`} 
                         />
                       ))}
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">Based on 0 reviews</div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Based on {product.reviewCount || 0} reviews
+                    </div>
                   </div>
                 </div>
                 <p className="text-gray-600">No reviews yet. Be the first to review this product!</p>
@@ -535,6 +768,32 @@ function ProductDetails({ product, addItem, AddWishh }) {
           </div>
         </div>
       </div>
+
+      {/* Full Screen Zoom Dialog */}
+      {showZoomDialog && currentZoomImage && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="relative bg-white rounded-2xl max-w-5xl max-h-[95vh] overflow-hidden">
+            <button
+              onClick={() => setShowZoomDialog(false)}
+              className="absolute top-4 right-4 z-10 p-3 bg-white/90 rounded-full hover:bg-white transition-colors shadow-lg"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <div className="relative w-full h-[90vh]">
+              <Image
+                src={currentZoomImage.url}
+                alt={currentZoomImage.alt}
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+            <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-2 rounded">
+              {currentZoomImage.alt}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

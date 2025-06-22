@@ -7,49 +7,49 @@ export const menuData = [
     submenu: [
       {
         label: "Handbags",
-        link: "/products/?category=women&search=handbags",
-        image:"/images/relot front page img 13-6/1st setion women_s bag.png"
+        link: "/products/?category=women&subCategory=handbags",
+        image: "/images/relot front page img 13-6/1st setion women_s bag.png"
       },
       {
         label: "Wallets and Small Leather Goods",
-        link: "/products/?category=women&search=wallets-and-small-leather-goods",
+        link: "/products/?category=women&subCategory=wallets-and-small-leather-goods",
         image: "/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif"
       },
       {
         label: "Accessories",
-        link: "/products/?category=women&search=accessories",
-        image:"/images/relot front page img 13-6/topbnr3.jpg",
+        link: "/products/?category=women&subCategory=accessories",
+        image: "/images/relot front page img 13-6/topbnr3.jpg",
         submenu: [
           {
             label: "Jewelry",
-            link: "/products/?category=women&search=jewelry",
+            link: "/products/?category=women&subCategory=accessories&childCategory=jewelry"
           },
           {
             label: "Scarves",
-            link: "/products/?category=women&search=scarves"
+            link: "/products/?category=women&subCategory=accessories&childCategory=scarves"
           },
           {
             label: "Belts",
-            link: "/products/?category=women&search=belts"
+            link: "/products/?category=women&subCategory=accessories&childCategory=belts"
           }
         ]
       },
       {
         label: "Travel",
-        link: "/products/?category=women&search=travel",
-        image:"/images/relot front page img 13-6/topbnr3.jpg",
+        link: "/products/?category=women&subCategory=travel",
+        image: "/images/relot front page img 13-6/topbnr3.jpg",
         submenu: [
           {
             label: "Luggage",
-            link: "/products/?category=women&search=luggage"
+            link: "/products/?category=women&subCategory=travel&childCategory=luggage"
           },
           {
             label: "Travel Accessories",
-            link: "/products/?category=women&search=travel-accessories"
+            link: "/products/?category=women&subCategory=travel&childCategory=travel-accessories"
           },
           {
             label: "Travel Bags",
-            link: "/products/?category=women&search=travel-bags"
+            link: "/products/?category=women&subCategory=travel&childCategory=travel-bags"
           }
         ]
       }
@@ -62,57 +62,57 @@ export const menuData = [
     submenu: [
       {
         label: "Bags",
-        link: "/products/?category=men&search=bags",
+        link: "/products/?category=men&subCategory=handbags", // Changed to match filter structure
         image: "/images/relot front page img 13-6/1st sec men_s bag.avif"
       },
       {
         label: "Wallets and Small Leather Goods",
-        link: "/products/?category=men&search=wallets-and-small-leather-goods",
+        link: "/products/?category=men&subCategory=wallets-and-small-leather-goods",
         image: "/images/relot front page img 13-6/Men_s Wallet and Small Leather Good.avif"
       },
       {
         label: "Accessories",
-        link: "/products/?category=men&search=accessories",
-        image:"/images/relot front page img 13-6/topbnr3.jpg",
+        link: "/products/?category=men&subCategory=accessories",
+        image: "/images/relot front page img 13-6/topbnr3.jpg",
         submenu: [
           {
             label: "Belts",
-            link: "/products/?category=men&search=belts"
+            link: "/products/?category=men&subCategory=accessories&childCategory=belts"
           },
           {
             label: "Card Holders",
-            link: "/products/?category=men&search=cardholders"
+            link: "/products/?category=men&subCategory=accessories&childCategory=cardholders"
           },
           {
             label: "Key Holders",
-            link: "/products/?category=men&search=keyholders"
+            link: "/products/?category=men&subCategory=accessories&childCategory=keyholders"
           }
         ]
       },
       {
         label: "Travel",
-        link: "/products/?category=men&search=travel",
-        image:"/images/relot front page img 13-6/topbnr3.jpg",
+        link: "/products/?category=men&subCategory=travel",
+        image: "/images/relot front page img 13-6/topbnr3.jpg",
         submenu: [
           {
             label: "Luggage",
-            link: "/products/?category=men&search=luggage",
-            image:"/images/relot front page img 13-6/topbnr3.jpg"
+            link: "/products/?category=men&subCategory=travel&childCategory=luggage",
+            image: "/images/relot front page img 13-6/topbnr3.jpg"
           },
           {
             label: "Travel Accessories",
-            link: "/products/?category=men&search=travel-accessories",
-            image:"/images/relot front page img 13-6/topbnr3.jpg"
+            link: "/products/?category=men&subCategory=travel&childCategory=travel-accessories",
+            image: "/images/relot front page img 13-6/topbnr3.jpg"
           },
           {
             label: "Travel Bags",
-            link: "/products/?category=men&search=travel-bags",
-            image:"/images/relot front page img 13-6/topbnr3.jpg"
+            link: "/products/?category=men&subCategory=travel&childCategory=travel-bags",
+            image: "/images/relot front page img 13-6/topbnr3.jpg"
           },
           {
             label: "Shaving Kit Bags",
-            link: "/products/?category=men&search=shaving-kit-bags",
-            image:"/images/relot front page img 13-6/topbnr3.jpg"
+            link: "/products/?category=men&subCategory=travel&childCategory=shaving-kit-bags",
+            image: "/images/relot front page img 13-6/topbnr3.jpg"
           }
         ]
       }
@@ -125,22 +125,22 @@ export const menuData = [
     submenu: [
       {
         label: "Perfume",
-        link: "/products/?category=fragrances&search=perfume",
+        link: "/products/?category=fragrances&subCategory=perfume",
         image: "/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif"
       },
       {
         label: "Body Mist",
-        link: "/products/?category=fragrances&search=body-mist",
+        link: "/products/?category=fragrances&subCategory=body-mist",
         image: "/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif"
       },
       {
         label: "Roll-on",
-        link: "/products/?category=fragrances&search=roll-on",
+        link: "/products/?category=fragrances&subCategory=roll-on",
         image: "/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif"
       },
       {
         label: "Fragrances of India",
-        link: "/products/?category=fragrances&search=fragrances-of-india",
+        link: "/products/?category=fragrances&subCategory=fragrances-of-india",
         image: "/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif"
       }
     ]
@@ -152,22 +152,22 @@ export const menuData = [
     submenu: [
       {
         label: "Relot Colourmania",
-        link: "/products/?category=bags&search=relotcolourmania",
+        link: "/products/?category=bags&brand=relot&search=colourmania", // Using brand filter + search
         image: "/images/relot front page img 13-6/relot abt.jpg"
       },
       {
         label: "Men Bags",
-        link: "/products/?category=bags&search=men-bags",
-        image:"/images/relot front page img 13-6/topbnr3.jpg"
+        link: "/products/?category=bags&search=men", // Using search for specific targeting
+        image: "/images/relot front page img 13-6/topbnr3.jpg"
       },
       {
-        label: "Women small Leather Goods",
-        link: "/products/?category=bags&search=women-small-leather-bags",
+        label: "Women Small Leather Goods",
+        link: "/products/?category=bags&subCategory=wallets-and-small-leather-goods&search=women",
         image: "/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif"
       },
       {
-        label: "Men small Leather Goods",
-        link: "/products/?category=bags&search=men-small-leather-bags",
+        label: "Men Small Leather Goods",
+        link: "/products/?category=bags&subCategory=wallets-and-small-leather-goods&search=men",
         image: "/images/relot front page img 13-6/1st sec men_s bag.avif"
       }
     ]
@@ -179,17 +179,17 @@ export const menuData = [
     submenu: [
       {
         label: "Personalisation",
-        link: "/products/?category=services&search=personalisation",
+        link: "/products/?search=personalisation&tags=service", // Using search + tags for services
         image: "/images/relot front page img 13-6/Personalization.avif"
       },
       {
         label: "Relot Repairs",
-        link: "/products/?category=services&search=relot-repairs",
+        link: "/products/?search=repairs&tags=service",
         image: "/images/relot front page img 13-6/Relot Repairs.avif"
       },
       {
         label: "Art of Gifting",
-        link: "/products/?category=services&search=art-of-gifting",
+        link: "/products/?search=gifting&tags=service",
         image: "/images/relot front page img 13-6/art of gifting.avif"
       }
     ]

@@ -1,8 +1,8 @@
 export const heroData = {
   images: [
-    "https://relot.in/wp-content/uploads/2025/01/couple-winter-cloths-studio_1303-5887.avif",
-    "https://relot.in/wp-content/uploads/2025/02/rl2br.jpg",
-    "https://relot.in/wp-content/uploads/2025/02/hn2.png",
+    "/images/relot front page img 13-6/topbnr2.jpg",
+    "/images/relot front page img 13-6/topbr1.jpg",
+    "/images/relot front page img 13-6/topbnr3.jpg",
   ],
   title: "Relot Leather Goods",
   subtitle: "Built to last!",

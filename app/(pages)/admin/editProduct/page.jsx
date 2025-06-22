@@ -1,10 +1,11 @@
 "use client";
 import { useState, useCallback, useEffect } from "react";
+import Image from "next/image";
 import api from "../../../lib/api";
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ChevronDown, ChevronUp, Info, Tag, Truck, Star, BarChart3,
-  Package, DollarSign, Calendar, FileText, Globe, Search,Plus
+  Package, DollarSign, Calendar, FileText, Globe, Search, Plus, ImageIcon, X, Trash2
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -48,52 +49,45 @@ export default function EditProductPage() {
   const productDataString = searchParams.get('product');
 
   const [formData, setFormData] = useState({
-    // Basic Information
-    _id: "", // Add _id to store product ID
+    _id: "",
     name: "",
     description: "",
     shortDescription: "",
     price: 0,
     category: "",
+    subCategory: "",
+    childCategory: "",
+    // Updated media structure to match backend
+    media: [],
+    gallery: { images: [], videos: [], models3D: [] },
+    images: [], // Keep for backward compatibility
     brand: "",
     productModel: "",
     sku: "",
     barcode: "",
-
-    // Status & Visibility
     status: "draft",
     featured: false,
     isDigital: false,
-
-    // Pricing & Discounts
     discount: 0,
     comparePrice: 0,
     costPrice: 0,
     taxable: true,
     taxClass: "",
-
-    // Inventory
     hasVariants: false,
     variants: [],
     stock: 0,
     trackQuantity: true,
     allowBackorders: false,
     lowStockThreshold: 5,
-
-    // Features & Specifications
     features: [],
     specifications: [],
     detailedDescription: [],
-
-    // SEO
     seo: {
       metaTitle: "",
       metaDescription: "",
       keywords: [],
       slug: ""
     },
-
-    // Shipping
     shipping: {
       weight: 0,
       dimensions: {
@@ -104,28 +98,48 @@ export default function EditProductPage() {
       freeShipping: false,
       shippingClass: ""
     },
-
-    // Additional
     tags: [],
     vendor: "",
     supplier: "",
     manufacturingDate: "",
     expiryDate: ""
-    // Removed media and gallery from initial state as they won't be updated via this form
-    // media: [],
-    // gallery: { images: [], videos: [], models3D: [] },
   });
 
-  // Removed mediaFiles, mediaPreviews, existingMedia states
-  // const [mediaFiles, setMediaFiles] = useState([]);
-  // const [mediaPreviews, setMediaPreviews] = useState([]);
-  // const [existingMedia, setExistingMedia] = useState([]);
+  // Updated media removal states to match backend expectations
+  const [mediaToRemove, setMediaToRemove] = useState([]);
+  const [galleryImagesToRemove, setGalleryImagesToRemove] = useState([]);
+  const [galleryVideosToRemove, setGalleryVideosToRemove] = useState([]);
+  const [galleryModelsToRemove, setGalleryModelsToRemove] = useState([]);
+  
+  // New uploads
+  const [newMediaFiles, setNewMediaFiles] = useState([]);
+  const [newMediaPreviews, setNewMediaPreviews] = useState([]);
+
+  // Helper function to toggle removal
+  const toggleRemoval = (setter, url) => {
+    setter(prev => prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url]);
+  };
+
+  // Handle new media uploads
+  const handleNewMediaChange = useCallback((e) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    const previews = files.map(f => URL.createObjectURL(f));
+    setNewMediaFiles(prev => [...prev, ...files]);
+    setNewMediaPreviews(prev => [...prev, ...previews]);
+    e.target.value = "";
+  }, []);
+
+  // Remove newly added media before upload
+  const handleRemoveNewMedia = useCallback((idx) => {
+    setNewMediaFiles(prev => prev.filter((_, i) => i !== idx));
+    setNewMediaPreviews(prev => prev.filter((_, i) => i !== idx));
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     basic: true,
-    // Removed media section from expandedSections
-    // media: true,
+    media: true,
     inventory: false,
     pricing: false,
     features: false,
@@ -135,8 +149,9 @@ export default function EditProductPage() {
   });
 
   // Available options
-  const categories = ["clothing", "accessories", "bags", "shoes", "electronics", "home", "beauty", "sports"];
-  const brands = ["Nike", "Adidas", "Apple", "Samsung", "Sony", "Custom"];
+  const categories = ["men", "women", "bags", "fragrances"];
+  const subCategories = ["handbags", "perfume", "body-mist", "roll-on", "fragrances-of-india", "wallets-and-small-leather-goods", "accessories", "travel"];
+  const childCategories = ["jewelry", "scarves", "belts", "luggage", "travel-accessories", "travel-bags", "cardholders", "keyholders", "luggage", "shaving-kit-bags"];
   const availableColors = ["Red", "Blue", "Black", "White", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown"];
   const availableSizes = ["XS", "S", "M", "L", "XL", "XXL", "2XL", "3XL"];
   const shippingClasses = ["standard", "express", "overnight", "free"];
@@ -147,9 +162,14 @@ export default function EditProductPage() {
     if (productDataString) {
       try {
         const product = JSON.parse(decodeURIComponent(productDataString));
-        // Ensure all nested objects and arrays exist before spreading
         const initialData = {
           ...product,
+          category: product.category || "",
+          subCategory: product.subCategory || "",
+          childCategory: product.childCategory || "",
+          media: product.media || [],
+          gallery: product.gallery || { images: [], videos: [], models3D: [] },
+          images: product.images || [], // Keep for backward compatibility
           seo: product.seo || { metaTitle: "", metaDescription: "", keywords: [], slug: "" },
           shipping: product.shipping || { weight: 0, dimensions: { length: 0, width: 0, height: 0 }, freeShipping: false, shippingClass: "" },
           variants: product.variants || [],
@@ -157,43 +177,43 @@ export default function EditProductPage() {
           specifications: product.specifications || [],
           detailedDescription: product.detailedDescription || [],
           tags: product.tags || [],
-          // Handle dates which might be strings
           manufacturingDate: product.manufacturingDate ? product.manufacturingDate.split('T')[0] : "",
           expiryDate: product.expiryDate ? product.expiryDate.split('T')[0] : "",
-          // Exclude media/gallery from initial state if not needed for display
         };
         setFormData(initialData);
-
-        // Removed setting existing media state
-        // if (product.media && Array.isArray(product.media)) {
-        //     setExistingMedia(product.media.map(mediaItem => ({
-        //         url: mediaItem.url,
-        //         type: mediaItem.type || getFileTypeFromUrl(mediaItem.url),
-        //         name: mediaItem.name || mediaItem.url.split('/').pop(),
-        //         size: mediaItem.size || 0
-        //     })));
-        // }
-
       } catch (error) {
         console.error("Failed to parse product data from URL:", error);
         toast.error("Failed to load product data.");
-        // Optionally redirect back or show an error state
-        // router.push('/admin/products');
+        router.push('/admin/products');
       }
     } else {
-        toast.error("No product data provided for editing.");
-        // Optionally redirect back
-        // router.push('/admin/products');
+      toast.error("No product data provided for editing.");
+      router.push('/admin/products');
     }
-  }, [productDataString, router]); // Depend on productDataString and router
+  }, [productDataString, router]);
 
-  // Removed getFileTypeFromUrl, getFileType, getMediaIcon, formatFileSize, handleMediaChange, removeMedia
-
-  // Use useCallback to prevent function recreation
   const toggleSection = useCallback((section) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
+    }));
+  }, []);
+   const addDescriptionSection = useCallback(() => {
+    setFormData(prev => ({
+      ...prev,
+      detailedDescription: [...(prev.detailedDescription || []), { // Ensure detailedDescription is an array
+        title: "",
+        content: "",
+        type: "text",
+        order: (prev.detailedDescription || []).length
+      }]
+    }));
+  }, []);
+
+  const addSpecification = useCallback(() => {
+    setFormData(prev => ({
+      ...prev,
+      specifications: [...(prev.specifications || []), { name: "", value: "", group: "" }] // Ensure specifications is an array
     }));
   }, []);
 
@@ -201,35 +221,34 @@ export default function EditProductPage() {
     const { name, value, type, checked } = e.target;
 
     if (name.includes('.')) {
-      // Handle nested objects
       const keys = name.split('.');
       setFormData(prev => {
         const newData = { ...prev };
         let current = newData;
         for (let i = 0; i < keys.length - 1; i++) {
           if (!current[keys[i]]) {
-            // Initialize nested object/array if it doesn't exist
-             current[keys[i]] = Array.isArray(current) ? [] : {};
+            current[keys[i]] = Array.isArray(current) ? [] : {};
           }
           current = current[keys[i]];
         }
         const lastKey = keys[keys.length - 1];
         current[lastKey] = type === "checkbox" ? checked :
-                                        ["price", "stock", "discount", "weight", "length", "width", "height", "comparePrice", "costPrice", "lowStockThreshold", "order"].includes(lastKey) ?
-                                        (parseFloat(value) || 0) : value; // Added 'order' for detailedDescription
+          ["price", "stock", "discount", "weight", "length", "width", "height", "comparePrice", "costPrice", "lowStockThreshold", "order"].includes(lastKey) ?
+            (parseFloat(value) || 0) : value;
         return newData;
       });
     } else {
       setFormData(prev => ({
         ...prev,
         [name]: type === "checkbox" ? checked :
-                ["price", "stock", "discount", "comparePrice", "costPrice", "lowStockThreshold"].includes(name) ?
-                (parseFloat(value) || 0) : value,
+          ["price", "stock", "discount", "comparePrice", "costPrice", "lowStockThreshold"].includes(name) ?
+            (parseFloat(value) || 0) : value,
       }));
     }
   }, []);
 
-  // Handle array fields (used for features, tags)
+  
+  // Handle array fields
   const handleArrayChange = useCallback((field, index, value) => {
     setFormData(prev => ({
       ...prev,
@@ -251,19 +270,16 @@ export default function EditProductPage() {
     }));
   }, []);
 
-  // Handle features
+  // Handle features, tags, keywords, specifications, etc. (same as before)
   const addFeature = useCallback(() => addArrayItem("features", ""), [addArrayItem]);
   const removeFeature = useCallback((index) => removeArrayItem("features", index), [removeArrayItem]);
-
-  // Handle tags
   const addTag = useCallback(() => addArrayItem("tags", ""), [addArrayItem]);
   const removeTag = useCallback((index) => removeArrayItem("tags", index), [removeArrayItem]);
 
-  // Handle SEO keywords
   const addKeyword = useCallback(() => {
     setFormData(prev => ({
       ...prev,
-      seo: { ...prev.seo, keywords: [...(prev.seo?.keywords || []), ""] } // Ensure keywords is an array
+      seo: { ...prev.seo, keywords: [...(prev.seo?.keywords || []), ""] }
     }));
   }, []);
 
@@ -272,7 +288,7 @@ export default function EditProductPage() {
       ...prev,
       seo: {
         ...prev.seo,
-        keywords: (prev.seo?.keywords || []).filter((_, i) => i !== index) // Ensure keywords is an array
+        keywords: (prev.seo?.keywords || []).filter((_, i) => i !== index)
       }
     }));
   }, []);
@@ -282,96 +298,8 @@ export default function EditProductPage() {
       ...prev,
       seo: {
         ...prev.seo,
-        keywords: (prev.seo?.keywords || []).map((keyword, i) => i === index ? value : keyword) // Ensure keywords is an array
+        keywords: (prev.seo?.keywords || []).map((keyword, i) => i === index ? value : keyword)
       }
-    }));
-  }, []);
-
-  // Handle specifications
-  const addSpecification = useCallback(() => {
-    setFormData(prev => ({
-      ...prev,
-      specifications: [...(prev.specifications || []), { name: "", value: "", group: "" }] // Ensure specifications is an array
-    }));
-  }, []);
-
-  const removeSpecification = useCallback((index) => {
-    setFormData(prev => ({
-      ...prev,
-      specifications: (prev.specifications || []).filter((_, i) => i !== index) // Ensure specifications is an array
-    }));
-  }, []);
-
-  const handleSpecificationChange = useCallback((index, field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      specifications: (prev.specifications || []).map((spec, i) =>
-        i === index ? { ...spec, [field]: value } : spec
-      )
-    }));
-  }, []);
-
-  // Handle detailed description sections
-  const addDescriptionSection = useCallback(() => {
-    setFormData(prev => ({
-      ...prev,
-      detailedDescription: [...(prev.detailedDescription || []), { // Ensure detailedDescription is an array
-        title: "",
-        content: "",
-        type: "text",
-        order: (prev.detailedDescription || []).length
-      }]
-    }));
-  }, []);
-
-  const removeDescriptionSection = useCallback((index) => {
-    setFormData(prev => ({
-      ...prev,
-      detailedDescription: (prev.detailedDescription || []).filter((_, i) => i !== index) // Ensure detailedDescription is an array
-    }));
-  }, []);
-
-  const handleDescriptionSectionChange = useCallback((index, field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      detailedDescription: (prev.detailedDescription || []).map((section, i) =>
-        i === index ? { ...section, [field]: value } : section
-      )
-    }));
-  }, []);
-
-  // Handle variants
-  const handleVariantChange = useCallback((index, field, value) => {
-    setFormData(prev => {
-      const updatedVariants = [...(prev.variants || [])]; // Ensure variants is an array
-      updatedVariants[index] = {
-        ...updatedVariants[index],
-        [field]: field === "stock" ? (parseInt(value) || 0) :
-                field === "price" ? (parseFloat(value) || 0) :
-                field === "isActive" ? Boolean(value) : // Ensure isActive is boolean
-                value
-      };
-      return { ...prev, variants: updatedVariants };
-    });
-  }, []);
-
-  const addVariant = useCallback(() => {
-    setFormData(prev => ({
-      ...prev,
-      variants: [...(prev.variants || []), { // Ensure variants is an array
-        color: "",
-        size: "",
-        stock: 0,
-        price: 0,
-        isActive: true // Default to active
-      }]
-    }));
-  }, []);
-
-  const removeVariant = useCallback((index) => {
-    setFormData(prev => ({
-      ...prev,
-      variants: (prev.variants || []).filter((_, i) => i !== index) // Ensure variants is an array
     }));
   }, []);
 
@@ -382,7 +310,6 @@ export default function EditProductPage() {
       .replace(/^-+|-+$/g, '');
   }, []);
 
-  // Handle name change and auto-generate slug (only if slug is empty)
   const handleNameChange = useCallback((e) => {
     const name = e.target.value;
     setFormData(prev => ({
@@ -390,46 +317,59 @@ export default function EditProductPage() {
       name,
       seo: {
         ...prev.seo,
-        slug: prev.seo?.slug || generateSlug(name), // Use optional chaining for seo
-        metaTitle: prev.seo?.metaTitle || name // Use optional chaining for seo
+        slug: generateSlug(name),
+        metaTitle: prev.seo?.metaTitle || name
       }
     }));
   }, [generateSlug]);
 
+  // Updated submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     const productId = formData._id;
     if (!productId) {
-        toast.error("Product ID is missing. Cannot update.");
-        setLoading(false);
-        return;
+      toast.error("Product ID is missing. Cannot update.");
+      setLoading(false);
+      return;
     }
 
     try {
-      // Create a new object with only the data to be sent
-      // Exclude media-related fields that the simplified backend doesn't handle
-      const dataToSend = { ...formData };
-      delete dataToSend.media; // Remove the media array
-      delete dataToSend.gallery; // Remove the gallery object
-      // Ensure nested objects/arrays are sent as objects/arrays, not strings
-      // The backend parseJSONField will handle them if they arrive as strings (e.g., from FormData)
-      // But since we are sending JSON, they will arrive as their native types.
+      const fd = new FormData();
 
-      console.log('Sending product data for update:', dataToSend);
-
-      // Send data as JSON
-      const res = await api.put(`/v1/products/${productId}`, dataToSend, {
-        headers: {
-          "Content-Type": "application/json", // Set Content-Type to JSON
-        },
+      // Append simple fields (exclude complex objects and arrays)
+      Object.entries(formData).forEach(([key, value]) => {
+        if (['media', 'gallery', 'seo', 'shipping', 'variants', 'features', 'specifications', 'detailedDescription', 'tags'].includes(key)) {
+          // These will be handled separately as JSON
+          fd.append(key, JSON.stringify(value));
+        } else if (typeof value === 'object' && value !== null) {
+          fd.append(key, JSON.stringify(value));
+        } else {
+          fd.append(key, String(value));
+        }
       });
 
-      if (res.status === 200) { // Assuming 200 for successful update
-        toast.success("Product updated successfully! 🎉");
-        // Optionally redirect or refetch data if needed
-        // router.push('/admin/products');
+      // Append removal arrays as JSON strings
+      fd.append('mediaToRemove', JSON.stringify(mediaToRemove));
+      fd.append('galleryImagesToRemove', JSON.stringify(galleryImagesToRemove));
+      fd.append('galleryVideosToRemove', JSON.stringify(galleryVideosToRemove));
+      fd.append('galleryModelsToRemove', JSON.stringify(galleryModelsToRemove));
+
+      // Append new files
+      newMediaFiles.forEach(file => fd.append('media', file));
+
+      const res = await api.put(
+        `/v1/products/${formData._id}`,
+        fd,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+
+      if (res.data.success) {
+        toast.success("Product updated successfully!");
+        // Optionally redirect or refresh data
+      } else {
+        throw new Error(res.data.message || 'Update failed');
       }
     } catch (error) {
       console.error('Error updating product:', error);
@@ -438,6 +378,11 @@ export default function EditProductPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to get media URL from media asset
+  const getMediaUrl = (mediaAsset) => {
+    return typeof mediaAsset === 'string' ? mediaAsset : mediaAsset?.url || mediaAsset;
   };
 
   return (
@@ -486,6 +431,36 @@ export default function EditProductPage() {
                 >
                   <option value="">Select Category</option>
                   {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <FormLabel>SubCategory</FormLabel>
+                <select
+                  name="subCategory"
+                  value={formData.subCategory}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value="">Select SubCategory</option>
+                  {subCategories.map(cat => (
+                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <FormLabel>ChildCategory</FormLabel>
+                <select
+                  name="childCategory"
+                  value={formData.childCategory}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value="">Select ChildCategory</option>
+                  {childCategories.map(cat => (
                     <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
                   ))}
                 </select>
@@ -582,20 +557,202 @@ export default function EditProductPage() {
           </div>
         </SectionHeader>
 
-        {/* Removed Media Upload Section */}
-        {/*
+        {/* Enhanced Media Section */}
         <SectionHeader
-          title="Media Files (Images, Videos, 3D Models)"
+          title="Media Management"
           icon={<ImageIcon className="w-5 h-5" />}
           section="media"
           expandedSections={expandedSections}
           toggleSection={toggleSection}
         >
-          ... Media Upload JSX ...
-        </SectionHeader>
-        */}
+          <div className="space-y-6">
+            {/* Legacy Media (for backward compatibility) */}
+            {formData.media && formData.media.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Legacy Media</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {formData.media.map((mediaItem, index) => {
+                    const url = getMediaUrl(mediaItem);
+                    return (
+                      <div key={index} className="relative group">
+                        <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+                          <Image
+                            src={url}
+                            alt={`Media ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleRemoval(setMediaToRemove, url)}
+                          className={`absolute top-2 right-2 p-1 bg-white rounded-full shadow-md transition-colors ${
+                            mediaToRemove.includes(url) ? "text-red-600 bg-red-50" : "text-gray-400 hover:text-red-500"
+                          }`}
+                        >
+                          {mediaToRemove.includes(url) ? "✓" : "✕"}
+                        </button>
+                        {mediaToRemove.includes(url) && (
+                          <div className="absolute inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-medium text-sm">Marked for removal</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-        {/* Pricing */}
+            {/* Gallery Images */}
+            {formData.gallery?.images && formData.gallery.images.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Gallery Images</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {formData.gallery.images.map((image, index) => {
+                    const url = getMediaUrl(image);
+                    return (
+                      <div key={index} className="relative group">
+                        <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+                          <Image
+                            src={url}
+                            alt={`Gallery Image ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleRemoval(setGalleryImagesToRemove, url)}
+                          className={`absolute top-2 right-2 p-1 bg-white rounded-full shadow-md transition-colors ${
+                            galleryImagesToRemove.includes(url) ? "text-red-600 bg-red-50" : "text-gray-400 hover:text-red-500"
+                          }`}
+                        >
+                          {galleryImagesToRemove.includes(url) ? "✓" : "✕"}
+                        </button>
+                        {galleryImagesToRemove.includes(url) && (
+                          <div className="absolute inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-medium text-sm">Marked for removal</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Gallery Videos */}
+            {formData.gallery?.videos && formData.gallery.videos.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">Gallery Videos</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {formData.gallery.videos.map((video, index) => {
+                    const url = getMediaUrl(video);
+                    return (
+                      <div key={index} className="relative group">
+                        <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+                          <video src={url} className="w-full h-full object-cover" controls />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleRemoval(setGalleryVideosToRemove, url)}
+                          className={`absolute top-2 right-2 p-1 bg-white rounded-full shadow-md transition-colors ${
+                            galleryVideosToRemove.includes(url) ? "text-red-600 bg-red-50" : "text-gray-400 hover:text-red-500"
+                          }`}
+                        >
+                          {galleryVideosToRemove.includes(url) ? "✓" : "✕"}
+                        </button>
+                        {galleryVideosToRemove.includes(url) && (
+                          <div className="absolute inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-medium text-sm">Marked for removal</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Gallery 3D Models */}
+            {formData.gallery?.models3D && formData.gallery.models3D.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">3D Models</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {formData.gallery.models3D.map((model, index) => {
+                    const url = getMediaUrl(model);
+                    return (
+                      <div key={index} className="relative group">
+                        <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-2xl mb-2">🎭</div>
+                            <div className="text-xs text-gray-600">3D Model</div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleRemoval(setGalleryModelsToRemove, url)}
+                          className={`absolute top-2 right-2 p-1 bg-white rounded-full shadow-md transition-colors ${
+                            galleryModelsToRemove.includes(url) ? "text-red-600 bg-red-50" : "text-gray-400 hover:text-red-500"
+                          }`}
+                        >
+                          {galleryModelsToRemove.includes(url) ? "✓" : "✕"}
+                        </button>
+                        {galleryModelsToRemove.includes(url) && (
+                          <div className="absolute inset-0 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <span className="text-white font-medium text-sm">Marked for removal</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* New Media Upload */}
+            <div className="border-t pt-6">
+              <FormLabel>Upload New Media Files</FormLabel>
+              <input
+                type="file"
+                multiple
+                onChange={handleNewMediaChange}
+                accept="image/*,video/*,.glb,.gltf,.usdz,.obj,.fbx"
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Supported formats: Images (JPG, PNG, WebP), Videos (MP4, WebM), 3D Models (GLB, GLTF, USDZ, OBJ, FBX)
+              </p>
+              
+              {newMediaPreviews.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">New Files to Upload</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    {newMediaPreviews.map((src, i) => (
+                      <div key={i} className="relative group">
+                        <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
+                          <img src={src} alt={`New upload ${i + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveNewMedia(i)}
+                          className="absolute top-2 right-2 p-1 bg-white text-red-500 rounded-full shadow-md hover:bg-red-50"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </SectionHeader>
+
+        {/* Pricing Section */}
         <SectionHeader
           title="Pricing & Discounts"
           icon={<DollarSign className="w-5 h-5" />}
@@ -1195,7 +1352,7 @@ export default function EditProductPage() {
                   value={formData.shipping?.dimensions?.width || 0} // Use optional chaining and default
                   onChange={handleChange}
                   placeholder="Width"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:focus:border-blue-500 transition-colors"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 />
                 <input
                   type="number"
@@ -1323,18 +1480,12 @@ export default function EditProductPage() {
               {loading ? "Updating Product..." : "Update Product"}
             </button>
 
-            {/* Removed Reset button as it might not be desired on edit page */}
-            {/* <button
-              type="button"
-              onClick={resetForm}
-              disabled={loading}
-              className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-            >
-              Reset Form
-            </button> */}
           </div>
         </div>
       </form>
     </div>
   );
 }
+
+
+

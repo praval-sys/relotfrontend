@@ -198,6 +198,7 @@ function WishlistDialog() {
                         fill
                         className="object-cover rounded-md hover:opacity-75 transition-opacity"
                         sizes="(max-width: 768px) 80px, 96px"
+                        unoptimized
                       />
                     </div>
                     <div className="flex-1 min-w-0">

@@ -220,7 +220,7 @@ export default function CartDialog() {
               {cartItems.map((item) => (
                 <div
                   // Use product ID and variant ID for a unique key
-                  key={`${item.product?._id || item.product}-${item.variantId || 'no-variant'}`}
+                  key={`${item.product._id || item.product}-${item.variantId || 'no-variant'}`}
                   className="flex gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   {/* Update image container with click handler */}
@@ -234,6 +234,7 @@ export default function CartDialog() {
                       fill
                       className="object-cover rounded-md hover:opacity-75 transition-opacity"
                       sizes="(max-width: 768px) 80px, 96px"
+                      unoptimized
                     />
                   </div>
                   <div className="flex-1 min-w-0">

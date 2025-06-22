@@ -51,6 +51,8 @@ export default function CreateProductPage() {
     shortDescription: "",
     price: 0,
     category: "",
+    subCategory: "",
+    childCategory: "",
     brand: "",
     productModel: "",
     sku: "",
@@ -124,8 +126,9 @@ export default function CreateProductPage() {
   });
 
   // Available options
-  const categories = ["men","women","travel","handbags","smallleathergoods", "accessories", "bags", "fragrances",];
-  const brands = ["Nike", "Adidas", "Apple", "Samsung", "Sony", "Custom"];
+  const categories = ["men","women","bags", "fragrances"];
+  const subCategories = ["handbags","perfume","body-mist","roll-on","fragrances-of-india","wallets-and-small-leather-goods","accessories","travel"]
+  const childCategories = ["jewelry","scarves","belts","luggage","travel-accessories","travel-bags","cardholders","keyholders","luggage","shaving-kit-bags"]
   const availableColors = ["Red", "Blue", "Black", "White", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown"];
   const availableSizes = ["XS", "S", "M", "L", "XL", "XXL", "2XL", "3XL"];
   const shippingClasses = ["standard", "express", "overnight", "free"];
@@ -385,7 +388,7 @@ export default function CreateProductPage() {
       name,
       seo: {
         ...prev.seo,
-        slug: prev.seo.slug || generateSlug(name),
+        slug: generateSlug(name),
         metaTitle: prev.seo.metaTitle || name
       }
     }));
@@ -405,6 +408,8 @@ export default function CreateProductPage() {
       shortDescription: "",
       price: 0,
       category: "",
+      subCategory: "",
+      childCategory: "",
       brand: "",
       productModel: "",
       sku: "",
@@ -546,6 +551,36 @@ export default function CreateProductPage() {
                 >
                   <option value="">Select Category</option>
                   {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+               <div>
+                <FormLabel>SubCategory</FormLabel>
+                <select
+                  name="subCategory"
+                  value={formData.subCategories}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value="">Select Category</option>
+                  {subCategories.map(cat => (
+                    <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <FormLabel>ChildCategory</FormLabel>
+                <select
+                  name="childCategory"
+                  value={formData.childCategory}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value="">Select Category</option>
+                  {childCategories.map(cat => (
                     <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
                   ))}
                 </select>
@@ -1462,3 +1497,7 @@ export default function CreateProductPage() {
     </div>
   );
 }
+
+
+
+
