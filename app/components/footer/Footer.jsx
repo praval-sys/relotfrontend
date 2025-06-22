@@ -6,11 +6,10 @@ import Link from "next/link"
 import { footerData } from "../../../data/footerData"
 import { SocialIcon } from "./social-icons"
 import { ContactItem } from "./contactItem"
-import { ChevronDown, ChevronUp } from "lucide-react" // Keep Lucid Icons for dropdowns
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 export default function Footer() {
-  // Initialize openSections as an empty array - Keep this for dropdown functionality
-  const [openSections, setOpenSections] = useState([]);
+  const [openSections, setOpenSections] = useState([])
 
   const toggleSection = (title) => {
     setOpenSections((prev) =>
@@ -18,45 +17,28 @@ export default function Footer() {
     )
   }
 
-  // Placeholder payment icons data - Hardcoded as footerData cannot be changed
-  const paymentIcons = [
-    { name: "Visa", src: "/path/to/visa-icon.png" }, // Replace with actual paths or SVGs
-    { name: "CB", src: "/path/to/cb-icon.png" },
-    { name: "American Express", src: "/path/to/amex-icon.png" },
-    { name: "Maestro", src: "/path/to/maestro-icon.png" },
-    { name: "Mastercard", src: "/path/to/mastercard-icon.png" },
-    { name: "PayPal", src: "/path/to/paypal-icon.png" },
-    // Add Razorpay icon - you might need to add an SVG file and import it
-    // { name: "Razorpay", src: "/path/to/razorpay-icon.png" },
-  ];
-
-
   return (
-    // Changed background to a light cream/off-white shade and text to dark gray
-    <footer className="bg-[#F8F8F8] px-6 md:px-16 py-12 text-gray-700"> {/* Light background, dark text */}
+    <footer className="bg-[#F8F8F8] px-6 md:px-16 py-12 text-gray-700">
       <div className="container mx-auto">
-        {/* Keep the existing 4-column grid structure */}
+        {/* Main Footer Grid */}
         <div className="grid md:grid-cols-4 gap-10">
           {/* Logo and Description */}
           <div>
-            <Link href="/" className="inline-block mb-6">
+            <Link href="/" className="inline-block mb-6 group">
               <Image
-                src="/assets/logo.jpg" // Ensure this logo works well on a light background
+                src="/assets/logo.jpg"
                 alt="Relot Logo"
                 width={150}
                 height={40}
-                className="mb-4"
+                className="mb-4 transition-all duration-300 group-hover:scale-105"
               />
             </Link>
-            {/* Changed heading color to dark gray and font to bold */}
             <h2 className="font-bold text-xl mb-4 text-gray-800">{footerData.tagline}</h2>
-            {/* Changed description text color to a slightly lighter dark gray */}
             <p className="text-base leading-relaxed text-gray-600">{footerData.description}</p>
           </div>
 
-          {/* Information */}
+          {/* Information Links */}
           <div>
-            {/* Changed heading color to dark gray and border to light gray */}
             <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-gray-800">
               {footerData.informationTitle}
             </h3>
@@ -64,16 +46,14 @@ export default function Footer() {
               {footerData.informationLinks.map((link) => (
                 <li key={link.text} className="text-base">
                   <div
-                    // Changed link colors to dark gray, hover to darker gray
-                    className="flex items-center justify-between cursor-pointer text-gray-600 hover:text-gray-800 transition-colors"
+                    className="flex items-center justify-between cursor-pointer text-gray-600 hover:text-red-600 transition-colors duration-300"
                     onClick={() => link.subsections && toggleSection(link.text)}
                   >
-                    <Link href={link.href} className="hover:underline">
+                    <Link href={link.href} className="hover:underline transition-all duration-300">
                       {link.text}
                     </Link>
                     {link.subsections && (
-                      // Changed icon color to a slightly lighter dark gray
-                      <span className="text-gray-500">
+                      <span className="text-gray-500 hover:text-red-500 transition-colors duration-300">
                         {openSections.includes(link.text) ? (
                           <ChevronUp size={18} />
                         ) : (
@@ -83,11 +63,13 @@ export default function Footer() {
                     )}
                   </div>
                   {link.subsections && openSections.includes(link.text) && (
-                    // Changed sub-link text color to a lighter dark gray
                     <ul className="ml-4 mt-2 space-y-2 text-sm text-gray-500">
                       {link.subsections.map((sublink) => (
                         <li key={sublink.text}>
-                          <Link href={sublink.href} className="hover:text-gray-800 hover:underline transition-colors">
+                          <Link
+                            href={sublink.href}
+                            className="hover:text-red-600 hover:underline transition-colors duration-300"
+                          >
                             {sublink.text}
                           </Link>
                         </li>
@@ -101,63 +83,119 @@ export default function Footer() {
 
           {/* Quick Shop */}
           <div>
-             {/* Changed heading color to dark gray and border to light gray */}
             <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-gray-800">
               {footerData.quickShopTitle}
             </h3>
             <ul className="space-y-3">
               {footerData.quickShopLinks.map((link) => (
-                 // Changed link colors to dark gray, hover to darker gray
-                <li key={link.text} className="text-base text-gray-600 hover:text-gray-800 hover:underline transition-colors">
-                  <Link href={link.href}>{link.text}</Link>
+                <li key={link.text} className="text-base">
+                  <Link
+                    href={link.href}
+                    className="text-gray-600 hover:text-red-600 hover:underline transition-colors duration-300"
+                  >
+                    {link.text}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Contact Info */}
-          {/* Removed dark background, border, and padding from this div */}
           <div>
-             {/* Changed heading color to dark gray and border to light gray */}
             <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-gray-800">
               {footerData.contactTitle}
             </h3>
-            {/* Assuming ContactItem component uses appropriate text colors for light background */}
-            <div className="space-y-4"> {/* Adjusted spacing */}
+            <div className="space-y-4">
               {footerData.contactInfo.map((item) => (
                 <ContactItem key={item.type} icon={item.icon} content={item.content} />
               ))}
             </div>
 
-            {/* Changed heading color to dark gray */}
             <h3 className="font-bold text-xl mt-8 mb-4 text-gray-800">{footerData.socialTitle}</h3>
-            {/* Changed icon color to dark gray */}
             <div className="flex gap-4 text-2xl text-gray-600">
               {footerData.socialLinks.map((social) => (
-                 // Assuming SocialIcon component uses appropriate icon colors for light background
-                <SocialIcon key={social.platform} href={social.href} icon={social.icon} platform={social.platform} />
+                <div key={social.platform} className="hover:text-red-600 transition-colors duration-300">
+                  <SocialIcon href={social.href} icon={social.icon} platform={social.platform} />
+                </div>
               ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      {/* Changed border color to light gray and adjusted layout for medium screens */}
-      <div className="border-t border-gray-300 mt-10 pt-6 text-center md:flex md:justify-between md:items-center">
-        {/* Changed copyright text color to dark gray */}
-        <p className="text-base text-gray-600 mb-4 md:mb-0">{footerData.copyright}</p>
-         {/* Payment Icons */}
-         <div className="flex justify-center md:justify-end items-center gap-3">
-            {paymentIcons.map((icon) => (
-                // You will need to replace these with actual Image or SVG components
-                <Image key={icon.name} src={icon.src} alt={icon.name} width={30} height={20} className="h-5 object-contain" />
-                // If using an SVG component directly:
-                // <div key={icon.name}>{icon.icon}</div>
-            ))}
-             {/* Placeholder for Razorpay if not in react-icons */}
-             {/* <span className="text-gray-600 text-sm">Razorpay Icon Here</span> */}
-         </div>
+      {/* Bottom Footer with Razorpay Integration */}
+      <div className="border-t border-gray-300 mt-10 pt-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
+          {/* Copyright */}
+          <div className="text-center md:text-left">
+            <p className="text-base text-gray-600">{footerData.copyright}</p>
+          </div>
+
+          {/* Payment Section */}
+          <div className="text-center md:text-right">
+            <div className="flex flex-col items-center md:items-end gap-3">
+              {/* Payment Method Text */}
+              <p className="text-sm text-gray-600 font-medium">
+                Secure Payment Powered by
+              </p>
+
+              {/* Razorpay Logo and Badge */}
+              <div className="flex items-center gap-4">
+                {/* Razorpay Logo */}
+                {/* Razorpay Logo */}
+                <div className="group cursor-pointer">
+                  <div className="bg-white rounded-lg p-3 shadow-md border border-gray-200 hover:border-red-300 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src="/razorpay.svg" // Replace with your actual Razorpay image path
+                        alt="Razorpay"
+                        width={120}
+                        height={40}
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Security Badge */}
+                <div className="group cursor-pointer">
+                  <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-2 hover:bg-green-100 hover:border-green-300 transition-all duration-300">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      <span className="text-green-700 font-semibold text-sm">100% Secure</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Features */}
+              <div className="flex flex-wrap justify-center md:justify-end gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-1 hover:text-red-600 transition-colors duration-300">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Instant Refunds</span>
+                </div>
+                <div className="flex items-center gap-1 hover:text-red-600 transition-colors duration-300">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>UPI, Cards, Wallets</span>
+                </div>
+                <div className="flex items-center gap-1 hover:text-red-600 transition-colors duration-300">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Bank Grade Security</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
       </div>
     </footer>
   )

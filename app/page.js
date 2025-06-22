@@ -66,12 +66,12 @@ export default function Home() {
         <BestSeller />
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials
       <section className="py-8 sm:py-10 md:py-12 bg-neutral-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Testimonial />
         </div>
-      </section>
+      </section> */}
 
       {/* Collection Showcase */}
       {/* <section className="py-8 sm:py-12 md:py-16">
