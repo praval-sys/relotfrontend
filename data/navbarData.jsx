@@ -1,6 +1,11 @@
 // Menu data structure
 export const menuData = [
   {
+    id: "home",
+    label: "Home",
+    link: "/",
+  },
+  {
     id: "women",
     label: "Women",
     link: "/products/?category=women",

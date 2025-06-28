@@ -98,6 +98,7 @@ export default function WishlistPage() {
                     fill
                     className="object-cover rounded-md hover:opacity-75 transition-opacity"
                     sizes="(max-width: 768px) 96px, 96px"
+                    unoptimized
                   />
                 </div>
 

@@ -1,9 +1,21 @@
 import { useSelector } from 'react-redux';
-import { SET_CART_ITEMS, ADD_ITEM_TO_CART, REMOVE_ITEM_FROM_CART, UPDATE_CART_ITEM_QUANTITY, SET_CART_TOTAL } from '../types';
+import {
+  SET_CART_ITEMS,
+  ADD_ITEM_TO_CART,
+  REMOVE_ITEM_FROM_CART,
+  UPDATE_CART_ITEM_QUANTITY,
+  SET_CART_TOTAL,
+  CLEAR_CART
+} from '../types';
 
 export const setCartItems = (items) => ({
   type: SET_CART_ITEMS,
   payload: items
+});
+
+export const setCartTotal = (total) => ({
+  type: SET_CART_TOTAL,
+  payload: total
 });
 
 export const addItemToCart = (item) => ({
@@ -11,18 +23,19 @@ export const addItemToCart = (item) => ({
   payload: item
 });
 
-export const removeItemFromCart = (itemId) => ({
+// ✅ FIXED: Updated to handle the new payload structure
+export const removeItemFromCart = (itemIdentifier) => ({
   type: REMOVE_ITEM_FROM_CART,
-  payload: itemId
+  payload: itemIdentifier
 });
 
-export const updateCartItemQuantity = (itemId, quantity) => ({
+// ✅ FIXED: Updated to handle the new payload structure
+export const updateCartItemQuantity = (updateData) => ({
   type: UPDATE_CART_ITEM_QUANTITY,
-  payload: { itemId, quantity }
+  payload: updateData
 });
 
-export const setCartTotal = (total) => ({
-  type: SET_CART_TOTAL,
-  payload: total
+export const clearCart = () => ({
+  type: CLEAR_CART
 });
 
