@@ -49,15 +49,7 @@ const MobileMenu = ({
         </button>
       </div>
 
-      {/* Mobile search */}
-      <div className="p-4 border-b border-neutral-100 bg-neutral-50">
-       <SearchBar 
-    searchQuery={searchQuery} 
-    setSearchQuery={setSearchQuery} 
-    isExpanded={false}
-    setIsExpanded={() => {}} 
-  />
-      </div>
+     
 
       {/* Mobile user info */}
       {user && (

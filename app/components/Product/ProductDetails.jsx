@@ -40,8 +40,6 @@ function ProductDetails({ product, addItem, AddWishh }) {
   const getAllMedia = () => {
     const allMedia = [];
 
-    
-
     // Gallery images
     if (product.gallery?.images && Array.isArray(product.gallery.images)) {
       product.gallery.images.forEach(img => {
@@ -155,6 +153,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
     }
   };
 
+  // ✅ Enhanced handleAddToCart with correct final price calculation
   const handleAddToCart = async (e) => {
     e.stopPropagation();
     
@@ -163,32 +162,36 @@ function ProductDetails({ product, addItem, AddWishh }) {
       return;
     }
 
-    const cartData = {
-      products: [{
-        product: product._id,
-        variantId: selectedVariant?._id,
-        quantity: quantity,
-        price: selectedVariant?.price || product.price,
-        discount: product.discount,
-        name: product.name,
-        image: allMedia[0]?.url || '/placeholder.png',
-        color: selectedVariant?.color,
-        size: selectedVariant?.size,
-        sku: selectedVariant?.sku
-      }]
-    };
+    // ✅ FIXED: Calculate final price with discount
+    const basePrice = selectedVariant?.price || product.price;
+    const discount = product.discount || 0;
+    const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
 
+    // Create cart item object with final price
     const cartItem = {
+      id: `${product._id}${selectedVariant?._id ? `-${selectedVariant._id}` : ''}`,
       product: product._id,
+      productId: product._id,
       variantId: selectedVariant?._id,
       quantity: quantity,
-      price: selectedVariant?.price || product.price,
+      price: basePrice, // Keep original price for display
+      finalPrice: finalPrice, // ✅ FIXED: Store calculated final price
       discount: product.discount,
       name: product.name,
       image: allMedia[0]?.url || '/placeholder.png',
       color: selectedVariant?.color,
       size: selectedVariant?.size,
-      sku: selectedVariant?.sku
+      sku: selectedVariant?.sku,
+      category: product.category,
+      brand: product.brand,
+      inStock: availableStock > 0,
+      maxQuantity: availableStock,
+      addedAt: new Date().toISOString()
+    };
+
+    // API payload for logged-in users
+    const cartData = {
+      products: [cartItem]
     };
 
     try {
@@ -197,16 +200,24 @@ function ProductDetails({ product, addItem, AddWishh }) {
       if (response.success) {
         addItem(response.data.items[0]);
         toast.success(response.message || "Added to cart!");
+        return;
       }
     } catch (error) {
+      console.error("Cart API error:", error);
+      
       if (error.response?.status === 401) {
-        toast.error("Please login to add items to cart");
+        toast.success("Added to cart! (Sign in to sync across devices)");
+        addItem(cartItem);
+        return;
       } else {
-        toast.error("Failed to add to cart. Please try again.");
+        toast.success("Added to cart! (Saved locally)");
+        addItem(cartItem);
+        return;
       }
     }
   };
 
+  // ✅ Enhanced handleAddToWishlist with fallback for non-logged-in users
   const handleAddToWishlist = async (e) => {
     e.stopPropagation();
     
@@ -215,24 +226,50 @@ function ProductDetails({ product, addItem, AddWishh }) {
       return;
     }
 
+    // Create wishlist item object
+    const wishlistItem = {
+      id: `${product._id}${selectedVariant?._id ? `-${selectedVariant._id}` : ''}`,
+      productId: product._id,
+      variantId: selectedVariant?._id,
+      // Additional product details for offline wishlist
+      name: product.name,
+      price: selectedVariant?.price || product.price,
+      discount: product.discount,
+      image: allMedia[0]?.url || '/placeholder.png',
+      color: selectedVariant?.color,
+      size: selectedVariant?.size,
+      sku: selectedVariant?.sku,
+      category: product.category,
+      brand: product.brand,
+      inStock: availableStock > 0,
+      addedAt: new Date().toISOString()
+    };
+
+    // API payload for logged-in users
     const wishlistData = {
       productId: product._id,
       variantId: selectedVariant?._id,
     };
 
     try {
+      // Try to add to API wishlist (for logged-in users)
       const response = await addToWishlist(wishlistData);
       
       if (response.success) {
+        // Success: Add to Redux state from API response
         AddWishh(response.data);
         toast.success(response.message || "Added to wishlist!");
         return;
       }
     } catch (error) {
+      console.error("Wishlist API error:", error);
+      
       if (error.response?.status === 401) {
-        toast.error("Please login to add to wishlist");
+        // User not logged in - use Redux fallback
+        toast.success("Added to wishlist! (Sign in to sync across devices)");
+        AddWishh(wishlistItem);
         return;
-      } 
+      }
       
       if (error.response?.status === 400) {
         if (error.response.data?.message.includes("already in wishlist")) {
@@ -243,8 +280,10 @@ function ProductDetails({ product, addItem, AddWishh }) {
         return;
       }
 
-      toast.error("Failed to add to wishlist. Please try again.");
-      console.error("Wishlist error:", error);
+      // Other API errors - use Redux fallback
+      toast.success("Added to wishlist! (Saved locally)");
+      AddWishh(wishlistItem);
+      return;
     }
   };
 
@@ -348,7 +387,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                     onClick={() => setSelectedMedia(index)}
                     className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedMedia === index 
-                        ? 'border-blue-500 ring-2 ring-blue-200' 
+                        ? 'border-red-500 ring-2 ring-red-200' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -380,7 +419,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
 
           {/* Zoom Preview Panel (Side Panel) */}
           {isZooming && currentZoomImage && (
-            <div className="hidden lg:block fixed left-30 top-1/2 transform -translate-y-1/2 w-120 h-200 bg-white rounded-2xl shadow-2xl border-4 border-blue-200 z-50 overflow-hidden">
+            <div className="hidden lg:block fixed left-30 top-1/2 transform -translate-y-1/2 w-120 h-200 bg-white rounded-2xl shadow-2xl border-4 border-red-200 z-50 overflow-hidden">
               <div className="relative w-full h-full">
                 <Image
                   src={currentZoomImage.url}
@@ -446,7 +485,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
             {/* Price Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border">
               <div className="flex items-center gap-4 mb-2">
-                <div className="text-3xl font-bold text-blue-600">
+                <div className="text-3xl font-bold text-red-600">
                   ₹{finalPrice.toFixed(2)}
                 </div>
                 {product.discount > 0 && (
@@ -479,7 +518,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 {product.availableColors?.length > 0 && (
                   <div className="space-y-3">
                     <label className="text-sm font-medium text-gray-900">
-                      Color: <span className="text-blue-600">{selectedColor}</span>
+                      Color: <span className="text-red-600">{selectedColor}</span>
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {product.availableColors.map((color) => (
@@ -488,7 +527,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                           onClick={() => setSelectedColor(color)}
                           className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all ${
                             selectedColor === color 
-                              ? 'border-blue-500 bg-blue-50 text-blue-600' 
+                              ? 'border-red-500 bg-red-50 text-red-600' 
                               : 'border-gray-200 hover:border-gray-300 text-gray-700'
                           }`}
                         >
@@ -503,7 +542,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 {product.availableSizes?.length > 0 && (
                   <div className="space-y-3">
                     <label className="text-sm font-medium text-gray-900">
-                      Size: <span className="text-blue-600">{selectedSize}</span>
+                      Size: <span className="text-red-600">{selectedSize}</span>
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {product.availableSizes.map((size) => (
@@ -512,7 +551,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                           onClick={() => setSelectedSize(size)}
                           className={`px-4 py-2 text-sm font-medium rounded-lg border-2 transition-all ${
                             selectedSize === size 
-                              ? 'border-blue-500 bg-blue-50 text-blue-600' 
+                              ? 'border-red-500 bg-red-50 text-red-600' 
                               : 'border-gray-200 hover:border-gray-300 text-gray-700'
                           }`}
                         >
@@ -587,7 +626,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 disabled={availableStock <= 0 || (product.hasVariants && !selectedVariant)}
                 className={`w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all transform hover:scale-105 ${
                   availableStock > 0 && (!product.hasVariants || selectedVariant) 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg' 
+                    ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg' 
                     : 'bg-gray-400 cursor-not-allowed'
                 }`}
               >
@@ -598,7 +637,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
               <button
                 onClick={handleAddToWishlist}
                 disabled={product.hasVariants && !selectedVariant}
-                className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-white border-2 border-gray-300 font-semibold text-lg hover:border-gray-400 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-white border-2 border-red-300 font-semibold text-lg hover:border-red-400 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-red-600"
               >
                 <Heart className="h-6 w-6" />
                 <span>Add to Wishlist</span>
@@ -608,7 +647,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
             {/* Features */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center gap-3 p-4 bg-white rounded-lg border">
-                <Truck className="h-6 w-6 text-blue-600" />
+                <Truck className="h-6 w-6 text-red-600" />
                 <div>
                   <p className="font-medium text-sm text-gray-900">Free Shipping</p>
                   <p className="text-xs text-gray-500">On orders over ₹500</p>
@@ -641,7 +680,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                   onClick={() => setActiveTab(tab.key)}
                   className={`px-8 py-4 text-sm font-medium transition-all ${
                     activeTab === tab.key
-                      ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                      ? 'text-red-600 border-b-2 border-red-600 bg-red-50'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -691,7 +730,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 {!product.detailedDescription?.length && (
                   <button
                     onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                    className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+                    className="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium"
                   >
                     {isDescriptionExpanded ? (
                       <>
@@ -715,7 +754,7 @@ function ProductDetails({ product, addItem, AddWishh }) {
                 <ul className="space-y-2">
                   {product.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
                       <span className="text-gray-700">{feature}</span>
                     </li>
                   ))}

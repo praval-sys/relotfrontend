@@ -86,49 +86,80 @@ const Navbar = ({ className }) => {
       <div className={`w-full fixed bg-white transition-all duration-300 ${
         isSearchExpanded ? 'z-30' : 'z-40'
       } ${isScrolled ? 'top-0 shadow-md' : 'top-[32px] md:top-[40px]'}`}>
+        
         {/* Upper Section (Logo, Search, Icons) */}
         <div className={`w-full bg-white transition-all duration-300 overflow-hidden border-b border-gray-200
           ${isScrolled ? 'h-0 opacity-0' : 'h-auto opacity-100'}`}
         >
           <div className="container mx-auto px-4 py-3 md:py-4">
-            <div className="flex items-center justify-between gap-4">
-              {/* Mobile menu button */}
-              <button
-                className="md:hidden p-2 rounded-md hover:bg-gray-100"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-
-              {/* Search Bar - Now First */}
-              <div className="hidden md:flex flex-1 max-w-xl w-80">
-                <SearchBar 
-                  searchQuery={searchQuery} 
-                  setSearchQuery={setSearchQuery} 
-                  isExpanded={isSearchExpanded}
-                  setIsExpanded={setIsSearchExpanded}
-                />
+            {/* Mobile Layout */}
+            <div className="flex md:hidden items-center justify-between">
+              {/* Left: Mobile menu button */}
+              <div className="flex items-center">
+                <button
+                  className="p-2 rounded-md hover:bg-gray-100 flex-shrink-0"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                  {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                </button>
               </div>
 
-              {/* Logo - Now in Middle */}
+              {/* Center: Logo */}
               <div className="flex-shrink-0">
                 <NavbarLogo />
               </div>
 
-              {/* Icons - Now Last */}
-              <div className="flex items-center space-x-2 md:space-x-4">
+              {/* Right: Icons with proper spacing */}
+              <div className="flex items-center space-x-2">
                 <UserNavigation />
                 <WishlistButton />
                 <CartButton />
               </div>
             </div>
+
+            {/* Desktop Layout */}
+            <div className="hidden md:flex items-center gap-4">
+              {/* Left Side - Logo */}
+              <div className="flex-shrink-0">
+                <NavbarLogo />
+              </div>
+
+              {/* Center - Search Bar (Desktop only) */}
+              <div className="flex flex-1 justify-center max-w-2xl mx-auto">
+                <div className="w-full max-w-lg">
+                  <SearchBar 
+                    searchQuery={searchQuery} 
+                    setSearchQuery={setSearchQuery} 
+                    isExpanded={isSearchExpanded}
+                    setIsExpanded={setIsSearchExpanded}
+                  />
+                </div>
+              </div>
+
+              {/* Right Side - Icons */}
+              <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+                <UserNavigation />
+                <WishlistButton />
+                <CartButton />
+              </div>
+            </div>
+
+            {/* Mobile Search Bar - Below main header on mobile only */}
+            <div className="md:hidden mt-3 pt-3 border-t border-gray-100">
+              <SearchBar 
+                searchQuery={searchQuery} 
+                setSearchQuery={setSearchQuery} 
+                isExpanded={isSearchExpanded}
+                setIsExpanded={setIsSearchExpanded}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Navigation Menu - Always Visible */}
+        {/* Navigation Menu - Desktop Only */}
         <nav className="hidden md:block bg-white border-b border-gray-200">
           <div className="container mx-auto px-4 py-3">
-            <ul className="flex items-center space-x-6">
+            <ul className="flex items-center justify-center space-x-6">
               <DesktopMenu 
                 menuData={menuData} 
                 activeSubmenu={activeSubmenu} 
@@ -142,7 +173,7 @@ const Navbar = ({ className }) => {
       {/* Mobile menu overlay */}
       {mobileMenuOpen && (
         <div 
-          className="fixed inset-0 z-50 bg-black bg-opacity-50" 
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden" 
           onClick={() => setMobileMenuOpen(false)}
         ></div>
       )}
@@ -153,7 +184,7 @@ const Navbar = ({ className }) => {
         setIsOpen={setMobileMenuOpen}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        handleSearch={() => {}} // Remove handleSearch as it's now handled internally
+        handleSearch={() => {}}
         user={user}
         logout={logout}
         menuData={menuData}

@@ -22,7 +22,8 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
 
               {item.submenu && (
                 <div
-                  className="absolute left-0 mt-2 bg-white shadow-xl rounded-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform group-hover:translate-y-0 translate-y-1 w-[800px] p-6"
+                  // 🔥 CHANGED: Increased z-index from z-10 to z-[70]
+                  className="absolute left-0 mt-2 bg-white shadow-xl rounded-lg z-[70] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform group-hover:translate-y-0 translate-y-1 w-[800px] p-6"
                   onMouseLeave={() => setActiveSubmenu(null)}
                 >
                   <div className="flex gap-6">
@@ -46,8 +47,11 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
 
                             {/* Nested Submenu */}
                             {subItem.submenu && (
-                              <div className="absolute left-full top-0 ml-2 bg-white shadow-xl rounded-lg z-20 opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible transition-all duration-300 ease-in-out transform group-hover/nested:translate-x-0 translate-x-1 w-60 p-4"> {/* Adjusted width and padding */}
-                                <h4 className="font-bold text-base mb-3 text-gray-800 pb-1 border-b"> {/* Smaller heading for nested */}
+                              <div 
+                                // 🔥 CHANGED: Increased nested menu z-index to z-[80]
+                                className="absolute left-full top-0 ml-2 bg-white shadow-xl rounded-lg z-[80] opacity-0 invisible group-hover/nested:opacity-100 group-hover/nested:visible transition-all duration-300 ease-in-out transform group-hover/nested:translate-x-0 translate-x-1 w-60 p-4"
+                              >
+                                <h4 className="font-bold text-base mb-3 text-gray-800 pb-1 border-b">
                                   {subItem.label}
                                 </h4>
                                 <ul className="space-y-2">

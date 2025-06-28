@@ -9,15 +9,23 @@ import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
-import localFont from 'next/font/local';
+import { Raleway } from 'next/font/google';
+// import localFont from 'next/font/local';
 
-
-// Configure Raleway font
-const customFont = localFont({
-  src: '../app/font/fonnts.com-244192/fonts/fonnts.com-Newbery_Sans_Pro_Light.otf',
+// Configure Raleway font from Google Fonts
+const raleway = Raleway({
+  subsets: ['latin'],
   display: 'swap',
-  variable: '--font-custom' // This creates a CSS variable
+  variable: '--font-raleway',
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
+
+// Commented out custom local font
+// const customFont = localFont({
+//   src: '../app/font/fonnts.com-244192/fonts/fonnts.com-Newbery_Sans_Pro_Light.otf',
+//   display: 'swap',
+//   variable: '--font-custom' // This creates a CSS variable
+// });
 
 function LayoutContent({ children }) {
   const pathname = usePathname();
@@ -45,8 +53,8 @@ function LayoutContent({ children }) {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={customFont.className}>
-      <body className="antialiased">
+    <html lang="en" className={raleway.variable}>
+      <body className={`${raleway.className} antialiased`}>
         <Provider store={store}>
             <AuthProvider>
               <LayoutContent>{children}</LayoutContent>
