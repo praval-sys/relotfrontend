@@ -16,7 +16,7 @@ export default function CollectInStorePage() {
         "• The email informing you of the availability of your order (printed out or on the screen of your phone)",
         "• Proof of identification."
       ],
-      icon: <Store className="h-12 w-12 text-blue-600" />
+      icon: <Store className="h-12 w-12 text-red-600" />
     },
     {
       question: "Can a third party collect my order in a store?",
@@ -24,7 +24,7 @@ export default function CollectInStorePage() {
         "Yes, an option for third party pick-up is available if the first and last name of the individual is designated in the required fields prior to the order being placed.",
         "Please note, a copy of the order confirmation and a valid photo ID will be required at the time of pick-up. The name on the ID must match the name entered on the order for the package to be retrieved."
       ],
-      icon: <UserCheck className="h-12 w-12 text-blue-600" />
+      icon: <UserCheck className="h-12 w-12 text-red-600" />
     },
     {
       question: "When will my order be available in store?",
@@ -35,7 +35,7 @@ export default function CollectInStorePage() {
         "• Proof of identification",
         "You have 21 days to collect your order from the receipt of the e-mail(relot2025@gmail.com) informing you of its availability in store."
       ],
-      icon: <Clock className="h-12 w-12 text-blue-600" />
+      icon: <Clock className="h-12 w-12 text-red-600" />
     }
   ];
 

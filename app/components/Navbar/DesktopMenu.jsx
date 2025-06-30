@@ -22,7 +22,6 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
 
               {item.submenu && (
                 <div
-                  // 🔥 CHANGED: Increased z-index from z-10 to z-[70]
                   className="absolute left-0 mt-2 bg-white shadow-xl rounded-lg z-[70] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out transform group-hover:translate-y-0 translate-y-1 w-[800px] p-6"
                   onMouseLeave={() => setActiveSubmenu(null)}
                 >
@@ -118,7 +117,7 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
         {/* Best Offers - Right aligned */}
         <li className="relative group ml-auto">
           <Link
-            href="/offers"
+            href="/products/?maxDiscount=60"
             className="flex items-center py-2 text-red-600 hover:text-red-700 transition-colors duration-300 ease-in-out font-bold text-[15px]"
           >
             <Sparkles className="mr-2 h-5 w-5 animate-pulse" />

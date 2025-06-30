@@ -218,7 +218,7 @@ function ResetPasswordComponent() {
 
           <div className="text-center">
             <Link
-              href="/forgot-password"
+              href="/forgotpassword"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Need a new reset code?

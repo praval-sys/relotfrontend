@@ -6,7 +6,7 @@ export default function CookiesPage() {
                 This website uses cookies to enhance the user experience. By using our site, you agree to our use of cookies.
             </p>
             <p className="text-sm text-gray-500 mt-4">
-                For more information, please read our <a href="/privacy-policy" className="text-blue-500 underline">Privacy Policy</a>.
+                For more information, please read our <a href="/contactus" className="text-blue-500 underline">Privacy Policy</a>.
             </p>
         </div>
     );

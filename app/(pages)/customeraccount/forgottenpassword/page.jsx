@@ -7,17 +7,17 @@ export default function ForgottenPasswordPage() {
     {
       title: "Click Account",
       description: "Navigate to \"your account\" at the top right of the Relot.in website",
-      icon: <Key className="h-12 w-12 text-blue-600" />
+      icon: <Key className="h-12 w-12 text-red-600" />
     },
     {
       title: "Reset Password",
       description: "Click \"forgotten your password?\" link",
-      icon: <Mail className="h-12 w-12 text-blue-600" />
+      icon: <Mail className="h-12 w-12 text-red-600" />
     },
     {
       title: "Check Email",
       description: "Enter your email address and follow the reset instructions sent to your inbox",
-      icon: <ArrowRight className="h-12 w-12 text-blue-600" />
+      icon: <ArrowRight className="h-12 w-12 text-red-600" />
     }
   ];
 
@@ -58,7 +58,7 @@ export default function ForgottenPasswordPage() {
 
         {/* Reset Password Button */}
         <div className="mt-12 text-center">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors duration-200 text-lg font-medium">
+          <button className="bg-red-600 text-white px-8 py-3 rounded-md hover:bg-red-700 transition-colors duration-200 text-lg font-medium" onClick={() => window.location.href = '/reset-password'}>
             Reset Password Now
           </button>
         </div>

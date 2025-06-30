@@ -4,43 +4,50 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-// Enhanced categories with proper query parameters based on navbar data
 const categories = [
   {
-    href: '/products/?category=women&subCategory=handbags',
+    href: '/products?category=women&subCategory=handbags',
     imgSrc: '/images/relot front page img 13-6/1st setion women_s bag.png',
     title: "Women's Handbags",
-    description: "Discover elegant handbags for every occasion"
+    description: "Discover elegant handbags for every occasion",
+    badge: "Popular"
   },
   {
-    href: '/products/?category=women&subCategory=wallets-and-small-leather-goods',
+    // ✅ Fixed: Corrected link format and image path
+    href: '/products?category=women&subCategory=wallets-and-small-leather-goods',
     imgSrc: '/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif',
-    title: "Women's Wallet and Small Leather Good",
-    description: "Premium wallets and leather accessories"
+    title: "Women's Wallet & Small Leather Goods",
+    description: "Premium wallets and leather accessories",
+    badge: "Popular"
   },
   {
-    href: '/products/?category=men&subCategory=handbags',
+    href: '/products?category=men&subCategory=handbags',
     imgSrc: '/images/relot front page img 13-6/1st sec men_s bag.avif',
     title: "Men's Bags",
-    description: "Sophisticated bags for the modern man"
+    description: "Sophisticated bags for the modern man",
+    badge: "Popular"
   },
   {
-    href: '/products/?category=men&subCategory=wallets-and-small-leather-goods',
+    href: '/products?category=men&subCategory=wallets-and-small-leather-goods',
     imgSrc: '/images/relot front page img 13-6/Men_s Wallet and Small Leather Good.avif',
-    title: "Men's Wallet and Small Leather Good",
-    description: "Crafted leather goods for everyday use"
+    title: "Men's Wallet & Small Leather Goods",
+    description: "Crafted leather goods for everyday use",
+    badge: "Popular"
   },
   {
-    href: '/products/?category=fragrances&subCategory=perfume',
-    imgSrc: '/images/relot front page img 13-6/Women_s Wallet and Small Leather Good.avif',
+    href: '/products?category=fragrances&subCategory=perfume',
+    // ✅ Fixed: Use correct fragrance image instead of wallet image
+    imgSrc: '/images/relot front page img 13-6/istockphoto-1411865611-1024x1024.jpg', // Use appropriate fragrance image
     title: "Fragrances",
-    description: "Captivating scents for every personality"
+    description: "Captivating scents for every personality",
+    badge: "New"
   },
   {
-    href: '/products/?category=women&subCategory=accessories&childCategory=jewelry',
+    href: '/products?category=women&subCategory=accessories&childCategory=jewelry',
     imgSrc: '/images/relot front page img 13-6/topbnr3.jpg',
     title: "Women's Jewelry",
-    description: "Exquisite jewelry to complete your look"
+    description: "Exquisite jewelry to complete your look",
+    badge: "Trending"
   }
 ]
 
@@ -84,10 +91,14 @@ export default function ProductCategories() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover object-center transition-all duration-700 group-hover:scale-110"
                     unoptimized
+                    onError={(e) => {
+                      // ✅ Fallback image if original fails to load
+                      e.target.src = '/images/placeholder-category.jpg'
+                    }}
                   />
                   
                   {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
                   {/* Hover Content */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
@@ -102,19 +113,24 @@ export default function ProductCategories() {
                     </div>
                   </div>
 
-                  {/* Category Badge */}
-                  <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                    Popular
+                  {/* ✅ Dynamic Category Badge */}
+                  <div className={`absolute top-4 left-4 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg ${
+                    item.badge === 'Popular' ? 'bg-red-500' :
+                    item.badge === 'New' ? 'bg-green-500' :
+                    item.badge === 'Trending' ? 'bg-purple-500' :
+                    'bg-blue-500'
+                  }`}>
+                    {item.badge}
                   </div>
                 </div>
 
                 {/* Fixed Content Section */}
                 <div className="p-6 h-32 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-300 line-clamp-2">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-300 line-clamp-1">
                       {item.title}
                     </h3>
-                    <p className="text-gray-600 text-sm line-clamp-2">
+                    <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -133,10 +149,10 @@ export default function ProductCategories() {
                 </div>
 
                 {/* Animated Border */}
-                <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-red-300 transition-colors duration-500" />
+                <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-red-300 transition-colors duration-500 pointer-events-none" />
                 
                 {/* Glow Effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-400/0 via-pink-400/0 to-red-400/0 group-hover:from-red-400/20 group-hover:via-pink-400/20 group-hover:to-red-400/20 transition-all duration-700 -z-10 blur-xl transform scale-110" />
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-red-400/0 via-pink-400/0 to-red-400/0 group-hover:from-red-400/20 group-hover:via-pink-400/20 group-hover:to-red-400/20 transition-all duration-700 blur-xl -z-10" />
               </div>
             </Link>
           ))}

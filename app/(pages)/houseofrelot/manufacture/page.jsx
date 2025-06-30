@@ -25,17 +25,17 @@ export default function ManufacturePage() {
         {/* Feature Highlights */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <Factory className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
+            <Factory className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Local Production</h3>
             <p className="text-gray-600">Manufactured in Indian facilities</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <Scissors className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
+            <Scissors className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Customization</h3>
             <p className="text-gray-600">Personalized services available</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <Info className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
+            <Info className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Product Info</h3>
             <p className="text-gray-600">Detailed product information</p>
           </div>

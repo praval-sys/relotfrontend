@@ -82,106 +82,164 @@ export default function AddReview({ productId }) {
   };
 
   const renderForm = () => (
-    <form onSubmit={handleSubmit} className="bg-gray-50 rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">
-        {isEditing || !userReview ? 'Add a Review' : 'Edit Your Review'}
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold text-black">
+        {isEditing ? 'Edit Your Review' : 'Write a Review'}
       </h3>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 mb-2">Your Rating</label>
-        <div className="flex">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              className="text-2xl focus:outline-none"
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHover(star)}
-              onMouseLeave={() => setHover(0)}
-            >
-              <Star
-                size={24}
-                className={`${
-                  (hover || rating) >= star
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-300'
-                }`}
-              />
-            </button>
-          ))}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Rating Section */}
+        <div className="space-y-3">
+          <label className="text-lg font-semibold text-black">Your Rating</label>
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                className="p-1 focus:outline-none hover:scale-110 transition-transform"
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHover(star)}
+                onMouseLeave={() => setHover(0)}
+              >
+                <Star
+                  size={28}
+                  className={`${
+                    (hover || rating) >= star
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300 hover:text-yellow-200'
+                  } transition-colors`}
+                />
+              </button>
+            ))}
+            {rating > 0 && (
+              <span className="ml-3 text-sm font-medium text-gray-700">
+                {rating}/5 stars
+              </span>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="mb-4">
-        <label htmlFor="comment" className="block text-gray-700 mb-2">
-          Review
-        </label>
-        <textarea
-          id="comment"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-          rows="4"
-          placeholder="Share your experience with this product"
-          required
-        />
-      </div>
+        {/* Comment Section */}
+        <div className="space-y-3">
+          <label htmlFor="comment" className="text-lg font-semibold text-black">
+            Your Review
+          </label>
+          <textarea
+            id="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="w-full px-4 py-3 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 resize-none"
+            rows="5"
+            placeholder="Share your experience with this product..."
+            required
+          />
+          <p className="text-sm text-gray-600">
+            {comment.length}/500 characters
+          </p>
+        </div>
 
-      <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full md:w-auto px-6 py-2 rounded-md text-white font-medium
-            ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-        >
-          {isSubmitting
-            ? isEditing
-              ? 'Updating...'
-              : 'Submitting...'
-            : isEditing
-            ? 'Update Review'
-            : 'Submit Review'}
-        </button>
-
-        {isEditing && (
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <button
-            type="button"
-            onClick={() => {
-              setIsEditing(false);
-              setRating(userReview.rating);
-              setComment(userReview.comment);
-            }}
-            className="px-6 py-2 rounded-md text-gray-600 font-medium border border-gray-300 hover:bg-gray-50"
+            type="submit"
+            disabled={isSubmitting || rating === 0 || !comment.trim()}
+            className={`flex-1 sm:flex-none px-8 py-3 rounded-lg font-semibold transition-all ${
+              isSubmitting || rating === 0 || !comment.trim()
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-red-600 text-white hover:bg-red-700 transform hover:scale-105'
+            }`}
           >
-            Cancel
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                {isEditing ? 'Updating...' : 'Submitting...'}
+              </span>
+            ) : (
+              isEditing ? 'Update Review' : 'Submit Review'
+            )}
           </button>
-        )}
-      </div>
-    </form>
+
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditing(false);
+                setRating(userReview.rating);
+                setComment(userReview.comment);
+              }}
+              className="flex-1 sm:flex-none px-8 py-3 rounded-lg font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    );
+  }
 
-  if (!user) return <p className="text-gray-600">Login to add a review.</p>;
+  if (!user) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-600 text-lg">Please sign in to write a review</p>
+      </div>
+    );
+  }
 
   if (!userReview || isEditing) {
     return renderForm();
   }
 
+  // Display existing review
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
-      <p className="font-semibold mb-2">Your Review:</p>
-      <div className="bg-gray-100 p-4 rounded-lg mb-4">
-        <p>{userReview.comment}</p>
-        <p className="text-sm text-gray-500 mt-2">Rating: {userReview.rating}/5</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-bold text-black">Your Review</h3>
+        <button
+          onClick={() => setIsEditing(true)}
+          className="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium transition-colors"
+        >
+          <Edit size={16} />
+          Edit Review
+        </button>
       </div>
-      <button
-        onClick={() => setIsEditing(true)}
-        className="flex items-center text-blue-600 hover:text-blue-700"
-      >
-        <Edit size={16} className="mr-1" />
-        Edit Review
-      </button>
+
+      <div className="space-y-4">
+        {/* User's Rating */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                key={star}
+                size={20}
+                className={`${
+                  star <= userReview.rating
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="font-semibold text-black">
+            {userReview.rating}/5 stars
+          </span>
+        </div>
+
+        {/* User's Comment */}
+        <div className="space-y-2">
+          <p className="text-gray-700 leading-relaxed text-lg">
+            {userReview.comment}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

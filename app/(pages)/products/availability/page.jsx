@@ -71,7 +71,7 @@ export default function AvailabilityPage() {
                 <p className="text-amber-700">Visit your nearest Relot store</p>
               </div>
             </div>
-            <button className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors duration-200">
+            <button className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 transition-colors duration-200" onClick={() => window.location.href = '/contactus'}>
               Store Locator
             </button>
           </div>
