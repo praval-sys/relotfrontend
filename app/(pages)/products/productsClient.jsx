@@ -184,7 +184,7 @@ export default function ProductsClient() {
   }, [searchParams]);
 
   return (
-    <div className="container mx-auto px-4 py-4 lg:py-8">
+    <div className="container mx-auto mt-5 px-4 py-4 lg:py-8">
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
@@ -214,7 +214,7 @@ export default function ProductsClient() {
 
         {/* Active Filters Summary */}
         {getActiveFilterCount() > 0 && (
-          <div className="flex items-center justify-between bg-blue-50 p-3 rounded-lg">
+          <div className="flex items-center justify-between bg-red-50 p-3 rounded-lg">
             <span className="text-sm text-blue-800">
               {getActiveFilterCount()} filter{getActiveFilterCount() > 1 ? 's' : ''} applied
             </span>

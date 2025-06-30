@@ -25,17 +25,17 @@ export default function SecurityPage() {
         {/* Security Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <Shield className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Secure Platform</h3>
             <p className="text-gray-600">Advanced security measures to protect your data</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <Lock className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <Lock className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Data Privacy</h3>
             <p className="text-gray-600">GDPR compliant data protection policies</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-            <UserCheck className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <UserCheck className="h-12 w-12 text-red-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">User Rights</h3>
             <p className="text-gray-600">Full control over your personal data</p>
           </div>

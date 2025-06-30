@@ -145,7 +145,7 @@ export default function CareAndRepairPage() {
                 </p>
               </div>
             </div>
-            <button className="bg-cyan-600 text-white px-6 py-2 rounded-md hover:bg-cyan-700 transition-colors duration-200">
+            <button className="bg-cyan-600 text-white px-6 py-2 rounded-md hover:bg-cyan-700 transition-colors duration-200" onClick={() => window.location.href = '/contactus'}>
               Find a Store
             </button>
           </div>

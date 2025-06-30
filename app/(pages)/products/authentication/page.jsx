@@ -8,19 +8,22 @@ export default function AuthenticationPage() {
       title: "Official Website",
       description: "Shop securely at Relot.in",
       icon: <Globe className="h-12 w-12 text-green-600" />,
-      link: "Visit Relot.in"
+      link:"/",
+      linkText: "Visit Relot.in"
     },
     {
       title: "Relot Stores",
       description: "Visit our authorized retail locations",
       icon: <Store className="h-12 w-12 text-green-600" />,
-      link: "Find a Store"
+      link:"/contactus",
+      linkText: "Find a Store"
     },
     {
       title: "Authorized Distributors",
       description: "Shop at verified corner stores",
       icon: <ShieldCheck className="h-12 w-12 text-green-600" />,
-      link: "View Distributors"
+      link:"/contactus",
+      linkText: "View Distributors"
     }
   ];
 
@@ -66,8 +69,8 @@ export default function AuthenticationPage() {
               <p className="text-gray-600 mb-4">
                 {channel.description}
               </p>
-              <button className="text-green-600 hover:text-green-700 font-medium">
-                {channel.link} →
+              <button className="text-green-600 hover:text-green-700 font-medium" onClick={() => window.location.href = `${channel.link}`}>
+                {channel.linkText} →
               </button>
             </div>
           ))}

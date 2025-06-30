@@ -9,17 +9,17 @@ export default function BrowsingPage() {
     {
       question: "What is the availability status of items on the site?",
       answer: "All items for sale on the Relot.in are available. If you wish to order a significant number of a particular item, please contact us by email or telephone at 9319198930, option 1, Monday through Friday from 9:00 a.m. to 6 p.m. and Saturday from 10 a.m. to 6 p.m EST.",
-      icon: <Clock className="h-12 w-12 text-blue-600" />
+      icon: <Clock className="h-12 w-12 text-red-600" />
     },
     {
       question: "What do I need for optimum browsing when visiting Relot.in?",
       answer: "To make your experience at Relot.in as pleasant as possible, we recommend using the latest generation of your browser. If you access our website using an older version, we cannot guarantee that all of its features will function properly. Please note that your browser must accept cookies and be SSL compatible with standard browsing mode enabled. Relot.in does not support private browsing mode at this time.",
-      icon: <Monitor className="h-12 w-12 text-blue-600" />
+      icon: <Monitor className="h-12 w-12 text-red-600" />
     },
     {
       question: "How accurate is color display on the Internet?",
       answer: "Each product is photographed with precise attention to detail, and the colors shown should accurately depict each product. However, it is possible that colors may vary slightly from one screen to another due to monitor display settings.",
-      icon: <Palette className="h-12 w-12 text-blue-600" />
+      icon: <Palette className="h-12 w-12 text-red-600" />
     }
   ];
 

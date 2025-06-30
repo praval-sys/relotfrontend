@@ -11,7 +11,7 @@ export default function DeliveryPage() {
     sections: [
       {
         title: "Standard Shipping Thresholds",
-        icon: <Truck className="h-12 w-12 text-blue-600" />,
+        icon: <Truck className="h-12 w-12 text-red-600" />,
         items: [
           "Complimentary Ground shipping on all items up to ₹3,999",
           "Express delivery required for items greater than ₹5,000",
@@ -20,7 +20,7 @@ export default function DeliveryPage() {
       },
       {
         title: "Delivery Service Costs",
-        icon: <Clock className="h-12 w-12 text-blue-600" />,
+        icon: <Clock className="h-12 w-12 text-red-600" />,
         items: [
           "Express 2-day service: ₹200",
           "Standard Overnight service: ₹400",
@@ -65,7 +65,7 @@ export default function DeliveryPage() {
                     key={idx}
                     className="flex items-start text-gray-600"
                   >
-                    <Package className="h-5 w-5 mr-2 mt-0.5 text-blue-600" />
+                    <Package className="h-5 w-5 mr-2 mt-0.5 text-red-600" />
                     <span>{item}</span>
                   </li>
                 ))}

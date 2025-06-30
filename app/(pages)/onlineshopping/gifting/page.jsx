@@ -9,17 +9,17 @@ export default function GiftingPage() {
     {
       question: "Will my order be gift wrapped?",
       answer: "Your purchases are delivered in an orange box tied with a Bolduc ribbon, with the exception of fragrances.",
-      icon: <Gift className="h-12 w-12 text-purple-600" />
+      icon: <Gift className="h-12 w-12 text-red-600" />
     },
     {
       question: "Can I use a gift card or store credit for an online purchase?",
       answer: "Hermès gift cards and store credits may not be used on the Relot.in website. Please consult the conditions listed on your gift card for its terms of use in stores.",
-      icon: <CreditCard className="h-12 w-12 text-purple-600" />
+      icon: <CreditCard className="h-12 w-12 text-red-600" />
     },
     {
       question: "Can I include a personalized gift message with my purchase?",
       answer: "When viewing the items in your cart before checking out, you may include a blank or printed card and priceless invoice. Personalized messages should only be written in English language characters to guarantee accuracy. Use of other characters or images may not print correctly.",
-      icon: <MessageSquare className="h-12 w-12 text-purple-600" />
+      icon: <MessageSquare className="h-12 w-12 text-red-600" />
     },
     {
       question: "Will my gift order include an invoice where the price of the items are not shown?",
@@ -27,12 +27,12 @@ export default function GiftingPage() {
         "An order will be considered a \"gift\" if the civil status, last name or first name of the invoicing information is different from that of the delivery information. In this specific case, an invoice where the price of the items are not shown will be included in the package that is sent to the gift recipient.",
         "To request an invoice where the price is not shown, even if your invoicing information is identical to your delivery information, please contact us as soon as possible by email or telephone at +91-9319198930, option 1, Monday through Friday from 9:00 a.m. to 6 p.m. and Saturday from 10 a.m. to 6 p.m EST."
       ],
-      icon: <FileText className="h-12 w-12 text-purple-600" />
+      icon: <FileText className="h-12 w-12 text-red-600" />
     },
     {
       question: "If I give a gift to someone, can that person exchange it for something else?",
       answer: "Accompanied with an invoice or priceless invoice, a gift may be exchanged for an item of equal or greater value. The difference must be paid at the time of the exchange. Online orders are eligible for a pre-paid return shipping label through your online account or please contact us.",
-      icon: <RefreshCw className="h-12 w-12 text-purple-600" />
+      icon: <RefreshCw className="h-12 w-12 text-red-600" />
     }
   ];
 
