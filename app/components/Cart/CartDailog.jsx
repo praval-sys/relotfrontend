@@ -15,9 +15,9 @@ export default function CartDialog() {
   const [loading, setLoading] = useState(false);
   const [syncingWithAPI, setSyncingWithAPI] = useState(false);
   
-  // Redux state
-  const cartItems = useSelector((state) => state.cart.items);
-  const totalAmount = useSelector((state) => state.cart.totalPrice);
+  // ✅ Fixed: Redux state with fallback defaults
+  const cartItems = useSelector((state) => state.cart?.items || []);
+  const totalAmount = useSelector((state) => state.cart?.totalPrice || 0);
   
   const router = useRouter();
   const dialogRef = useRef(null);
@@ -31,8 +31,8 @@ export default function CartDialog() {
         
         if (response.success && response.data) {
           // Success: Update Redux store with API data
-          dispatch(setCartItems(response.data.items));
-          dispatch(setCartTotal(response.data.totalPrice));
+          dispatch(setCartItems(response.data.items || []));
+          dispatch(setCartTotal(response.data.totalPrice || 0));
         }
       } catch (error) {
         console.error("Failed to fetch cart:", error);
@@ -107,8 +107,8 @@ export default function CartDialog() {
       
       if (response.success) {
         // Success: Update Redux store with API response
-        dispatch(setCartItems(response.data.items));
-        dispatch(setCartTotal(response.data.totalPrice));
+        dispatch(setCartItems(response.data.items || []));
+        dispatch(setCartTotal(response.data.totalPrice || 0));
         toast.success("Quantity updated");
         return;
       }
@@ -117,7 +117,6 @@ export default function CartDialog() {
       
       if (error.response?.status === 401) {
         // User not logged in - update Redux state only
-        // ✅ FIXED: Pass the correct payload structure
         dispatch(updateCartItemQuantity({
           itemId: item.id || `${itemIdentifier.productId}${itemIdentifier.variantId ? `-${itemIdentifier.variantId}` : ''}`,
           productId: itemIdentifier.productId,
@@ -132,7 +131,6 @@ export default function CartDialog() {
         return;
       } else {
         // Other API errors - use Redux fallback
-        // ✅ FIXED: Pass the correct payload structure
         dispatch(updateCartItemQuantity({
           itemId: item.id || `${itemIdentifier.productId}${itemIdentifier.variantId ? `-${itemIdentifier.variantId}` : ''}`,
           productId: itemIdentifier.productId,
@@ -165,8 +163,8 @@ export default function CartDialog() {
       
       if (response.success) {
         // Success: Update Redux store with API response
-        dispatch(setCartItems(response.data.items));
-        dispatch(setCartTotal(response.data.totalPrice));
+        dispatch(setCartItems(response.data.items || []));
+        dispatch(setCartTotal(response.data.totalPrice || 0));
         toast.success("Item removed from cart");
         return;
       }
@@ -175,7 +173,6 @@ export default function CartDialog() {
       
       if (error.response?.status === 401) {
         // User not logged in - remove from Redux only
-        // ✅ FIXED: Pass the correct item identifier
         dispatch(removeItemFromCart({
           itemId: item.id || `${itemIdentifier.productId}${itemIdentifier.variantId ? `-${itemIdentifier.variantId}` : ''}`,
           productId: itemIdentifier.productId,
@@ -284,18 +281,18 @@ export default function CartDialog() {
     return basePrice;
   };
 
-  // ✅ FIXED: Update totals calculation to use final prices
-  const totalSavings = cartItems.reduce((sum, item) => {
+  // ✅ FIXED: Update totals calculation to use final prices with safe fallbacks
+  const totalSavings = (cartItems || []).reduce((sum, item) => {
     const originalPrice = item.price || 0;
     const finalPrice = getFinalPrice(item);
     const discount = originalPrice - finalPrice;
     return sum + (discount * (item.quantity || 1));
   }, 0);
 
-  const totalItems = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const totalItems = (cartItems || []).reduce((sum, item) => sum + (item.quantity || 1), 0);
 
-  // ✅ FIXED: Filter out invalid items before rendering
-  const validCartItems = cartItems.filter(item => {
+  // ✅ FIXED: Filter out invalid items before rendering with safe fallbacks
+  const validCartItems = (cartItems || []).filter(item => {
     const productId = getProductId(item);
     return productId && productId !== 'unknown' && item.name;
   });
@@ -315,10 +312,10 @@ export default function CartDialog() {
             </span>
           )}
         </div>
-        {/* Display total price from Redux state */}
+        {/* ✅ Fixed: Display total price with safe fallback */}
         {validCartItems.length > 0 && (
           <span className="ml-2 text-black font-semibold text-sm md:text-base">
-            ₹{totalAmount.toFixed(2)}
+            ₹{(totalAmount || 0).toFixed(2)}
           </span>
         )}
       </button>
@@ -395,7 +392,7 @@ export default function CartDialog() {
               {/* ✅ FIXED: Use validCartItems and safe key generation */}
               {validCartItems.map((item, index) => {
                 const productId = getProductId(item);
-                const finalPrice = getFinalPrice(item); // ✅ Use helper function
+                const finalPrice = getFinalPrice(item);
                 const hasDiscount = item.discount > 0 && finalPrice < (item.price || 0);
                 
                 return (
@@ -559,7 +556,7 @@ export default function CartDialog() {
               )}
               <div className="flex items-center justify-between text-lg font-semibold text-gray-900">
                 <span>Total ({totalItems} items):</span>
-                <span>₹{totalAmount.toFixed(2)}</span>
+                <span>₹{(totalAmount || 0).toFixed(2)}</span>
               </div>
             </div>
 

@@ -151,7 +151,7 @@ export default function EditProductPage() {
   // Available options
   const categories = ["men", "women", "bags", "fragrances"];
   const subCategories = ["handbags", "perfume", "body-mist", "roll-on", "fragrances-of-india", "wallets-and-small-leather-goods", "accessories", "travel"];
-  const childCategories = ["jewelry", "scarves", "belts", "luggage", "travel-accessories", "travel-bags", "cardholders", "keyholders", "luggage", "shaving-kit-bags"];
+  const childCategories = ["jewelry", "scarves", "belts", "luggage", "travel-accessories", "travel-bags", "cardholders", "keyholders", "shaving-kit-bags"];
   const availableColors = ["Red", "Blue", "Black", "White", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown"];
   const availableSizes = ["XS", "S", "M", "L", "XL", "XXL", "2XL", "3XL"];
   const shippingClasses = ["standard", "express", "overnight", "free"];
@@ -323,6 +323,69 @@ export default function EditProductPage() {
     }));
   }, [generateSlug]);
 
+  // Variant management functions
+const addVariant = useCallback(() => {
+  setFormData(prev => ({
+    ...prev,
+    variants: [...(prev.variants || []), {
+      color: "",
+      size: "",
+      stock: 0,
+      price: 0,
+      isActive: true,
+      sku: ""
+    }]
+  }));
+}, []);
+
+const removeVariant = useCallback((index) => {
+  setFormData(prev => ({
+    ...prev,
+    variants: (prev.variants || []).filter((_, i) => i !== index)
+  }));
+}, []);
+
+const handleVariantChange = useCallback((index, field, value) => {
+  setFormData(prev => ({
+    ...prev,
+    variants: (prev.variants || []).map((variant, i) => 
+      i === index ? { ...variant, [field]: value } : variant
+    )
+  }));
+}, []);
+
+const removeSpecification = useCallback((index) => {
+  setFormData(prev => ({
+    ...prev,
+    specifications: (prev.specifications || []).filter((_, i) => i !== index)
+  }));
+}, []);
+
+const handleSpecificationChange = useCallback((index, field, value) => {
+  setFormData(prev => ({
+    ...prev,
+    specifications: (prev.specifications || []).map((spec, i) => 
+      i === index ? { ...spec, [field]: value } : spec
+    )
+  }));
+}, []);
+
+const removeDescriptionSection = useCallback((index) => {
+  setFormData(prev => ({
+    ...prev,
+    detailedDescription: (prev.detailedDescription || []).filter((_, i) => i !== index)
+  }));
+}, []);
+
+const handleDescriptionSectionChange = useCallback((index, field, value) => {
+  setFormData(prev => ({
+    ...prev,
+    detailedDescription: (prev.detailedDescription || []).map((section, i) => 
+      i === index ? { ...section, [field]: value } : section
+    )
+  }));
+}, []);
+
   // Updated submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -334,6 +397,8 @@ export default function EditProductPage() {
       setLoading(false);
       return;
     }
+
+    
 
     try {
       const fd = new FormData();
@@ -567,7 +632,7 @@ export default function EditProductPage() {
         >
           <div className="space-y-6">
             {/* Legacy Media (for backward compatibility) */}
-            {formData.media && formData.media.length > 0 && (
+            {/* {formData.media && formData.media.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-3">Legacy Media</h3>
                 <div className="grid grid-cols-3 gap-4">
@@ -603,7 +668,7 @@ export default function EditProductPage() {
                   })}
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Gallery Images */}
             {formData.gallery?.images && formData.gallery.images.length > 0 && (
