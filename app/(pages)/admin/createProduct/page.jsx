@@ -128,7 +128,7 @@ export default function CreateProductPage() {
   // Available options
   const categories = ["men","women","bags", "fragrances"];
   const subCategories = ["handbags","perfume","body-mist","roll-on","fragrances-of-india","wallets-and-small-leather-goods","accessories","travel"]
-  const childCategories = ["jewelry","scarves","belts","luggage","travel-accessories","travel-bags","cardholders","keyholders","luggage","shaving-kit-bags"]
+  const childCategories = ["jewelry","scarves","belts","luggage","travel-accessories","travel-bags","cardholders","keyholders","shaving-kit-bags"]
   const availableColors = ["Red", "Blue", "Black", "White", "Green", "Yellow", "Purple", "Orange", "Pink", "Brown"];
   const availableSizes = ["XS", "S", "M", "L", "XL", "XXL", "2XL", "3XL"];
   const shippingClasses = ["standard", "express", "overnight", "free"];
