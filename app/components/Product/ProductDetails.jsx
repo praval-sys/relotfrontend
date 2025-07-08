@@ -19,7 +19,7 @@ export default function ProductDetails({ product }) {
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 lg:gap-12">
           {/* Left Column - Sticky Image Gallery (7/10 of width) */}
-          <div className="lg:col-span-6 lg:h-screen lg:overflow-hidden">
+          <div className="lg:col-span-5 lg:h-screen lg:overflow-hidden">
             <ProductImageGallery 
               product={product}
               selectedVariant={selectedVariant}
@@ -28,7 +28,7 @@ export default function ProductDetails({ product }) {
           </div>
 
           {/* Right Column - Scrollable Product Info (3/10 of width) */}
-          <div className="lg:col-span-4 lg:h-screen lg:overflow-y-auto lg:pr-4 space-y-8">
+          <div className="lg:col-span-5 lg:h-screen lg:overflow-y-auto lg:pr-4 space-y-8">
             <ProductInfo 
               product={product}
               selectedVariant={selectedVariant}
