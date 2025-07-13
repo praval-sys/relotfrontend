@@ -88,8 +88,8 @@ const Navbar = ({ className }) => {
       } ${isScrolled ? 'top-0 shadow-md' : 'top-[32px] md:top-[40px]'}`}>
         
         {/* Upper Section (Logo, Search, Icons) */}
-        <div className={`w-full bg-white transition-all duration-300 overflow-hidden border-b border-gray-200
-          ${isScrolled ? 'h-0 opacity-0' : 'h-auto opacity-100'}`}
+        <div className={`w-full bg-white transition-all duration-300 overflow-hidden border-b border-gray-200 opacity-100
+          ${isScrolled ? 'h-0 ' : 'h-auto '}`}
         >
           <div className="container mx-auto px-4 py-3 md:py-4">
             {/* Mobile Layout */}
@@ -137,8 +137,8 @@ const Navbar = ({ className }) => {
               </div>
 
               {/* Right Side - Icons */}
-              <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
-                <UserNavigation />
+              <div className={`flex items-center space-x-2 md:space-x-4 flex-shrink-0`}>
+                <UserNavigation style = {{height : "auto", opacity: "100"}}/>
                 <WishlistButton />
                 <CartButton />
               </div>
