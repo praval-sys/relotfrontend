@@ -18,7 +18,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-[#F8F8F8] px-6 md:px-16 py-12 text-gray-700">
+    <footer className="bg-white px-6 md:px-16 py-12 text-black">
       <div className="container mx-auto">
         {/* Main Footer Grid */}
         <div className="grid md:grid-cols-4 gap-10">
@@ -33,27 +33,27 @@ export default function Footer() {
                 className="mb-4 transition-all duration-300 group-hover:scale-105"
               />
             </Link>
-            <h2 className="font-bold text-xl mb-4 text-gray-800">{footerData.tagline}</h2>
-            <p className="text-base leading-relaxed text-gray-600">{footerData.description}</p>
+            <h2 className="font-bold text-xl mb-4 text-black">{footerData.tagline}</h2>
+            <p className="font-medium  text-base leading-relaxed text-black ">{footerData.description}</p>
           </div>
 
           {/* Information Links */}
           <div>
-            <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-gray-800">
+            <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-black">
               {footerData.informationTitle}
             </h3>
             <ul className="space-y-3">
               {footerData.informationLinks.map((link) => (
-                <li key={link.text} className="text-base">
+                <li key={link.text} className="font-medium text-base">
                   <div
-                    className="flex items-center justify-between cursor-pointer text-gray-600 hover:text-red-600 transition-colors duration-300"
+                    className="flex items-center justify-between cursor-pointer text-black hover:text-red-600 transition-colors duration-300"
                     onClick={() => link.subsections && toggleSection(link.text)}
                   >
                     <Link href={link.href} className="hover:underline transition-all duration-300">
                       {link.text}
                     </Link>
                     {link.subsections && (
-                      <span className="text-gray-500 hover:text-red-500 transition-colors duration-300">
+                      <span className="text-black hover:text-red-500 transition-colors duration-300">
                         {openSections.includes(link.text) ? (
                           <ChevronUp size={18} />
                         ) : (
@@ -63,7 +63,7 @@ export default function Footer() {
                     )}
                   </div>
                   {link.subsections && openSections.includes(link.text) && (
-                    <ul className="ml-4 mt-2 space-y-2 text-sm text-gray-500">
+                    <ul className="ml-4 mt-2 space-y-2 text-sm text-black">
                       {link.subsections.map((sublink) => (
                         <li key={sublink.text}>
                           <Link
@@ -83,15 +83,15 @@ export default function Footer() {
 
           {/* Quick Shop */}
           <div>
-            <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-gray-800">
+            <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-black">
               {footerData.quickShopTitle}
             </h3>
             <ul className="space-y-3">
               {footerData.quickShopLinks.map((link) => (
-                <li key={link.text} className="text-base">
+                <li key={link.text} className="font-medium text-base">
                   <Link
                     href={link.href}
-                    className="text-gray-600 hover:text-red-600 hover:underline transition-colors duration-300"
+                    className="text-black hover:text-red-600 hover:underline transition-colors duration-300"
                   >
                     {link.text}
                   </Link>
@@ -102,17 +102,17 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-gray-800">
+            <h3 className="font-bold text-xl mb-5 border-b border-gray-300 pb-2 text-black">
               {footerData.contactTitle}
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-4 font-medium">
               {footerData.contactInfo.map((item) => (
                 <ContactItem key={item.type} icon={item.icon} content={item.content} />
               ))}
             </div>
 
-            <h3 className="font-bold text-xl mt-8 mb-4 text-gray-800">{footerData.socialTitle}</h3>
-            <div className="flex gap-4 text-2xl text-gray-600">
+            <h3 className="font-bold text-xl mt-8 mb-4 text-black">{footerData.socialTitle}</h3>
+            <div className="flex gap-4 text-2xl text-black">
               {footerData.socialLinks.map((social) => (
                 <div key={social.platform} className="hover:text-red-600 transition-colors duration-300">
                   <SocialIcon href={social.href} icon={social.icon} platform={social.platform} />
@@ -128,14 +128,14 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
           {/* Copyright */}
           <div className="text-center md:text-left">
-            <p className="text-base text-gray-600">{footerData.copyright}</p>
+            <p className="text-base text-black">{footerData.copyright}</p>
           </div>
 
           {/* Payment Section */}
           <div className="text-center md:text-right">
             <div className="flex flex-col items-center md:items-end gap-3">
               {/* Payment Method Text */}
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-sm text-black font-medium">
                 Secure Payment Powered by
               </p>
 
@@ -171,7 +171,7 @@ export default function Footer() {
               </div>
 
               {/* Payment Features */}
-              <div className="flex flex-wrap justify-center md:justify-end gap-4 text-xs text-gray-500">
+              <div className="flex flex-wrap justify-center md:justify-end gap-4 text-xs text-black">
                 <div className="flex items-center gap-1 hover:text-red-600 transition-colors duration-300">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

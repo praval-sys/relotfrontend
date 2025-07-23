@@ -55,7 +55,7 @@ export default function Home() {
   }, [dispatch])
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen ">
       {/* Hero Section */}
       <section className="w-full">
         <HeroSlider data={heroData} />
@@ -81,7 +81,7 @@ export default function Home() {
       </section> */}
 
       {/* Product Categories */}
-      <section className="py-8 sm:py-10 md:py-12 bg-white">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ProductCategories />
         </div>
@@ -95,14 +95,14 @@ export default function Home() {
       </section>
 
       {/* Category Banners */}
-      <section className="py-8 sm:py-10 md:py-12 bg-neutral-50">
+      <section className="py-8 sm:py-10 md:py-12 ">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <CategoryBanners />
         </div>
       </section>
 
       {/* Services Section */}
-      <section className="py-8 sm:py-12 md:py-16 bg-white">
+      <section className="py-8 sm:py-12 md:py-16 ">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ServicesSection services={servicesData} />
         </div>

@@ -178,6 +178,11 @@ export const menuData = [
     ]
   },
   {
+    id: "blogs",
+    label: "Blogs",
+    link: "/blogs",
+  },
+  {
     id: "services",
     label: "SERVICES",
     link: "/products/?category=services",

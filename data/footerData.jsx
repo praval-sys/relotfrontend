@@ -115,11 +115,11 @@ export const footerData = {
   socialTitle: "Social Links",
   socialLinks: [
     { platform: "Facebook", href: "https://www.facebook.com/profile.php?id=61571605739440", icon: <FaFacebookF /> },
-    { platform: "YouTube", href: "https://youtube.com", icon: <FaYoutube /> },
+    { platform: "YouTube", href: "https://www.youtube.com/@RelotLeatherGoods", icon: <FaYoutube /> },
     { platform: "Instagram", href: "https://www.instagram.com/relot.store?igsh=MWNzZmV1MmF4NW16cA%3D%3D&utm_source=qr", icon: <FaInstagram /> },
-    { platform: "LinkedIn", href: "https://linkedin.com", icon: <FaLinkedinIn /> },
-    { platform: "Twitter", href: "https://twitter.com", icon: <FaTwitter /> },
-    { platform: "Pinterest", href: "https://pinterest.com", icon: <FaPinterestP /> },
+    // { platform: "LinkedIn", href: "https://linkedin.com", icon: <FaLinkedinIn /> },
+    // { platform: "Twitter", href: "https://twitter.com", icon: <FaTwitter /> },
+    { platform: "Pinterest", href: "https://in.pinterest.com/relotstore", icon: <FaPinterestP /> },
   ],
 
   copyright: "© 2025 Relot. All Rights Reserved.",

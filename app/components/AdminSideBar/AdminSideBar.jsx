@@ -15,7 +15,8 @@ import {
   Mail,
   Phone,
   Shield,
-  Calendar
+  Calendar,
+  FileText
 } from "lucide-react";
 
 const navItems = [
@@ -42,6 +43,12 @@ const navItems = [
     icon: <ShoppingCart className="w-5 h-5" />,
     path: "/admin/orders",
     key: "orders",
+  },
+  {
+    name: "Blogs",
+    icon: <FileText className="w-5 h-5" />,
+    path: "/admin/blogs",
+    key: "blogs",
   },
   {
     name: "Users",

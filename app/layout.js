@@ -42,7 +42,7 @@ function LayoutContent({ children }) {
       )}
       <main className={`${
   showLayout ? 'pt-[144px] md:pt-[160px]' : ''
-} min-h-screen w-full overflow-x-hidden`}>
+} min-h-screen w-full overflow-x-hidden bg-gray-100`}>
         {children}
       </main>
       <Toaster position="bottom-right" />

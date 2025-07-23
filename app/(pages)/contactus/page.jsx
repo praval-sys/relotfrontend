@@ -161,7 +161,7 @@ export default function ContactPage() {
         </div>
 
         {/* Contact Details Section */}
-        <div className="bg-gray-100 p-8 rounded-lg shadow-lg">
+        <div className="bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">Contact Information</h2>
           <div className="space-y-6 text-gray-700">
             <div className="flex items-start">
