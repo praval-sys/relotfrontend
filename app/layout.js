@@ -10,7 +10,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 
-import WhatsAppButtoon from './components/WhatsAppButton';
+import WhatsAppButton from './components/WhatsappButton';
 // import localFont from 'next/font/local';
 
 
@@ -43,7 +43,7 @@ function LayoutContent({ children }) {
 } min-h-screen w-full overflow-x-hidden bg-gray-100`}>
         {children}
       </main>
-      <WhatsAppButtoon/>
+      <WhatsAppButton/>
       <Toaster position="bottom-right" />
       {showLayout && <Footer />}
     </>
