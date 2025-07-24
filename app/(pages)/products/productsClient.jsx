@@ -184,7 +184,7 @@ export default function ProductsClient() {
   }, [searchParams]);
 
   return (
-    <div className="container mx-auto mt-5 px-4 py-4 lg:py-8">
+    <div className="lining-nums container mx-auto mt-5 px-4 py-4 lg:py-8">
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">

@@ -179,7 +179,7 @@ export const menuData = [
   },
   {
     id: "blogs",
-    label: "Blogs",
+    label: "BLOGS",
     link: "/blogs",
   },
   {

@@ -161,7 +161,7 @@ export default function ContactPage() {
         </div>
 
         {/* Contact Details Section */}
-        <div className="bg-white p-8 rounded-lg shadow-lg">
+        <div className="lining-nums bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">Contact Information</h2>
           <div className="space-y-6 text-gray-700">
             <div className="flex items-start">
@@ -169,9 +169,9 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">Our Location</h3>
                 <p className="leading-relaxed">
-                  Suman enclave plot No. 07<br />
-                  Pin code - 202414<br />
-                  India
+                  Plot no.7 , Suman Enclave <br/>
+                  Opposite to Lotus 300 Gate Number 2 , Sector 107 <br/>
+                  Noida , Uttar Pradesh , 201303
                 </p>
               </div>
             </div>

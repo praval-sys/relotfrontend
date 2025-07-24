@@ -26,7 +26,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="inline-block mb-6 group">
               <Image
-                src="/assets/logo.jpg"
+                src="/assets/logo.jpeg"
                 alt="Relot Logo"
                 width={150}
                 height={40}
@@ -127,7 +127,7 @@ export default function Footer() {
       <div className="border-t border-gray-300 mt-10 pt-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
           {/* Copyright */}
-          <div className="text-center md:text-left">
+          <div className="lining-nums text-center md:text-left">
             <p className="text-base text-black">{footerData.copyright}</p>
           </div>
 

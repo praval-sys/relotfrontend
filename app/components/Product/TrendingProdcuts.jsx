@@ -46,7 +46,7 @@ export default function TrendingProducts({ productId, category }) {
 
   if (loading) {
     return (
-      <section className="py-8 md:py-12 lg:py-16 bg-gradient-to-br from-red-50 via-white to-orange-50">
+      <section className="py-8 md:py-12 lg:py-16 ">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           {/* Header Skeleton */}
           <div className="text-center mb-8 md:mb-12">
@@ -70,7 +70,7 @@ export default function TrendingProducts({ productId, category }) {
   }
 
   return (
-    <section className="py-8 md:py-12 lg:py-16 bg-gradient-to-br from-red-50 via-white to-orange-50">
+    <section className="lining-nums py-8 md:py-12 lg:py-16 ">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Enhanced Header Section */}
         <div className="text-center mb-8 md:mb-12 lg:mb-16">

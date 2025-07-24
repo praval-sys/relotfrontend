@@ -97,7 +97,7 @@ export const footerData = {
   contactInfo: [
     {
       type: "address",
-      content: "Plot no.7 , Suman enclave , opposite to lotus 300 gate number 2 , sector 107 , Noida , Uttar pradesh , 201303",
+      content: "Plot no.7 , Suman Enclave , Opposite to Lotus 300 Gate Number 2 , Sector 107 , Noida , Uttar Pradesh , 201303",
       icon: <MdLocationOn className="text-2xl flex-shrink-0" />,
     },
     {
@@ -108,7 +108,7 @@ export const footerData = {
     {
       type: "phone",
       content: "+91-9319198930",
-      icon: <MdCall className="text-2xl flex-shrink-0" />,
+      icon: <MdCall className=" text-2xl flex-shrink-0" />,
     },
   ],
 

@@ -6,7 +6,7 @@ export default function ProductsPage() {
 
   
   return (
-    <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
+    <Suspense fallback={<div className=" text-center py-12">Loading...</div>}>
       <ProductsClient />
     </Suspense>
   );

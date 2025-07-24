@@ -50,6 +50,12 @@ body {
 }
 
 /* Add smooth transitions for header elements */
+
+.lining-nums {
+  font-feature-settings: "lnum";
+}
+
+
 /* Navbar transitions */
 .header-transition {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

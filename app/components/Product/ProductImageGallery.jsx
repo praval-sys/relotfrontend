@@ -416,10 +416,10 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
       {/* ✅ FIXED POSITION Zoom Preview - Only for images, static position */}
       {isZooming && !isMobile && isCurrentMediaImage() && (
         <div 
-          className="fixed w-[700px] h-[700px] border-4 border-red-200 rounded-xl shadow-2xl bg-white overflow-hidden pointer-events-none"
+          className="fixed z-50 w-[700px] h-[1000px] border-4 border-red-200 rounded-xl shadow-2xl bg-white overflow-hidden pointer-events-none"
           style={{
             zIndex: 9999,
-            right: '40px',
+            right: '300px',
             top: '50%',
             transform: 'translateY(-50%)',
           }}

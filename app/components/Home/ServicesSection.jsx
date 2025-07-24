@@ -39,7 +39,7 @@ export default function ServicesSection({ services = servicesData }) {
 	const [hoveredIndex, setHoveredIndex] = useState(null)
 
 	return (
-		<section className="py-16 lg:py-24 bg-gradient-to-br from-gray-50 to-white">
+		<section className="py-16 lg:py-24 ">
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 				{/* Enhanced Section Header */}
 				<div className="text-center mb-16">
@@ -264,7 +264,7 @@ export default function ServicesSection({ services = servicesData }) {
 
 							<div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
 								<Link
-									href="/contact"
+									href="/contactus"
 									className="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold px-8 py-4 rounded-full hover:from-red-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105 hover:shadow-lg group"
 								>
 									<span>Contact Our Experts</span>

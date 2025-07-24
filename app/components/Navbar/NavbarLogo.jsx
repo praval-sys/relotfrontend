@@ -6,7 +6,7 @@ const NavbarLogo = () => {
     <Link href="/" className="flex-shrink-0">
       <div className="font-bold text-3xl flex items-center">
         <Image 
-          src="/assets/logo.jpg"
+          src="/assets/logo.jpeg"
           alt="Relot Logo"
           width={100}
           height={100}
