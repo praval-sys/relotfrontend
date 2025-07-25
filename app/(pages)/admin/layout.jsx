@@ -27,7 +27,7 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="flex w-full h-screen bg-gray-50">
+    <div className="lining-nums flex w-full h-screen bg-gray-50">
       {/* Fixed width sidebar */}
       <div className="w-64 flex-shrink-0">
         <AdminSideBar />

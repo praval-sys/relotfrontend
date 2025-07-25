@@ -395,7 +395,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
+        {/* <div className="mt-8 bg-white rounded-xl shadow-sm border p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <button className="flex items-center justify-center px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
@@ -415,7 +415,7 @@ export default function AdminDashboard() {
               Export Reports
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
