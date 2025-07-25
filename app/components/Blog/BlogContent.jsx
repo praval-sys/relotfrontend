@@ -3,7 +3,7 @@ import Link from "next/link"
 
 export default function BlogContent({ blog }) {
   return (
-    <article className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-2">
+    <article className="lining-nums w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-2">
       {/* Title at the top */}
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-red-700 mb-8 leading-tight text-center">
         {blog.title}

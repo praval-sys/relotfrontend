@@ -15,7 +15,7 @@ export default function BlogsPage() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10 mt-2">
+    <div className="lining-nums max-w-5xl mx-auto px-4 py-10 mt-2">
       <h1 className="text-4xl font-extrabold text-red-700 mb-8 text-center tracking-tight">
         Relot Blogs
       </h1>

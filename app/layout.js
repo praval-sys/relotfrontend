@@ -39,7 +39,7 @@ function LayoutContent({ children }) {
         </div>
       )}
       <main className={`${
-  showLayout ? 'pt-[144px] md:pt-[160px]' : ''
+  showLayout ? 'lining-nums pt-[144px] md:pt-[160px]' : ''
 } min-h-screen w-full overflow-x-hidden bg-gray-100`}>
         {children}
       </main>

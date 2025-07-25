@@ -149,9 +149,9 @@ export default function CheckoutPage() {
       case 1:
         return (
           <Card className="border-none shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg">
+            <CardHeader className="bg-gradient-to-r from-red-100 to-red-50 rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-red-600 text-white">
                   <LogIn className="h-5 w-5" />
                 </div>
                 <span>Authentication</span>
@@ -160,10 +160,10 @@ export default function CheckoutPage() {
             <CardContent className="p-6">
               {user ? (
                 <div className="space-y-6">
-                  <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl">
+                  <div className="p-6 bg-gradient-to-r from-red-100 to-red-50 rounded-xl">
                     <div className="flex items-center gap-4">
-                      <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="text-xl font-bold text-primary">{user.name.charAt(0)}</span>
+                      <div className="h-16 w-16 rounded-full bg-red-200 flex items-center justify-center">
+                        <span className="text-xl font-bold text-red-600">{user.name.charAt(0)}</span>
                       </div>
                       <div>
                         <p className="font-semibold text-lg">{user.name}</p>
@@ -171,7 +171,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
-                  <Button className="w-full h-12 text-base font-medium" onClick={() => setStep(2)}>
+                  <Button className="w-full h-12 text-base font-medium bg-red-600 hover:bg-red-700" onClick={() => setStep(2)}>
                     Continue to Address
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
               ) : (
                 <div className="flex items-center justify-center p-10">
                   <div className="flex flex-col items-center">
-                    <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+                    <Loader2 className="h-10 w-10 animate-spin text-red-600 mb-4" />
                     <p className="text-lg">Redirecting to login...</p>
                   </div>
                 </div>
@@ -190,9 +190,9 @@ export default function CheckoutPage() {
       case 2:
         return (
           <Card className="border-none shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg">
+            <CardHeader className="bg-gradient-to-r from-red-100 to-red-50 rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-red-600 text-white">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <span>Select Address</span>
@@ -200,13 +200,13 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent className="p-6">
               {selectedAddress ? (
-                <div className="border-2 border-primary/20 rounded-xl p-5 mb-6 bg-primary/5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 rounded-bl-lg">
+                <div className="border-2 border-red-200 rounded-xl p-5 mb-6 bg-red-100 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 rounded-bl-lg">
                     {selectedAddress.type}
                   </div>
                   <div className="flex gap-4 items-start">
-                    <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                      <Home className="h-6 w-6 text-primary" />
+                    <div className="h-12 w-12 rounded-full bg-red-200 flex items-center justify-center flex-shrink-0">
+                      <Home className="h-6 w-6 text-red-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-lg">{selectedAddress.name}</p>
@@ -234,7 +234,7 @@ export default function CheckoutPage() {
                 <AddressDialog onAddressSelect={handleAddressSelect} selectedAddress={selectedAddress} />
 
                 {selectedAddress && (
-                  <Button className="w-full h-12 text-base font-medium" onClick={() => setStep(3)}>
+                  <Button className="w-full h-12 text-base font-medium bg-red-600 hover:bg-red-700" onClick={() => setStep(3)}>
                     Continue to Order Summary
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -246,9 +246,9 @@ export default function CheckoutPage() {
       case 3:
         return (
           <Card className="border-none shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg">
+            <CardHeader className="bg-gradient-to-r from-red-100 to-red-50 rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-red-600 text-white">
                   <ShoppingCart className="h-5 w-5" />
                 </div>
                 <span>Order Summary</span>
@@ -256,8 +256,8 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">
-                <div className="rounded-xl border-2 border-primary/20 overflow-hidden">
-                  <div className="bg-primary/10 px-5 py-3 font-medium text-primary flex justify-between">
+                <div className="rounded-xl border-2 border-red-200 overflow-hidden">
+                  <div className="bg-red-50 px-5 py-3 font-medium text-red-600 flex justify-between">
                     <span>Item</span>
                     <span>Total</span>
                   </div>
@@ -265,11 +265,11 @@ export default function CheckoutPage() {
                     {cartItems.map((item, index) => (
                       <li
                         key={index}
-                        className="px-5 py-4 flex justify-between items-center hover:bg-muted/30 transition-colors"
+                        className="px-5 py-4 flex justify-between items-center hover:bg-red-50 transition-colors"
                       >
                         <div className="flex items-center">
-                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                            <Package className="h-5 w-5 text-primary" />
+                          <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                            <Package className="h-5 w-5 text-red-600" />
                           </div>
                           <span>
                             <span className="font-medium">{item.name}</span>
@@ -280,28 +280,28 @@ export default function CheckoutPage() {
                       </li>
                     ))}
                   </ul>
-                  <div className="bg-primary/10 px-5 py-4 flex justify-between font-semibold text-lg">
+                  <div className="bg-red-50 px-5 py-4 flex justify-between font-semibold text-lg">
                     <span>Total</span>
                     <span>₹{totalAmount}</span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 my-6">
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-primary/5 text-center">
-                    <Truck className="h-6 w-6 text-primary mb-2" />
+                  <div className="flex flex-col items-center p-4 rounded-xl bg-red-100 text-center">
+                    <Truck className="h-6 w-6 text-red-600 mb-2" />
                     <span className="text-sm font-medium">Free Shipping</span>
                   </div>
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-primary/5 text-center">
-                    <Shield className="h-6 w-6 text-primary mb-2" />
+                  <div className="flex flex-col items-center p-4 rounded-xl bg-red-100 text-center">
+                    <Shield className="h-6 w-6 text-red-600 mb-2" />
                     <span className="text-sm font-medium">Secure Payment</span>
                   </div>
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-primary/5 text-center">
-                    <Clock className="h-6 w-6 text-primary mb-2" />
+                  <div className="flex flex-col items-center p-4 rounded-xl bg-red-100 text-center">
+                    <Clock className="h-6 w-6 text-red-600 mb-2" />
                     <span className="text-sm font-medium">Fast Delivery</span>
                   </div>
                 </div>
 
-                <Button className="w-full h-12 text-base font-medium" onClick={() => setStep(4)}>
+                <Button className="w-full h-12 text-base font-medium bg-red-600 hover:bg-red-700" onClick={() => setStep(4)}>
                   Continue to Payment
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -312,9 +312,9 @@ export default function CheckoutPage() {
       case 4:
         return (
           <Card className="border-none shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg">
+            <CardHeader className="bg-gradient-to-r from-red-100 to-red-50 rounded-t-lg">
               <CardTitle className="flex items-center gap-2">
-                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-white">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-red-600 text-white">
                   <CreditCard className="h-5 w-5" />
                 </div>
                 <span>Payment Method</span>
@@ -331,7 +331,7 @@ export default function CheckoutPage() {
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center">
-                        <Wallet className="h-5 w-5 text-primary mr-2" />
+                        <Wallet className="h-5 w-5 text-red-600 mr-2" />
                         <span className="font-medium">Razorpay</span>
                       </div>
                       <img src="https://razorpay.com/favicon.png" alt="Razorpay" className="h-8 w-8" />
@@ -342,9 +342,9 @@ export default function CheckoutPage() {
                   </RadioGroupItem>
                 </RadioGroup>
 
-                <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                <div className="bg-red-100 rounded-xl p-4 border border-red-200">
                   <div className="flex items-center">
-                    <Shield className="h-5 w-5 text-primary mr-2" />
+                    <Shield className="h-5 w-5 text-red-600 mr-2" />
                     <span className="font-medium">Secure Payment</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -354,7 +354,7 @@ export default function CheckoutPage() {
 
                 <div className="pt-2">
                   <Button
-                    className="w-full h-12 text-base font-medium"
+                    className="w-full h-12 text-base font-medium bg-red-600 hover:bg-red-700"
                     variant="default"
                     disabled={!paymentMethod || isProcessing}
                     onClick={handlePayment}
@@ -405,7 +405,7 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
-                <Button className="mt-4 h-12 px-8" onClick={() => (window.location.href = "/")}>
+                <Button className="mt-4 h-12 px-8 bg-red-600 hover:bg-red-700" onClick={() => (window.location.href = "/")}>
                   Continue Shopping
                 </Button>
               </div>
@@ -417,7 +417,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4 pb-10">
-      <h1 className="text-3xl font-bold mb-8 text-center">Checkout</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-red-700">Checkout</h1>
 
       <div className="grid md:grid-cols-[280px_1fr] gap-6">
         {/* Vertical Step Indicator */}
@@ -430,16 +430,16 @@ export default function CheckoutPage() {
                     key={index}
                     className={`flex items-center gap-3 p-4 rounded-xl transition-all ${
                       step === index + 1
-                        ? "bg-primary text-white"
+                        ? "bg-red-600 text-white"
                         : step > index + 1
                           ? "bg-green-100 text-green-700"
-                          : "hover:bg-muted/50"
+                          : "hover:bg-red-50"
                     }`}
                   >
                     <div
                       className={`flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full ${
                         step === index + 1
-                          ? "bg-white text-primary"
+                          ? "bg-white text-red-600"
                           : step > index + 1
                             ? "bg-green-500 text-white"
                             : "bg-muted text-muted-foreground"
@@ -454,9 +454,9 @@ export default function CheckoutPage() {
             </CardContent>
           </Card>
 
-          <div className="mt-6 bg-primary/5 rounded-xl p-5 border border-primary/20">
+          <div className="mt-6 bg-red-100 rounded-xl p-5 border border-red-200">
             <h3 className="font-medium mb-3 flex items-center">
-              <Shield className="h-5 w-5 mr-2 text-primary" />
+              <Shield className="h-5 w-5 mr-2 text-red-600" />
               Order Protection
             </h3>
             <p className="text-sm text-muted-foreground">

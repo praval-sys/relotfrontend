@@ -99,7 +99,7 @@ export default function OrderPage({ params }) {
   const statusClassName = STATUS_STYLES[order.deliveryStatus.toLowerCase()]?.className || 'text-gray-600 bg-gray-50';
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="lining-nums max-w-4xl mx-auto px-4 py-8">
       <div className="space-y-8">
         {/* Order Header */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
