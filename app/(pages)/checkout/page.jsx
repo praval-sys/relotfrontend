@@ -44,13 +44,14 @@ const loadRazorpayScript = () => {
 
 export default function CheckoutPage() {
   const { user, loading } = useAuth()
-  const cartItems = useSelector((state) => state.cart.items)
+  const cart = useSelector((state) => state.cart); // assuming your redux cart has .items and .totalPrice
+  const cartItems = cart.items || [];
   const [step, setStep] = useState(1)
   const [selectedAddress, setSelectedAddress] = useState(null)
   const [paymentMethod, setPaymentMethod] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const totalAmount = cart.totalPrice ?? cartItems.reduce((acc, item) => acc + (item.finalPrice ?? item.price) * item.quantity, 0)
 
   useEffect(() => {
     if (!loading && !user) return
@@ -274,15 +275,27 @@ export default function CheckoutPage() {
                           <span>
                             <span className="font-medium">{item.name}</span>
                             <span className="text-sm text-muted-foreground block">× {item.quantity}</span>
+                            {item.discount ? (
+                              <span className="block text-xs text-green-600 font-medium">
+                                You save ₹{((item.price - item.finalPrice) * item.quantity).toFixed(2)}
+                              </span>
+                            ) : null}
                           </span>
                         </div>
-                        <span className="font-medium text-lg">₹{item.price * item.quantity}</span>
+                        <div className="flex flex-col items-end">
+                          <span className="font-medium text-lg">₹{(item.finalPrice * item.quantity).toLocaleString()}</span>
+                          {item.discount ? (
+                            <span className="text-xs text-gray-400 line-through">
+                              ₹{(item.price * item.quantity).toLocaleString()}
+                            </span>
+                          ) : null}
+                        </div>
                       </li>
                     ))}
                   </ul>
                   <div className="bg-red-50 px-5 py-4 flex justify-between font-semibold text-lg">
                     <span>Total</span>
-                    <span>₹{totalAmount}</span>
+                    <span>₹{totalAmount.toLocaleString()}</span>
                   </div>
                 </div>
 

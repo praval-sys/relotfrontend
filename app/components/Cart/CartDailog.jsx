@@ -314,7 +314,7 @@ export default function CartDialog() {
         </div>
         {/* ✅ Fixed: Display total price with safe fallback */}
         {validCartItems.length > 0 && (
-          <span className="ml-2 text-black font-semibold text-sm md:text-base">
+          <span className="ml-2 text-black font-semibold text-sm md:text-base hidden sm:inline">
             ₹{(totalAmount || 0).toFixed(2)}
           </span>
         )}

@@ -3,14 +3,13 @@ import Link from "next/link"
 
 const NavbarLogo = () => {
   return (
-    <Link href="/" className="flex-shrink-0">
-      <div className="font-bold text-3xl flex items-center">
+    <Link href="/" className="flex-shrink-0 mx-auto">
+      <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16">
         <Image 
-          src="/assets/logo.jpeg"
+          src="/assets/logo.jpg"
           alt="Relot Logo"
-          width={100}
-          height={100}
-          className="mr-2"
+          fill
+          className="object-contain"
           unoptimized
         />
       </div>

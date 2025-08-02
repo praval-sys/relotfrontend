@@ -26,7 +26,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="inline-block mb-6 group">
               <Image
-                src="/assets/logo.jpeg"
+                src="/assets/logo.jpg"
                 alt="Relot Logo"
                 width={150}
                 height={40}

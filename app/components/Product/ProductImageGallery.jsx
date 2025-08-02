@@ -309,17 +309,17 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
 
   return (
     <div className="lg:sticky lg:top-8 space-y-6 w-full">
-      {/* ✅ ENHANCED: Gallery Layout - Full width container */}
+      {/* Gallery Layout */}
       <div className="w-full">
         <div className="flex flex-col lg:flex-row gap-4 w-full">
-          {/* ✅ Thumbnail Gallery - Left side on desktop, bottom on mobile */}
+          {/* Thumbnails */}
           {allMedia.length > 1 && (
-            <div className="order-2 lg:order-1 flex lg:flex-col gap-3 overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[700px] pb-2 lg:pb-0 lg:w-32 flex-shrink-0">
+            <div className="order-2 lg:order-1 flex lg:flex-col gap-2 sm:gap-3 overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[700px] pb-2 lg:pb-0 lg:w-32 flex-shrink-0">
               {allMedia.map((media, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedMedia(index)}
-                  className={`relative flex-shrink-0 w-20 h-20 lg:w-28 lg:h-28 rounded-lg overflow-hidden border-2 transition-all ${
+                  className={`relative flex-shrink-0 w-14 h-14 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-lg overflow-hidden border-2 transition-all ${
                     selectedMedia === index 
                       ? 'border-red-500 ring-2 ring-red-200' 
                       : 'border-gray-200 hover:border-gray-300'
@@ -345,9 +345,9 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
             </div>
           )}
 
-          {/* ✅ EXPANDED Main Image Container - Takes full remaining width */}
+          {/* Main Image */}
           <div className="order-1 lg:order-2 flex-1 w-full">
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg aspect-square w-full max-w-none">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg aspect-square w-full max-w-[400px] mx-auto lg:max-w-none">
               <div 
                 ref={imageRef}
                 className={`relative w-full h-full bg-white ${
@@ -413,13 +413,13 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
         </div>
       </div>
 
-      {/* ✅ FIXED POSITION Zoom Preview - Only for images, static position */}
+      {/* Zoom Preview: Only on large screens */}
       {isZooming && !isMobile && isCurrentMediaImage() && (
         <div 
-          className="fixed z-50 w-[700px] h-[1000px] border-4 border-red-200 rounded-xl shadow-2xl bg-white overflow-hidden pointer-events-none"
+          className="hidden lg:block fixed z-50 w-[400px] h-[500px] border-4 border-red-200 rounded-xl shadow-2xl bg-white overflow-hidden pointer-events-none"
           style={{
             zIndex: 9999,
-            right: '300px',
+            right: '40px',
             top: '50%',
             transform: 'translateY(-50%)',
           }}
@@ -468,23 +468,23 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
         </div>
       )}
 
-      {/* ✅ Action Buttons - Side by side for smaller screens */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full">
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 w-full">
         <button
           onClick={handleAddToCart}
           disabled={availableStock <= 0 || (product.hasVariants && !selectedVariant) || isLoading}
-          className={`flex-1 flex items-center justify-center gap-3 px-8 py-5 rounded-xl text-white font-semibold text-lg transition-all transform hover:scale-105 ${
+          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 sm:px-8 sm:py-5 rounded-xl text-white font-semibold text-base sm:text-lg transition-all transform hover:scale-105 ${
             availableStock > 0 && (!product.hasVariants || selectedVariant) && !isLoading
               ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg' 
               : 'bg-gray-400 cursor-not-allowed'
           }`}
         >
           {isLoading ? (
-            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
           ) : (
-            <ShoppingCart className="h-6 w-6" />
+            <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
           )}
-          <span className="text-lg font-semibold">
+          <span className="text-base sm:text-lg font-semibold">
             {availableStock <= 0 
               ? "Out of Stock" 
               : isLoading 
@@ -497,14 +497,14 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
         <button
           onClick={handleAddToWishlist}
           disabled={(product.hasVariants && !selectedVariant) || wishlistLoading}
-          className="flex-1 flex items-center justify-center gap-3 px-8 py-5 rounded-xl bg-white border-2 border-red-300 font-semibold text-lg hover:border-red-400 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-red-600"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 sm:px-8 sm:py-5 rounded-xl bg-white border-2 border-red-300 font-semibold text-base sm:text-lg hover:border-red-400 hover:bg-red-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-red-600"
         >
           {wishlistLoading ? (
-            <div className="w-6 h-6 border-2 border-red-300 border-t-red-500 rounded-full animate-spin" />
+            <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-red-300 border-t-red-500 rounded-full animate-spin" />
           ) : (
-            <Heart className="h-6 w-6" />
+            <Heart className="h-5 w-5 sm:h-6 sm:w-6" />
           )}
-          <span className="text-lg font-semibold">
+          <span className="text-base sm:text-lg font-semibold">
             {wishlistLoading ? "Adding..." : "Add to Wishlist"}
           </span>
         </button>

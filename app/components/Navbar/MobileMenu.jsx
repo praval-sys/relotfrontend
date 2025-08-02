@@ -1,206 +1,126 @@
 "use client"
-
-import { useState } from "react"
-import Link from "next/link"
-import { X, Home, User, Heart, ShoppingBag, Settings, LogOut, ChevronDown } from "lucide-react"
-import toast from "react-hot-toast"
-import SearchBar from "./SearchBar"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { X, ChevronRight } from "lucide-react"
 import NavbarLogo from "./NavbarLogo"
+import { footerData } from "../../../data/footerData"
 
-const MobileMenu = ({
-  isOpen,
-  setIsOpen,
-  searchQuery,
-  setSearchQuery,
-  handleSearch,
-  user,
-  logout,
-  menuData,
-}) => {
+const mobileMenuData = [
+  { id: "home", label: "Home", link: "/" },
+  { id: "women", label: "Women", submenu: [
+    { label: "Handbags", link: "/products/?category=women&subCategory=handbags" },
+    { label: "Wallets", link: "/products/?category=women&subCategory=wallets-and-small-leather-goods" },
+    { label: "Accessories", link: "/products/?category=women&subCategory=accessories" },
+    { label: "Travel", link: "/products/?category=women&subCategory=travel" }
+  ]},
+  { id: "men", label: "Men", submenu: [
+    { label: "Bags", link: "/products/?category=men&subCategory=handbags" },
+    { label: "Wallets", link: "/products/?category=men&subCategory=wallets-and-small-leather-goods" },
+    { label: "Accessories", link: "/products/?category=men&subCategory=accessories" },
+    { label: "Travel", link: "/products/?category=men&subCategory=travel" }
+  ]},
+  { id: "fragrances", label: "Fragrances", link: "/products/?category=fragrances" },
+  { id: "bags", label: "Bags & Leather", link: "/products/?category=bags" },
+  { id: "blogs", label: "Blogs", link: "/blogs" },
+  { id: "services", label: "Services", link: "/products/?category=services" }
+]
+
+export default function MobileMenu({ isOpen, setIsOpen }) {
   const [activeMobileSubmenu, setActiveMobileSubmenu] = useState(null)
-  const [activeMobileNestedSubmenu, setActiveMobileNestedSubmenu] = useState(null)
+  const router = useRouter()
 
-  const handleLogout = async (e) => {
-    try {
-      e.preventDefault()
-      await logout()
-      setIsOpen(false)
-      toast.success("Logged out successfully")
-    } catch (error) {
-      console.error("Logout failed:", error)
-      toast.error("Logout failed. Please try again.")
-    }
-  }
+  useEffect(() => {
+    if (isOpen) document.body.style.overflow = "hidden"
+    else document.body.style.overflow = ""
+    return () => { document.body.style.overflow = "" }
+  }, [isOpen])
 
   return (
-    <div
-      className={`fixed top-0 right-0 w-[80%] h-full bg-white z-50 transform transition-transform duration-300 ease-in-out ${
-        isOpen ? "translate-x-0" : "translate-x-full"
-      } overflow-y-auto md:hidden shadow-xl`}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-white">
-        <NavbarLogo />
-        <button
+    <>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-md transition-opacity duration-300 md:hidden"
           onClick={() => setIsOpen(false)}
-          className="p-2 hover:bg-neutral-50 rounded-full transition-colors"
-        >
-          <X className="h-6 w-6 text-neutral-900" />
-        </button>
-      </div>
-
-     
-
-      {/* Mobile user info */}
-      {user && (
-        <div className="p-4 border-b border-neutral-100 bg-white">
-          <div className="flex items-center space-x-3">
-            <div className="h-12 w-12 rounded-full bg-neutral-900 flex items-center justify-center text-white">
-              {user.avatar ? (
-                <img src={user.avatar} alt={user.name} className="h-full w-full object-cover rounded-full" />
-              ) : (
-                <User className="h-6 w-6" />
-              )}
-            </div>
-            <div>
-              <p className="font-medium text-neutral-900">{user.name || "User"}</p>
-              <p className="text-sm text-neutral-600 truncate">{user.email}</p>
-            </div>
-          </div>
-        </div>
+        />
       )}
-
-      {/* Mobile navigation */}
-      <nav className="flex flex-col h-full bg-white">
-        <ul className="py-2 flex-grow">
-          <li className="border-b border-neutral-100">
-            <Link
-              href="/"
-              className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              <Home className="h-5 w-5 mr-3 text-neutral-600" />
-              Home
-            </Link>
-          </li>
-
-          {menuData.map((item) => (
-            <li className="border-b border-neutral-100" key={item.id}>
-              <div
-                className="flex items-center justify-between py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                onClick={() => setActiveMobileSubmenu(activeMobileSubmenu === item.id ? null : item.id)}
+      <div
+        className={`fixed top-0 left-0 h-full w-[85vw] max-w-xs bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full"} flex flex-col`}
+        style={{ minHeight: "100dvh" }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Responsive Logo */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+          <div className="flex-shrink-0 w-10 h-10 md:w-14 md:h-14 flex items-center">
+            <NavbarLogo className="w-10 h-10 md:w-14 md:h-14" />
+          </div>
+          <button onClick={() => setIsOpen(false)}>
+            <X className="h-7 w-7 text-red-600" />
+          </button>
+        </div>
+        {/* Menu Items */}
+        <ul className="flex-1 overflow-y-auto">
+          {mobileMenuData.map(item => (
+            <li key={item.id} className="border-b border-gray-100">
+              <button
+                className={`w-full flex items-center justify-between px-6 py-4 text-base font-extrabold uppercase tracking-wide whitespace-nowrap overflow-hidden text-ellipsis
+                  ${item.label === "SALE" ? "text-red-600" : "text-gray-900"}
+                  bg-transparent hover:bg-red-50 transition`}
+                style={{ fontSize: "1.1rem" }}
+                onClick={() => {
+                  if (item.submenu) {
+                    setActiveMobileSubmenu(activeMobileSubmenu === item.id ? null : item.id)
+                  } else {
+                    setIsOpen(false)
+                    router.push(item.link)
+                  }
+                }}
               >
-                <Link href={item.link} className="flex-grow" onClick={(e) => item.submenu && e.preventDefault()}>
-                  {item.label}
-                </Link>
+                <span className="truncate">{item.label}</span>
                 {item.submenu && (
-                  <ChevronDown
-                    className={`h-4 w-4 text-neutral-600 transition-transform ${
-                      activeMobileSubmenu === item.id ? "rotate-180" : ""
-                    }`}
+                  <ChevronRight
+                    className={`h-6 w-6 ml-2 text-red-400 transition-transform ${activeMobileSubmenu === item.id ? "rotate-90" : ""}`}
                   />
                 )}
-              </div>
-
+              </button>
               {item.submenu && activeMobileSubmenu === item.id && (
-                <div className="bg-neutral-50">
-                  {item.submenu.map((subItem, idx) => (
-                    <div key={idx} className="border-t border-neutral-100">
-                      <Link
-                        href={subItem.link}
-                        className="block py-3 px-8 hover:bg-neutral-100 text-neutral-900 transition-colors"
-                        onClick={() => setIsOpen(false)}
+                <ul className="bg-red-50">
+                  {item.submenu.map((sub, idx) => (
+                    <li key={idx} className="border-t border-red-100">
+                      <button
+                        className="w-full text-left px-10 py-3 text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-100 truncate"
+                        onClick={() => {
+                          setIsOpen(false)
+                          router.push(sub.link)
+                        }}
                       >
-                        {subItem.label}
-                      </Link>
-                    </div>
+                        {sub.label}
+                      </button>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
             </li>
           ))}
-
-          {/* User related links */}
-          {!user ? (
-            <>
-              <li className="border-b border-neutral-100">
-                <Link
-                  href="/login"
-                  className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <User className="h-5 w-5 mr-3 text-neutral-600" />
-                  Login
-                </Link>
-              </li>
-              <li className="border-b border-neutral-100">
-                <Link
-                  href="/register"
-                  className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <User className="h-5 w-5 mr-3 text-neutral-600" />
-                  Register
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li className="border-b border-neutral-100">
-                <Link
-                  href="/profile"
-                  className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <User className="h-5 w-5 mr-3 text-neutral-600" />
-                  Profile
-                </Link>
-              </li>
-              <li className="border-b border-neutral-100">
-                <Link
-                  href="/wishlist"
-                  className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Heart className="h-5 w-5 mr-3 text-neutral-600" />
-                  Wishlist
-                </Link>
-              </li>
-              <li className="border-b border-neutral-100">
-                <Link
-                  href="/orders"
-                  className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <ShoppingBag className="h-5 w-5 mr-3 text-neutral-600" />
-                  Orders
-                </Link>
-              </li>
-              <li className="border-b border-neutral-100">
-                <Link
-                  href="/settings"
-                  className="flex items-center py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Settings className="h-5 w-5 mr-3 text-neutral-600" />
-                  Settings
-                </Link>
-              </li>
-              <li>
-                <button
-                  className="flex items-center w-full text-left py-3 px-4 hover:bg-neutral-50 text-neutral-900 transition-colors"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-5 w-5 mr-3 text-neutral-600" />
-                  Logout
-                </button>
-              </li>
-            </>
-          )}
         </ul>
-      </nav>
-    </div>
+        {/* Footer */}
+        <div className="mt-auto border-t border-gray-200 px-6 py-4 flex flex-col gap-2">
+          <div className="flex justify-center gap-4 mt-1">
+            {footerData.socialLinks.map(link => (
+              <a
+                key={link.platform}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-red-600 hover:text-red-800 transition text-xl"
+                aria-label={link.platform}
+              >
+                {link.icon}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
-
-export default MobileMenu

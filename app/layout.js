@@ -40,7 +40,7 @@ function LayoutContent({ children }) {
       )}
       <main className={`${
   showLayout ? 'lining-nums pt-[144px] md:pt-[160px]' : ''
-} min-h-screen w-full overflow-x-hidden bg-gray-100`}>
+} min-h-screen w-[90vw] max-w-[90vw] mx-auto overflow-x-hidden `}>
         {children}
       </main>
       <WhatsAppButton/>
@@ -53,7 +53,7 @@ function LayoutContent({ children }) {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={playfair.variable}>
-      <body className={`${playfair.className} antialiased`}>
+      <body className={`${playfair.className} antialiased bg-gray-100`}>
         <Provider store={store}>
             <AuthProvider>
               <LayoutContent>{children}</LayoutContent>

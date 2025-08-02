@@ -95,7 +95,7 @@ const Navbar = ({ className }) => {
             {/* Mobile Layout */}
             <div className="flex md:hidden items-center justify-between">
               {/* Left: Mobile menu button */}
-              <div className="flex items-center">
+              <div className="flex items-center w-1/4">
                 <button
                   className="p-2 rounded-md hover:bg-gray-100 flex-shrink-0"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -105,12 +105,12 @@ const Navbar = ({ className }) => {
               </div>
 
               {/* Center: Logo */}
-              <div className="flex-shrink-0">
+              <div className="flex justify-center w-1/2">
                 <NavbarLogo />
               </div>
 
-              {/* Right: Icons with proper spacing */}
-              <div className="flex items-center space-x-2">
+              {/* Right: Icons */}
+              <div className="flex items-center justify-end w-1/4 space-x-2">
                 <UserNavigation />
                 <WishlistButton />
                 <CartButton />
