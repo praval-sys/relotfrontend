@@ -125,7 +125,7 @@ export default function ProductCategories() {
                 </div>
 
                 {/* Fixed Content Section */}
-                <div className="p-6 h-32 flex flex-col justify-between">
+                <div className="p-6  flex flex-col justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors duration-300 line-clamp-1">
                       {item.title}

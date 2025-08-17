@@ -70,6 +70,7 @@ const UserNavigation = () => {
           transform transition-transform ease-in-out duration-300 ${
             isSidebarOpen ? 'translate-x-4' : 'translate-x-full'
           }`}
+          // style={{right: '6px'}}
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 sm:p-6 border-b border-gray-100">
