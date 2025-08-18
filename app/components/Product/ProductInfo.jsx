@@ -230,7 +230,7 @@ export default function ProductInfo({
           <span className="font-bold text-black text-sm sm:text-base">Quantity:</span>
           <div className="flex items-center gap-2 sm:gap-3">
             <button 
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 hover:text-black border border-gray-300 rounded-lg hover:border-gray-400 disabled:opacity-50"
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 hover:text-black border border-gray-300 rounded-lg hover:border-gray-400 "
               onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
               disabled={quantity <= 1}
             >
@@ -248,7 +248,7 @@ export default function ProductInfo({
               className="w-14 sm:w-20 text-center border border-gray-300 rounded-lg py-1 sm:py-2 font-bold text-black focus:outline-none focus:border-gray-500 text-sm sm:text-base"
             />
             <button 
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 hover:text-black border border-gray-300 rounded-lg hover:border-gray-400 disabled:opacity-50"
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-gray-600 hover:text-black border border-gray-300 rounded-lg hover:border-gray-400 "
               onClick={() => setQuantity(prev => Math.min(availableStock, prev + 1))}
               disabled={quantity >= availableStock}
             >

@@ -3,12 +3,13 @@ import Link from "next/link"
 import Image from "next/image"
 import { ChevronDown, Sparkles, ChevronRight, ArrowUpRight, ChevronLeft } from "lucide-react"
 import NavbarLogo from "./NavbarLogo"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeNestedMenu, setActiveNestedMenu] = useState(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const hoverTimeoutRef = useRef(null)
 
   // Static images for the slider
   const sliderImages = [
@@ -32,8 +33,29 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
     return () => clearInterval(interval)
   }, [])
 
-  // Remove the dynamic height calculation function and use static height
-  const staticDropdownHeight = 600 // Fixed height for all dropdowns
+  // Handle menu hover with delay
+  const handleMenuEnter = (itemId) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+    }
+    setActiveSubmenu(itemId)
+    setActiveNestedMenu(null)
+  }
+
+  const handleMenuLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveSubmenu(null)
+      setActiveNestedMenu(null)
+    }, 300) // 300ms delay before closing
+  }
+
+  const handleDropdownEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+    }
+  }
+
+  const staticDropdownHeight = 600
 
   return (
     <>
@@ -51,14 +73,11 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
               <Link
                 href={item.link}
                 className="relative flex items-center py-3 font-bold text-[15px] text-gray-800 transition-all duration-300 ease-out group-hover:text-red-600"
-                onMouseEnter={() => {
-                  setActiveSubmenu(item.id)
-                  setActiveNestedMenu(null)
-                }}
+                onMouseEnter={() => handleMenuEnter(item.id)}
+                onMouseLeave={handleMenuLeave}
               >
                 <span className="relative">
                   {item.label}
-                  {/* Animated underline */}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-red-500 to-red-600 transition-all duration-300 ease-out group-hover:w-full"></span>
                 </span>
                 {item.submenu && (
@@ -68,18 +87,21 @@ const DesktopMenu = ({ menuData, activeSubmenu, setActiveSubmenu }) => {
 
               {item.submenu && (
                 <div
-                  className="fixed left-0 right-0 mt-4 bg-white shadow-2xl z-[70] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-500 ease-out transform group-hover:translate-y-0 translate-y-4 border-t border-gray-100"
-                  onMouseLeave={() => {
-                    setActiveSubmenu(null)
-                    setActiveNestedMenu(null)
-                  }}
+                  className={`fixed left-0 right-0 mt-4 bg-white shadow-2xl z-[70] ${
+                    activeSubmenu === item.id ? 'opacity-100 visible' : 'opacity-0 invisible'
+                  } transition-all duration-500 ease-out transform ${
+                    activeSubmenu === item.id ? 'translate-y-0' : 'translate-y-4'
+                  } border-t border-gray-100`}
+                  onMouseEnter={handleDropdownEnter}
+                  onMouseLeave={handleMenuLeave}
                   style={{
                     background: "linear-gradient(135deg, #ffffff 0%, #fafafa 100%)",
-                    height: `${staticDropdownHeight}px`, // Use static height
-                    transition: "opacity 0.5s ease-out, transform 0.5s ease-out", // Remove height transition
+                    height: `${staticDropdownHeight}px`,
+                    transition: "opacity 0.5s ease-out, transform 0.5s ease-out",
                   }}
                 >
-                  <div className="container mx-auto px-8 py-8 h-full">
+                  {/* Rest of your dropdown content remains the same */}
+                    <div className="container mx-auto px-8 py-8 h-full">
                     <div className="flex gap-12 h-full">
                       {/* Categories Section - Left Side */}
                       <div className="w-1/4 border-r border-gray-200 pr-8 overflow-y-auto max-h-full">

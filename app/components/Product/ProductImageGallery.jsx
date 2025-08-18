@@ -416,11 +416,11 @@ function ProductImageGallery({ product, selectedVariant, quantity, addItem, AddW
       {/* Zoom Preview: Only on large screens */}
       {isZooming && !isMobile && isCurrentMediaImage() && (
         <div 
-          className="hidden lg:block fixed z-50 w-[400px] h-[500px] border-4 border-red-200 rounded-xl shadow-2xl bg-white overflow-hidden pointer-events-none"
+          className="hidden lg:block fixed z-50 w-[800px] h-[750px] rounded-b-sm shadow-2xl bg-white overflow-hidden pointer-events-none"
           style={{
             zIndex: 9999,
-            right: '40px',
-            top: '50%',
+            right: '250px',
+            top: '60%',
             transform: 'translateY(-50%)',
           }}
         >
